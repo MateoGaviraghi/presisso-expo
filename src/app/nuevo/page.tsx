@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { validateImageFile } from "@/lib/utils/validators";
 import { STEPS } from "@/lib/utils/constants";
 import type { KitchenType } from "@/lib/utils/constants";
@@ -15,7 +14,6 @@ import Image from "next/image";
 
 export default function NuevoPage() {
   const router = useRouter();
-  const supabase = createClient();
 
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -48,23 +46,20 @@ export default function NuevoPage() {
     setError(null);
 
     try {
-      // 1. Subir foto a Supabase Storage
-      const fileName = `${Date.now()}-${photoFile.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("fotos-cocinas")
-        .upload(`originales/${fileName}`, photoFile, {
-          contentType: photoFile.type,
-          upsert: false,
-        });
+      // 1. Subir foto via API server-side (usa service role, sin RLS)
+      const formData = new FormData();
+      formData.append("file", photoFile);
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!uploadResponse.ok) {
+        const uploadErr = await uploadResponse.json().catch(() => ({}));
+        throw new Error(uploadErr.error || "Error al subir la foto");
+      }
+      const { url: fotoUrl } = await uploadResponse.json();
 
-      if (uploadError) throw new Error("Error al subir la foto");
-
-      // 2. Obtener URL pública
-      const { data: urlData } = supabase.storage
-        .from("fotos-cocinas")
-        .getPublicUrl(uploadData.path);
-
-      // 3. Crear solicitud via API
+      // 2. Crear solicitud via API
       const response = await fetch("/api/solicitudes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -74,7 +69,7 @@ export default function NuevoPage() {
           email: email || undefined,
           tipo_cocina: kitchenType,
           enviar_pdf: enviarPdf,
-          foto_original: urlData.publicUrl,
+          foto_original: fotoUrl,
         }),
       });
 
