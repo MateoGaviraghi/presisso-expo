@@ -8,7 +8,9 @@ export function useSolicitud() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const crear = async (data: CreateSolicitudRequest): Promise<Solicitud | null> => {
+  const crear = async (
+    data: CreateSolicitudRequest,
+  ): Promise<Solicitud | null> => {
     setLoading(true);
     setError(null);
     try {

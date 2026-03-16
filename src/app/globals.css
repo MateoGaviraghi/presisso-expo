@@ -6,16 +6,16 @@
 
 :root {
   /* Presisso Colors */
-  --presisso-red: #D42B2B;
-  --presisso-red-hover: #B82424;
-  --presisso-red-light: #FDF2F2;
-  --presisso-black: #1A1A1A;
-  --presisso-white: #FFFFFF;
-  --presisso-gray-light: #F5F5F3;
-  --presisso-gray-mid: #6B6B6B;
+  --presisso-red: #d42b2b;
+  --presisso-red-hover: #b82424;
+  --presisso-red-light: #fdf2f2;
+  --presisso-black: #1a1a1a;
+  --presisso-white: #ffffff;
+  --presisso-gray-light: #f5f5f3;
+  --presisso-gray-mid: #6b6b6b;
   --presisso-gray-dark: #333333;
-  --presisso-border: #E5E5E5;
-  --presisso-surface: #FAFAF9;
+  --presisso-border: #e5e5e5;
+  --presisso-surface: #fafaf9;
 
   /* Spacing */
   --container-max: 1200px;
@@ -30,13 +30,33 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 /* Status badges */
-.badge-pendiente { background: #FEF3C7; color: #92400E; }
-.badge-generando { background: #EDE9FE; color: #6D28D9; }
-.badge-revision  { background: #DBEAFE; color: #1E40AF; }
-.badge-enviado   { background: #D1FAE5; color: #065F46; }
-.badge-rechazado { background: #FEE2E2; color: #991B1B; }
+.badge-pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-generando {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.badge-revision {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.badge-enviado {
+  background: #d1fae5;
+  color: #065f46;
+}
+.badge-rechazado {
+  background: #fee2e2;
+  color: #991b1b;
+}

@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 4, Días 3-5  
 > **Responsable:** Lead Developer + DevOps  
-> **Entregable:** Sistema en producción, monitoreado y estable para la expo  
+> **Entregable:** Sistema en producción, monitoreado y estable para la expo
 
 ---
 
@@ -11,41 +11,41 @@
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)  
 > **⚠️ CERO MARGEN DE ERROR:** El sistema debe funcionar desde el minuto 1 de la expo.
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
-| Arquitecto de Software | Principal | Senior 15+ años |
-| Líder Técnico | Principal | Senior 15+ años |
-| Ingeniero Industrial | Principal | Logística operativa expo |
-| Desarrollador Full Stack | Principal | Senior 10+ años |
-| Diseñador Gráfico | Soporte | QR branding + señalética |
-| Ingeniero de IA | Soporte | Warm-up + monitoreo IA |
+| Skill                    | Rol       | Nivel                    |
+| ------------------------ | --------- | ------------------------ |
+| Arquitecto de Software   | Principal | Senior 15+ años          |
+| Líder Técnico            | Principal | Senior 15+ años          |
+| Ingeniero Industrial     | Principal | Logística operativa expo |
+| Desarrollador Full Stack | Principal | Senior 10+ años          |
+| Diseñador Gráfico        | Soporte   | QR branding + señalética |
+| Ingeniero de IA          | Soporte   | Warm-up + monitoreo IA   |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/deploy-to-vercel/SKILL.md`](../.agents/skills/deploy-to-vercel/SKILL.md) | Deploy production, dominio, env vars |
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | Optimización Next.js para producción |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Validación final de tipos |
+| Skill (archivo)                                                                                                           | Propósito en esta fase               |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [`.agents/skills/deploy-to-vercel/SKILL.md`](../.agents/skills/deploy-to-vercel/SKILL.md)                                 | Deploy production, dominio, env vars |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)                   | Optimización Next.js para producción |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md)               | Validación final de tipos            |
 | [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Configuración DB producción, índices |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Arquitecto de Software Senior (15+ años) especializado en deploy a producción, 
+- Arquitecto de Software Senior (15+ años) especializado en deploy a producción,
   Vercel Serverless, dominios SSL, y diseño de planes de contingencia.
-- Líder Técnico Senior que define el checklist de go-live, procedimientos de rollback, 
+- Líder Técnico Senior que define el checklist de go-live, procedimientos de rollback,
   y protocolo de soporte técnico durante la expo.
-- Ingeniero Industrial que planifica la logística operativa del stand: posición de 
+- Ingeniero Industrial que planifica la logística operativa del stand: posición de
   dispositivos, flujo físico de clientes, backup de conectividad y métricas.
-- Desarrollador Full Stack Senior que configura variables de producción, optimiza 
+- Desarrollador Full Stack Senior que configura variables de producción, optimiza
   performance, y prepara el sistema de monitoreo.
 - Diseñador Gráfico Senior que valida presentación final: QR branding y señalética.
 
 CONTEXTO: Día de deploy a producción y preparación final para la expo.
 CERO MARGEN DE ERROR: el sistema debe funcionar desde el minuto 1.
-TAREA: Deploy final, configuración de dominio, Twilio en producción, 
+TAREA: Deploy final, configuración de dominio, Twilio en producción,
 monitoreo, rollback y validación del checklist pre-expo.
 ```
 
@@ -115,9 +115,7 @@ export default nextConfig;
   "headers": [
     {
       "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     }
   ]
 }
@@ -161,6 +159,7 @@ NEXT_PUBLIC_APP_URL               Production  (= URL de producción de Vercel)
 ```
 
 En Vercel:
+
 1. Settings → Domains → Add `expo.presisso.com.ar`
 2. Configurar DNS según instrucciones de Vercel
 3. SSL se genera automáticamente
@@ -297,6 +296,7 @@ export async function alertTeam(message: string) {
 ### Dashboard de monitoreo en la expo
 
 Tener abierto en una notebook/monitor del stand:
+
 - **Tab 1:** Panel admin (`/admin`) — ver solicitudes en tiempo real
 - **Tab 2:** Vercel Dashboard — ver errores
 - **Tab 3:** Supabase Dashboard — ver tabla y storage
@@ -342,9 +342,14 @@ async function warmUp() {
   console.log("Precalentando Gemini API...");
   const testResult = await generateKitchenImage(
     "URL_DE_FOTO_DE_PRUEBA",
-    "moderna"
+    "moderna",
   );
-  console.log("Warm-up completado:", testResult.success, testResult.timeMs, "ms");
+  console.log(
+    "Warm-up completado:",
+    testResult.success,
+    testResult.timeMs,
+    "ms",
+  );
 }
 ```
 
@@ -352,23 +357,23 @@ async function warmUp() {
 
 ## 8.10 Checklist de deploy final
 
-| # | Check | Estado |
-|---|-------|--------|
-| 1 | Deploy en Vercel con dominio `expo.presisso.com.ar` | ⬜ |
-| 2 | SSL activo (HTTPS) | ⬜ |
-| 3 | Variables de entorno de producción configuradas | ⬜ |
-| 4 | Supabase con datos limpios (sin datos de testing) | ⬜ |
-| 5 | Gemini API key con billing activo | ⬜ |
-| 6 | Twilio WhatsApp template aprobado por Meta | ⬜ |
-| 7 | Resend dominio verificado | ⬜ |
-| 8 | QR generado apuntando a URL de producción | ⬜ |
-| 9 | Test E2E en producción (no staging) pasado | ⬜ |
-| 10 | Rollback probado (redeploy de versión anterior) | ⬜ |
-| 11 | Notebook/monitor para panel admin en el stand | ⬜ |
-| 12 | Warm-up de API ejecutado | ⬜ |
-| 13 | 4G backup configurado y probado | ⬜ |
-| 14 | Renders pre-generados de backup (Plan B) | ⬜ |
-| 15 | Equipo técnico con acceso a todos los dashboards | ⬜ |
+| #   | Check                                               | Estado |
+| --- | --------------------------------------------------- | ------ |
+| 1   | Deploy en Vercel con dominio `expo.presisso.com.ar` | ⬜     |
+| 2   | SSL activo (HTTPS)                                  | ⬜     |
+| 3   | Variables de entorno de producción configuradas     | ⬜     |
+| 4   | Supabase con datos limpios (sin datos de testing)   | ⬜     |
+| 5   | Gemini API key con billing activo                   | ⬜     |
+| 6   | Twilio WhatsApp template aprobado por Meta          | ⬜     |
+| 7   | Resend dominio verificado                           | ⬜     |
+| 8   | QR generado apuntando a URL de producción           | ⬜     |
+| 9   | Test E2E en producción (no staging) pasado          | ⬜     |
+| 10  | Rollback probado (redeploy de versión anterior)     | ⬜     |
+| 11  | Notebook/monitor para panel admin en el stand       | ⬜     |
+| 12  | Warm-up de API ejecutado                            | ⬜     |
+| 13  | 4G backup configurado y probado                     | ⬜     |
+| 14  | Renders pre-generados de backup (Plan B)            | ⬜     |
+| 15  | Equipo técnico con acceso a todos los dashboards    | ⬜     |
 
 ---
 

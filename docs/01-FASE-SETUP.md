@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 1, Días 1-2  
 > **Responsable:** Lead Developer  
-> **Entregable:** Proyecto base deployado en Vercel con Supabase conectado  
+> **Entregable:** Proyecto base deployado en Vercel con Supabase conectado
 
 ---
 
@@ -10,38 +10,38 @@
 
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
-| Arquitecto de Software | Principal | Senior 15+ años |
+| Skill                    | Rol       | Nivel           |
+| ------------------------ | --------- | --------------- |
+| Arquitecto de Software   | Principal | Senior 15+ años |
 | Desarrollador Full Stack | Principal | Senior 10+ años |
-| Líder Técnico | Principal | Senior 15+ años |
-| Diseñador Gráfico | Soporte | Senior 10+ años |
+| Líder Técnico            | Principal | Senior 15+ años |
+| Diseñador Gráfico        | Soporte   | Senior 10+ años |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Setup de PostgreSQL, schema, Storage, RLS |
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | Estructura Next.js 14, App Router, TypeScript |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Configuración TypeScript estricto |
-| [`.agents/skills/deploy-to-vercel/SKILL.md`](../.agents/skills/deploy-to-vercel/SKILL.md) | Primer deploy a Vercel |
+| Skill (archivo)                                                                                                           | Propósito en esta fase                        |
+| ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Setup de PostgreSQL, schema, Storage, RLS     |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)                   | Estructura Next.js 14, App Router, TypeScript |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md)               | Configuración TypeScript estricto             |
+| [`.agents/skills/deploy-to-vercel/SKILL.md`](../.agents/skills/deploy-to-vercel/SKILL.md)                                 | Primer deploy a Vercel                        |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Arquitecto de Software Senior (15+ años) especializado en sistemas serverless, 
+- Arquitecto de Software Senior (15+ años) especializado en sistemas serverless,
   diseño de bases de datos PostgreSQL y arquitectura de proyectos Next.js 14.
-- Desarrollador Full Stack Senior (10+ años) con dominio de TypeScript, 
+- Desarrollador Full Stack Senior (10+ años) con dominio de TypeScript,
   Supabase, Tailwind CSS y configuración de entornos de desarrollo.
-- Líder Técnico Senior que define estándares de código, estructura de carpetas 
+- Líder Técnico Senior que define estándares de código, estructura de carpetas
   y convenciones de naming para equipos de desarrollo.
 
 PROYECTO: Sistema de visualización de cocinas con IA para expo presencial.
 MARCA: Presisso — Amoblamientos. Colores: #D42B2B (rojo), #1A1A1A (negro), #F5F5F3 (gris).
 STACK: Next.js 14 + TypeScript + Tailwind + Supabase + Vercel.
 DEADLINE: 4 semanas hasta la expo. Esta es la Semana 1, días 1-2.
-TAREA: Configurar el proyecto base desde cero con estructura profesional, 
+TAREA: Configurar el proyecto base desde cero con estructura profesional,
 variables de entorno, schema de base de datos y primer deploy.
 ```
 
@@ -327,16 +327,16 @@ Editar `src/app/globals.css`:
 
 :root {
   /* Presisso Colors */
-  --presisso-red: #D42B2B;
-  --presisso-red-hover: #B82424;
-  --presisso-red-light: #FDF2F2;
-  --presisso-black: #1A1A1A;
-  --presisso-white: #FFFFFF;
-  --presisso-gray-light: #F5F5F3;
-  --presisso-gray-mid: #6B6B6B;
+  --presisso-red: #d42b2b;
+  --presisso-red-hover: #b82424;
+  --presisso-red-light: #fdf2f2;
+  --presisso-black: #1a1a1a;
+  --presisso-white: #ffffff;
+  --presisso-gray-light: #f5f5f3;
+  --presisso-gray-mid: #6b6b6b;
   --presisso-gray-dark: #333333;
-  --presisso-border: #E5E5E5;
-  --presisso-surface: #FAFAF9;
+  --presisso-border: #e5e5e5;
+  --presisso-surface: #fafaf9;
 
   /* Spacing */
   --container-max: 1200px;
@@ -351,16 +351,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 /* Status badges */
-.badge-pendiente { background: #FEF3C7; color: #92400E; }
-.badge-generando { background: #EDE9FE; color: #6D28D9; }
-.badge-revision  { background: #DBEAFE; color: #1E40AF; }
-.badge-enviado   { background: #D1FAE5; color: #065F46; }
-.badge-rechazado { background: #FEE2E2; color: #991B1B; }
+.badge-pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-generando {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.badge-revision {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.badge-enviado {
+  background: #d1fae5;
+  color: #065f46;
+}
+.badge-rechazado {
+  background: #fee2e2;
+  color: #991b1b;
+}
 ```
 
 ---
@@ -534,13 +554,13 @@ vercel
 
 ## 1.11 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | `pnpm dev` levanta en `localhost:3000` sin errores |
-| ✅ | Tailwind renderiza colores Presisso correctamente |
-| ✅ | Supabase conecta (verificar en console del browser) |
-| ✅ | Tabla `solicitudes` creada en Supabase |
-| ✅ | Storage bucket `fotos-cocinas` creado |
-| ✅ | Deploy en Vercel funciona (URL de preview) |
-| ✅ | Variables de entorno configuradas en Vercel |
-| ✅ | `.env.local` en `.gitignore` |
+| Check | Criterio                                            |
+| ----- | --------------------------------------------------- |
+| ✅    | `pnpm dev` levanta en `localhost:3000` sin errores  |
+| ✅    | Tailwind renderiza colores Presisso correctamente   |
+| ✅    | Supabase conecta (verificar en console del browser) |
+| ✅    | Tabla `solicitudes` creada en Supabase              |
+| ✅    | Storage bucket `fotos-cocinas` creado               |
+| ✅    | Deploy en Vercel funciona (URL de preview)          |
+| ✅    | Variables de entorno configuradas en Vercel         |
+| ✅    | `.env.local` en `.gitignore`                        |

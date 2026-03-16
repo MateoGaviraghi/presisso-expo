@@ -32,3 +32,12 @@ export interface Solicitud {
   enviado_at: string | null;
   notas_admin: string | null;
 }
+
+export interface CreateSolicitudPayload {
+  nombre: string;
+  whatsapp: string;
+  email?: string;
+  tipo_cocina: "moderna" | "premium";
+  enviar_pdf: boolean;
+  foto_original: string;
+}

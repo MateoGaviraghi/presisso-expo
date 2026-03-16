@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 2, Días 1-2  
 > **Responsable:** Backend Developer  
-> **Entregable:** API REST funcional con CRUD de solicitudes  
+> **Entregable:** API REST funcional con CRUD de solicitudes
 
 ---
 
@@ -10,36 +10,36 @@
 
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
+| Skill                    | Rol       | Nivel           |
+| ------------------------ | --------- | --------------- |
 | Desarrollador Full Stack | Principal | Senior 10+ años |
-| Arquitecto de Software | Principal | Senior 15+ años |
-| Líder Técnico | Soporte | Senior 15+ años |
+| Arquitecto de Software   | Principal | Senior 15+ años |
+| Líder Técnico            | Soporte   | Senior 15+ años |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | API Routes Next.js, Server Components |
-| [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Queries, RLS, Storage, Realtime |
-| [`.agents/skills/nextjs-supabase-auth/SKILL.md`](../.agents/skills/nextjs-supabase-auth/SKILL.md) | Autenticación admin con Supabase |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado estricto, Zod schemas, contratos API |
+| Skill (archivo)                                                                                                           | Propósito en esta fase                      |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)                   | API Routes Next.js, Server Components       |
+| [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Queries, RLS, Storage, Realtime             |
+| [`.agents/skills/nextjs-supabase-auth/SKILL.md`](../.agents/skills/nextjs-supabase-auth/SKILL.md)                         | Autenticación admin con Supabase            |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md)               | Tipado estricto, Zod schemas, contratos API |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Desarrollador Full Stack Senior (10+ años) especializado en APIs REST con 
+- Desarrollador Full Stack Senior (10+ años) especializado en APIs REST con
   Next.js API Routes, validación con Zod, y Supabase server-side.
-- Arquitecto de Software Senior (15+ años) con experiencia en diseño de APIs, 
+- Arquitecto de Software Senior (15+ años) con experiencia en diseño de APIs,
   manejo de estados asíncronos, patterns de error handling y seguridad.
-- Líder Técnico Senior que asegura calidad de código, tipado estricto 
+- Líder Técnico Senior que asegura calidad de código, tipado estricto
   y contratos de API bien definidos.
 
 PROYECTO: API backend para sistema de visualización de cocinas con IA.
 BASE DE DATOS: Supabase (PostgreSQL) con tabla solicitudes y flujo de estados.
 ESTADOS: pendiente → generando → revision → aprobada → enviada (o error/rechazada).
-TAREA: Implementar los API Routes de CRUD de solicitudes, estadísticas del dashboard 
+TAREA: Implementar los API Routes de CRUD de solicitudes, estadísticas del dashboard
 y middleware de autenticación simple para el panel admin.
 ```
 
@@ -60,7 +60,7 @@ export const supabaseAdmin = createClient(
       autoRefreshToken: false,
       persistSession: false,
     },
-  }
+  },
 );
 ```
 
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       console.error("Supabase insert error:", error);
       return NextResponse.json(
         { error: "Error al crear solicitud" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -123,14 +123,11 @@ export async function POST(req: NextRequest) {
     if (err instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Datos inválidos", details: err.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
     console.error("API error:", err);
-    return NextResponse.json(
-      { error: "Error interno" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Error interno" }, { status: 500 });
   }
 }
 
@@ -174,7 +171,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 // GET /api/solicitudes/:id
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const { data, error } = await supabaseAdmin
     .from("solicitudes")
@@ -185,7 +182,7 @@ export async function GET(
   if (error || !data) {
     return NextResponse.json(
       { error: "Solicitud no encontrada" },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -195,7 +192,7 @@ export async function GET(
 // PATCH /api/solicitudes/:id — Actualizar estado
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const body = await req.json();
 
@@ -325,13 +322,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
 ## 3.6 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | `POST /api/solicitudes` crea registro correctamente |
-| ✅ | `GET /api/solicitudes` lista con paginación y filtro por estado |
-| ✅ | `GET /api/solicitudes/:id` retorna detalle |
-| ✅ | `PATCH /api/solicitudes/:id` actualiza estado |
-| ✅ | `GET /api/stats` retorna estadísticas del dashboard |
-| ✅ | Validación Zod rechaza payloads inválidos con error 400 |
-| ✅ | Fire-and-forget a `/api/generar-imagen` se dispara al crear |
-| ✅ | Auth admin funciona con contraseña de sesión |
+| Check | Criterio                                                        |
+| ----- | --------------------------------------------------------------- |
+| ✅    | `POST /api/solicitudes` crea registro correctamente             |
+| ✅    | `GET /api/solicitudes` lista con paginación y filtro por estado |
+| ✅    | `GET /api/solicitudes/:id` retorna detalle                      |
+| ✅    | `PATCH /api/solicitudes/:id` actualiza estado                   |
+| ✅    | `GET /api/stats` retorna estadísticas del dashboard             |
+| ✅    | Validación Zod rechaza payloads inválidos con error 400         |
+| ✅    | Fire-and-forget a `/api/generar-imagen` se dispara al crear     |
+| ✅    | Auth admin funciona con contraseña de sesión                    |

@@ -3,7 +3,7 @@
 > **Duración:** Semana 2, Días 2-5  
 > **Responsable:** Lead Developer  
 > **Entregable:** Generación de imagen IA funcional con prompts calibrados  
-> **Documentación oficial:** https://ai.google.dev/gemini-api/docs/imagen  
+> **Documentación oficial:** https://ai.google.dev/gemini-api/docs/imagen
 
 ---
 
@@ -12,32 +12,32 @@
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)  
 > **⚠️ FASE CRÍTICA:** Esta es la fase más técnicamente compleja del proyecto.
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
-| Ingeniero de IA | Principal | Senior 10+ años |
+| Skill                    | Rol       | Nivel           |
+| ------------------------ | --------- | --------------- |
+| Ingeniero de IA          | Principal | Senior 10+ años |
 | Desarrollador Full Stack | Principal | Senior 10+ años |
-| Arquitecto de Software | Principal | Senior 15+ años |
-| Líder Técnico | Principal | Senior 15+ años |
+| Arquitecto de Software   | Principal | Senior 15+ años |
+| Líder Técnico            | Principal | Senior 15+ años |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | API Routes para endpoint de generación |
+| Skill (archivo)                                                                                             | Propósito en esta fase                   |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)     | API Routes para endpoint de generación   |
 | [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado de respuestas Gemini, retry logic |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Ingeniero de IA Senior (10+ años) especializado en prompt engineering para 
-  generación de imágenes, APIs de IA generativa (Google Gemini, Imagen 4), 
+- Ingeniero de IA Senior (10+ años) especializado en prompt engineering para
+  generación de imágenes, APIs de IA generativa (Google Gemini, Imagen 4),
   y calibración de calidad de outputs con métricas objetivas.
-- Arquitecto de Software Senior (15+ años) con experiencia en integración de 
+- Arquitecto de Software Senior (15+ años) con experiencia en integración de
   APIs externas, patrones de retry/fallback, y diseño resiliente.
-- Desarrollador Full Stack Senior que implementa la integración técnica con 
+- Desarrollador Full Stack Senior que implementa la integración técnica con
   SDKs, manejo de base64, storage de imágenes y flujos asíncronos.
-- Líder Técnico Senior que toma decisiones de trade-off entre calidad de imagen, 
+- Líder Técnico Senior que toma decisiones de trade-off entre calidad de imagen,
   velocidad de generación y costo por request.
 
 PROYECTO: Integración con Google Gemini API para fotomontaje de cocinas.
@@ -45,7 +45,7 @@ API: Gemini 2.5 Flash Image (edición conversacional) + Imagen 4 (fallback).
 SDK: @google/genai (oficial de Google)
 OBJETIVO: Enviar foto del cliente + prompt → recibir foto con muebles Presisso.
 VOLUMEN: 30-80 generaciones/día durante 3-5 días de expo.
-TAREA: Implementar integración completa con Gemini, diseñar prompts para línea 
+TAREA: Implementar integración completa con Gemini, diseñar prompts para línea
 Moderna y Premium, implementar fallback y preparar calibración iterativa.
 ```
 
@@ -227,7 +227,7 @@ interface GenerateResult {
  */
 export async function generateKitchenImage(
   fotoOriginalUrl: string,
-  tipoCocina: PromptType
+  tipoCocina: PromptType,
 ): Promise<GenerateResult> {
   const startTime = Date.now();
   const promptConfig = PROMPTS[tipoCocina];
@@ -269,7 +269,7 @@ export async function generateKitchenImage(
 
     // 3. Extraer la imagen generada de la respuesta
     const generatedImage = response.candidates?.[0]?.content?.parts?.find(
-      (part: any) => part.inlineData
+      (part: any) => part.inlineData,
     );
 
     if (!generatedImage?.inlineData?.data) {
@@ -303,7 +303,7 @@ export async function generateKitchenImage(
  * en el tipo seleccionado (no edita la foto del cliente directamente)
  */
 export async function generateKitchenImageFallback(
-  tipoCocina: PromptType
+  tipoCocina: PromptType,
 ): Promise<GenerateResult> {
   const startTime = Date.now();
 
@@ -324,7 +324,9 @@ export async function generateKitchenImageFallback(
       throw new Error("Imagen 4 no devolvió imagen");
     }
 
-    const base64 = Buffer.from(generatedImage.image.imageBytes).toString("base64");
+    const base64 = Buffer.from(generatedImage.image.imageBytes).toString(
+      "base64",
+    );
 
     return {
       success: true,
@@ -369,7 +371,10 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error || !solicitud) {
-    return NextResponse.json({ error: "Solicitud no encontrada" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Solicitud no encontrada" },
+      { status: 404 },
+    );
   }
 
   // 2. Actualizar estado a "generando"
@@ -384,13 +389,15 @@ export async function POST(req: NextRequest) {
   // 3. Intentar generar con Gemini Flash Image (edición)
   let result = await generateKitchenImage(
     solicitud.foto_original,
-    solicitud.tipo_cocina as PromptType
+    solicitud.tipo_cocina as PromptType,
   );
 
   // 4. Si falla, intentar con fallback Imagen 4
   if (!result.success) {
     console.warn("Gemini Flash Image falló, intentando fallback Imagen 4...");
-    result = await generateKitchenImageFallback(solicitud.tipo_cocina as PromptType);
+    result = await generateKitchenImageFallback(
+      solicitud.tipo_cocina as PromptType,
+    );
   }
 
   if (!result.success) {
@@ -410,8 +417,7 @@ export async function POST(req: NextRequest) {
   const imageBuffer = Buffer.from(result.imageBase64!, "base64");
   const fileName = `generadas/${solicitud_id}-${Date.now()}.png`;
 
-  const { error: uploadError } = await supabaseAdmin
-    .storage
+  const { error: uploadError } = await supabaseAdmin.storage
     .from("fotos-cocinas")
     .upload(fileName, imageBuffer, {
       contentType: "image/png",
@@ -420,11 +426,13 @@ export async function POST(req: NextRequest) {
 
   if (uploadError) {
     console.error("Error subiendo imagen generada:", uploadError);
-    return NextResponse.json({ error: "Error almacenando imagen" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error almacenando imagen" },
+      { status: 500 },
+    );
   }
 
-  const { data: urlData } = supabaseAdmin
-    .storage
+  const { data: urlData } = supabaseAdmin.storage
     .from("fotos-cocinas")
     .getPublicUrl(fileName);
 
@@ -491,7 +499,7 @@ SEMANA 2, DÍAS 4-5: CALIBRACIÓN
 export async function generateWithRetry(
   fotoUrl: string,
   tipo: PromptType,
-  maxRetries = 3
+  maxRetries = 3,
 ): Promise<GenerateResult> {
   for (let i = 0; i < maxRetries; i++) {
     const result = await generateKitchenImage(fotoUrl, tipo);
@@ -499,7 +507,7 @@ export async function generateWithRetry(
 
     // Esperar antes de reintentar (1s, 2s, 4s)
     if (i < maxRetries - 1) {
-      await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, i)));
     }
   }
 
@@ -512,14 +520,14 @@ export async function generateWithRetry(
 
 ## 4.9 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | API key de Gemini configurada y funcional |
-| ✅ | Generación con Gemini Flash Image produce imagen editada |
-| ✅ | Fallback con Imagen 4 produce imagen text-to-image |
-| ✅ | Imagen generada se sube a Supabase Storage |
-| ✅ | Estado de solicitud se actualiza correctamente (generando → revision) |
-| ✅ | Error handling con retry funciona |
-| ✅ | Prompts calibrados con al menos 10 fotos de prueba |
-| ✅ | Tasa de aprobación de imágenes > 70% |
-| ✅ | Tiempo de generación promedio < 30 segundos |
+| Check | Criterio                                                              |
+| ----- | --------------------------------------------------------------------- |
+| ✅    | API key de Gemini configurada y funcional                             |
+| ✅    | Generación con Gemini Flash Image produce imagen editada              |
+| ✅    | Fallback con Imagen 4 produce imagen text-to-image                    |
+| ✅    | Imagen generada se sube a Supabase Storage                            |
+| ✅    | Estado de solicitud se actualiza correctamente (generando → revision) |
+| ✅    | Error handling con retry funciona                                     |
+| ✅    | Prompts calibrados con al menos 10 fotos de prueba                    |
+| ✅    | Tasa de aprobación de imágenes > 70%                                  |
+| ✅    | Tiempo de generación promedio < 30 segundos                           |

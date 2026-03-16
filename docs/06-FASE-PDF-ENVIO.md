@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 3, Días 3-5  
 > **Responsable:** Backend Developer  
-> **Entregable:** PDF branded generado automáticamente, envío funcional por WhatsApp y Email  
+> **Entregable:** PDF branded generado automáticamente, envío funcional por WhatsApp y Email
 
 ---
 
@@ -10,36 +10,36 @@
 
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
+| Skill                    | Rol       | Nivel           |
+| ------------------------ | --------- | --------------- |
 | Desarrollador Full Stack | Principal | Senior 10+ años |
-| Diseñador Gráfico | Principal | Senior 10+ años |
-| Arquitecto de Software | Soporte | Senior 15+ años |
+| Diseñador Gráfico        | Principal | Senior 10+ años |
+| Arquitecto de Software   | Soporte   | Senior 15+ años |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | API Routes para PDF, WhatsApp, Email |
-| [`.agents/skills/ui-ux-pro-max/SKILL.md`](../.agents/skills/ui-ux-pro-max/SKILL.md) | Diseño editorial PDF, email HTML branded |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado de integraciones Twilio, Resend |
+| Skill (archivo)                                                                                             | Propósito en esta fase                   |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)     | API Routes para PDF, WhatsApp, Email     |
+| [`.agents/skills/ui-ux-pro-max/SKILL.md`](../.agents/skills/ui-ux-pro-max/SKILL.md)                         | Diseño editorial PDF, email HTML branded |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado de integraciones Twilio, Resend   |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Desarrollador Full Stack Senior (10+ años) con experiencia en generación de PDF 
-  server-side (Puppeteer/Chromium), integración con Twilio WhatsApp Business API 
+- Desarrollador Full Stack Senior (10+ años) con experiencia en generación de PDF
+  server-side (Puppeteer/Chromium), integración con Twilio WhatsApp Business API
   y servicios de email transaccional (Resend).
-- Diseñador Gráfico Senior (10+ años) con experiencia en diseño editorial, 
-  maquetación de documentos PDF con identidad corporativa, y diseño de 
+- Diseñador Gráfico Senior (10+ años) con experiencia en diseño editorial,
+  maquetación de documentos PDF con identidad corporativa, y diseño de
   emails HTML responsive.
-- Arquitecto de Software Senior que asegura que el flujo PDF → WhatsApp → Email 
+- Arquitecto de Software Senior que asegura que el flujo PDF → WhatsApp → Email
   sea robusto, con manejo de errores y tracking de envíos.
 
 MARCA: Presisso. Paleta: #D42B2B (rojo acento), #1A1A1A (negro), #F5F5F3 (gris).
 TIPOGRAFÍA: Plus Jakarta Sans (headings), DM Sans (body).
-TAREA: Implementar generación de PDF branded, envío por WhatsApp Business API 
+TAREA: Implementar generación de PDF branded, envío por WhatsApp Business API
 con mensaje personalizado, y email HTML con preview de imagen y link de descarga.
 ```
 
@@ -304,11 +304,11 @@ import twilio from "twilio";
 
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID!,
-  process.env.TWILIO_AUTH_TOKEN!
+  process.env.TWILIO_AUTH_TOKEN!,
 );
 
 interface SendWhatsAppParams {
-  to: string;          // Número del cliente (ej: +5491112345678)
+  to: string; // Número del cliente (ej: +5491112345678)
   nombre: string;
   tipoCocina: string;
   pdfUrl: string;
@@ -483,7 +483,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, sid });
   } catch (error) {
     console.error("WhatsApp send error:", error);
-    return NextResponse.json({ error: "Error enviando WhatsApp" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error enviando WhatsApp" },
+      { status: 500 },
+    );
   }
 }
 ```
@@ -525,7 +528,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, emailId });
   } catch (error) {
     console.error("Email send error:", error);
-    return NextResponse.json({ error: "Error enviando email" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error enviando email" },
+      { status: 500 },
+    );
   }
 }
 ```
@@ -534,12 +540,12 @@ export async function POST(req: NextRequest) {
 
 ## 6.6 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | PDF se genera con branding Presisso correcto |
-| ✅ | PDF contiene: logo, imagen IA, datos cliente, footer |
-| ✅ | PDF se sube a Supabase Storage |
-| ✅ | WhatsApp envía mensaje con link al PDF |
-| ✅ | Email envía HTML branded con preview de imagen + link PDF |
-| ✅ | Flujo completo: Aprobar → PDF → WhatsApp + Email → estado "enviada" |
-| ✅ | Manejo de errores en cada paso del envío |
+| Check | Criterio                                                            |
+| ----- | ------------------------------------------------------------------- |
+| ✅    | PDF se genera con branding Presisso correcto                        |
+| ✅    | PDF contiene: logo, imagen IA, datos cliente, footer                |
+| ✅    | PDF se sube a Supabase Storage                                      |
+| ✅    | WhatsApp envía mensaje con link al PDF                              |
+| ✅    | Email envía HTML branded con preview de imagen + link PDF           |
+| ✅    | Flujo completo: Aprobar → PDF → WhatsApp + Email → estado "enviada" |
+| ✅    | Manejo de errores en cada paso del envío                            |

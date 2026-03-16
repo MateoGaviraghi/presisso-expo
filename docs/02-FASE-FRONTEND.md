@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 1, Días 2-5  
 > **Responsable:** Frontend Developer  
-> **Entregable:** Wizard completo funcional, responsive tablet + mobile  
+> **Entregable:** Wizard completo funcional, responsive tablet + mobile
 
 ---
 
@@ -10,39 +10,39 @@
 
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
-| Desarrollador Full Stack | Principal | Senior 10+ años |
-| Diseñador Gráfico | Principal | Senior 10+ años |
-| Ingeniero Industrial | Soporte | Optimización de flujos UX |
+| Skill                    | Rol       | Nivel                     |
+| ------------------------ | --------- | ------------------------- |
+| Desarrollador Full Stack | Principal | Senior 10+ años           |
+| Diseñador Gráfico        | Principal | Senior 10+ años           |
+| Ingeniero Industrial     | Soporte   | Optimización de flujos UX |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | Componentes React 18, App Router, Server Components |
-| [`.agents/skills/ui-ux-pro-max/SKILL.md`](../.agents/skills/ui-ux-pro-max/SKILL.md) | Diseño UI/UX mobile-first, paleta, tipografía |
-| [`.agents/skills/tailwindcss-advanced-layouts/SKILL.md`](../.agents/skills/tailwindcss-advanced-layouts/SKILL.md) | Layouts con Tailwind CSS, Grid, Flexbox |
-| [`.agents/skills/tailwindcss-mobile-first/SKILL.md`](../.agents/skills/tailwindcss-mobile-first/SKILL.md) | Diseño mobile-first para tablets/expo |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado estricto de componentes y props |
+| Skill (archivo)                                                                                                   | Propósito en esta fase                              |
+| ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)           | Componentes React 18, App Router, Server Components |
+| [`.agents/skills/ui-ux-pro-max/SKILL.md`](../.agents/skills/ui-ux-pro-max/SKILL.md)                               | Diseño UI/UX mobile-first, paleta, tipografía       |
+| [`.agents/skills/tailwindcss-advanced-layouts/SKILL.md`](../.agents/skills/tailwindcss-advanced-layouts/SKILL.md) | Layouts con Tailwind CSS, Grid, Flexbox             |
+| [`.agents/skills/tailwindcss-mobile-first/SKILL.md`](../.agents/skills/tailwindcss-mobile-first/SKILL.md)         | Diseño mobile-first para tablets/expo               |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md)       | Tipado estricto de componentes y props              |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Desarrollador Full Stack Senior (10+ años) especializado en React 18, Next.js 14 
+- Desarrollador Full Stack Senior (10+ años) especializado en React 18, Next.js 14
   App Router, TypeScript estricto y desarrollo mobile-first.
-- Diseñador Gráfico Senior (10+ años) especializado en UI/UX para dispositivos 
+- Diseñador Gráfico Senior (10+ años) especializado en UI/UX para dispositivos
   táctiles, identidad de marca y diseño de experiencias en eventos/expos.
-- Ingeniero Industrial con experiencia en ergonomía y flujos de usuario optimizados 
+- Ingeniero Industrial con experiencia en ergonomía y flujos de usuario optimizados
   para reducir fricción en entornos de alta rotación (stands de expo).
 
-PROYECTO: Wizard de 4 pasos para que clientes en una expo suban foto de su cocina, 
+PROYECTO: Wizard de 4 pasos para que clientes en una expo suban foto de su cocina,
 elijan estilo de muebles y reciban un fotomontaje por WhatsApp.
 MARCA: Presisso. Paleta: #D42B2B, #1A1A1A, #F5F5F3, #333333, #6B6B6B.
 DISPOSITIVOS: Tablet en stand + celular del cliente vía QR.
 PRIORIDADES: Velocidad de uso > estética > features. Cada segundo cuenta en la expo.
-TAREA: Construir el frontend completo del wizard cliente con carga de foto, 
+TAREA: Construir el frontend completo del wizard cliente con carga de foto,
 selector de tipo de cocina, formulario de datos mínimos y pantalla de confirmación.
 ```
 
@@ -187,11 +187,7 @@ export const clientFormSchema = z.object({
     .min(8, "Número de WhatsApp inválido")
     .max(20, "Número demasiado largo")
     .regex(/^[\d\s+\-()]+$/, "Solo números, espacios y + permitidos"),
-  email: z
-    .string()
-    .email("Email inválido")
-    .optional()
-    .or(z.literal("")),
+  email: z.string().email("Email inválido").optional().or(z.literal("")),
   tipo_cocina: z.enum(["moderna", "premium"]),
   enviar_pdf: z.boolean(),
 });
@@ -217,7 +213,7 @@ import { createBrowserClient } from "@supabase/ssr";
 export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 }
 ```
@@ -515,8 +511,8 @@ El wizard del cliente siempre usa `max-w-md mx-auto` para estar centrado tanto e
 // src/app/nuevo/page.tsx — agregar al <head> via metadata
 export const metadata = {
   other: {
-    "mobile-web-app-capable": "yes",          // PWA-like en Android
-    "apple-mobile-web-app-capable": "yes",     // PWA-like en iOS
+    "mobile-web-app-capable": "yes", // PWA-like en Android
+    "apple-mobile-web-app-capable": "yes", // PWA-like en iOS
     "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
 };
@@ -531,15 +527,15 @@ export const metadata = {
 
 ## 2.10 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | Wizard de 4 pasos navega correctamente |
-| ✅ | Carga de foto funciona desde cámara y galería |
-| ✅ | Selector de tipo cocina muestra ambas opciones |
-| ✅ | Formulario valida nombre y WhatsApp |
-| ✅ | Pantalla de confirmación muestra resumen completo |
-| ✅ | Submit sube foto a Supabase Storage |
-| ✅ | Submit crea registro en tabla `solicitudes` |
-| ✅ | Redirect a `/gracias` post-envío |
-| ✅ | Responsive correcto en iPhone SE, iPad, tablet 10" |
-| ✅ | Colores Presisso (#D42B2B) aplicados correctamente |
+| Check | Criterio                                           |
+| ----- | -------------------------------------------------- |
+| ✅    | Wizard de 4 pasos navega correctamente             |
+| ✅    | Carga de foto funciona desde cámara y galería      |
+| ✅    | Selector de tipo cocina muestra ambas opciones     |
+| ✅    | Formulario valida nombre y WhatsApp                |
+| ✅    | Pantalla de confirmación muestra resumen completo  |
+| ✅    | Submit sube foto a Supabase Storage                |
+| ✅    | Submit crea registro en tabla `solicitudes`        |
+| ✅    | Redirect a `/gracias` post-envío                   |
+| ✅    | Responsive correcto en iPhone SE, iPad, tablet 10" |
+| ✅    | Colores Presisso (#D42B2B) aplicados correctamente |

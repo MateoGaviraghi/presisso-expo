@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 3, Días 1-3  
 > **Responsable:** Frontend Developer  
-> **Entregable:** Dashboard funcional con revisión, aprobación y regeneración  
+> **Entregable:** Dashboard funcional con revisión, aprobación y regeneración
 
 ---
 
@@ -10,39 +10,39 @@
 
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
-| Desarrollador Full Stack | Principal | Senior 10+ años |
-| Diseñador Gráfico | Principal | Senior 10+ años |
-| Ingeniero Industrial | Soporte | Optimización operativa |
+| Skill                    | Rol       | Nivel                  |
+| ------------------------ | --------- | ---------------------- |
+| Desarrollador Full Stack | Principal | Senior 10+ años        |
+| Diseñador Gráfico        | Principal | Senior 10+ años        |
+| Ingeniero Industrial     | Soporte   | Optimización operativa |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | Componentes React, Server/Client Components |
-| [`.agents/skills/ui-ux-pro-max/SKILL.md`](../.agents/skills/ui-ux-pro-max/SKILL.md) | Dashboard UI, diseño operativo eficiente |
-| [`.agents/skills/tailwindcss-advanced-layouts/SKILL.md`](../.agents/skills/tailwindcss-advanced-layouts/SKILL.md) | Layout del dashboard, grid de stats |
-| [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Realtime subscriptions, queries |
-| [`.agents/skills/nextjs-supabase-auth/SKILL.md`](../.agents/skills/nextjs-supabase-auth/SKILL.md) | Auth guard del panel admin |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado de estado, props, respuestas |
+| Skill (archivo)                                                                                                           | Propósito en esta fase                      |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)                   | Componentes React, Server/Client Components |
+| [`.agents/skills/ui-ux-pro-max/SKILL.md`](../.agents/skills/ui-ux-pro-max/SKILL.md)                                       | Dashboard UI, diseño operativo eficiente    |
+| [`.agents/skills/tailwindcss-advanced-layouts/SKILL.md`](../.agents/skills/tailwindcss-advanced-layouts/SKILL.md)         | Layout del dashboard, grid de stats         |
+| [`.agents/skills/supabase-postgres-best-practices/SKILL.md`](../.agents/skills/supabase-postgres-best-practices/SKILL.md) | Realtime subscriptions, queries             |
+| [`.agents/skills/nextjs-supabase-auth/SKILL.md`](../.agents/skills/nextjs-supabase-auth/SKILL.md)                         | Auth guard del panel admin                  |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md)               | Tipado de estado, props, respuestas         |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Desarrollador Full Stack Senior (10+ años) con experiencia en dashboards 
+- Desarrollador Full Stack Senior (10+ años) con experiencia en dashboards
   real-time, Supabase Realtime subscriptions, y UIs de gestión operativa.
-- Diseñador Gráfico Senior (10+ años) especializado en diseño de interfaces 
+- Diseñador Gráfico Senior (10+ años) especializado en diseño de interfaces
   de administración eficientes, con foco en velocidad operativa y claridad visual.
-- Ingeniero Industrial con experiencia en diseño de puestos de trabajo operativos 
+- Ingeniero Industrial con experiencia en diseño de puestos de trabajo operativos
   y optimización de flujos de aprobación/rechazo.
 
 PROYECTO: Panel de administración para operadores en el stand de la expo Presisso.
-CONTEXTO: El operador debe revisar imágenes IA, aprobar o regenerar, y enviar 
+CONTEXTO: El operador debe revisar imágenes IA, aprobar o regenerar, y enviar
 el resultado al cliente. Todo en menos de 60 segundos por solicitud.
 PRIORIDADES: Velocidad operativa > features > estética. Cada click cuenta.
-TAREA: Construir dashboard admin con stats real-time, lista de solicitudes 
+TAREA: Construir dashboard admin con stats real-time, lista de solicitudes
 con estados, modal de revisión con comparación lado a lado, y botones de acción.
 ```
 
@@ -388,14 +388,14 @@ export default function ReviewModal({ solicitud, onClose, onRefresh }: Props) {
 
 ## 5.4 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | Dashboard muestra stats en tiempo real |
-| ✅ | Lista de solicitudes con filtro por estado |
-| ✅ | Real-time via Supabase: nuevas solicitudes aparecen solas |
-| ✅ | Modal de revisión con comparación lado a lado |
-| ✅ | Botón "Aprobar y enviar" genera PDF + envía |
-| ✅ | Botón "Regenerar" relanza la generación IA |
-| ✅ | Estados se actualizan correctamente en la lista |
-| ✅ | Auth admin funcional |
-| ✅ | Colores Presisso (#D42B2B) en todo el panel |
+| Check | Criterio                                                  |
+| ----- | --------------------------------------------------------- |
+| ✅    | Dashboard muestra stats en tiempo real                    |
+| ✅    | Lista de solicitudes con filtro por estado                |
+| ✅    | Real-time via Supabase: nuevas solicitudes aparecen solas |
+| ✅    | Modal de revisión con comparación lado a lado             |
+| ✅    | Botón "Aprobar y enviar" genera PDF + envía               |
+| ✅    | Botón "Regenerar" relanza la generación IA                |
+| ✅    | Estados se actualizan correctamente en la lista           |
+| ✅    | Auth admin funcional                                      |
+| ✅    | Colores Presisso (#D42B2B) en todo el panel               |

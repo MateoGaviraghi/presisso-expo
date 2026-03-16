@@ -35,15 +35,15 @@ export function useSupabaseRealtime() {
               prev.map((s) =>
                 s.id === (payload.new as Solicitud).id
                   ? (payload.new as Solicitud)
-                  : s
-              )
+                  : s,
+              ),
             );
           } else if (payload.eventType === "DELETE") {
             setSolicitudes((prev) =>
-              prev.filter((s) => s.id !== (payload.old as { id: string }).id)
+              prev.filter((s) => s.id !== (payload.old as { id: string }).id),
             );
           }
-        }
+        },
       )
       .subscribe();
 

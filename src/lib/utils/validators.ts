@@ -12,12 +12,42 @@ export const solicitudSchema = z.object({
   enviar_pdf: z.boolean().default(true),
 });
 
-export const fileSchema = z.object({
-  size: z.number().max(MAX_FILE_SIZE, "El archivo es demasiado grande (máx 10MB)"),
-  type: z.string().refine(
-    (type) => ACCEPTED_IMAGE_TYPES.includes(type),
-    "Formato no soportado. Usá JPG, PNG o WebP"
-  ),
+export const clientFormSchema = z.object({
+  nombre: z
+    .string()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(100, "Nombre demasiado largo"),
+  whatsapp: z
+    .string()
+    .min(8, "Número de WhatsApp inválido")
+    .max(20, "Número demasiado largo")
+    .regex(/^[\d\s+\-()]+$/, "Solo números, espacios y + permitidos"),
+  email: z.string().email("Email inválido").optional().or(z.literal("")),
+  tipo_cocina: z.enum(["moderna", "premium"]),
+  enviar_pdf: z.boolean(),
 });
 
+export const fileSchema = z.object({
+  size: z
+    .number()
+    .max(MAX_FILE_SIZE, "El archivo es demasiado grande (máx 10MB)"),
+  type: z
+    .string()
+    .refine(
+      (type) => ACCEPTED_IMAGE_TYPES.includes(type),
+      "Formato no soportado. Usá JPG, PNG o WebP",
+    ),
+});
+
+export const validateImageFile = (file: File): string | null => {
+  if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+    return "Solo se aceptan imágenes JPG, PNG o WebP";
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return "La imagen no puede superar los 10MB";
+  }
+  return null;
+};
+
 export type SolicitudFormData = z.infer<typeof solicitudSchema>;
+export type ClientFormData = z.infer<typeof clientFormSchema>;

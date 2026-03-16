@@ -2,7 +2,7 @@
 
 > **Duración:** Semana 4, Días 1-3  
 > **Responsable:** Todo el equipo  
-> **Entregable:** Sistema validado con tasa de error < 5%, listo para producción  
+> **Entregable:** Sistema validado con tasa de error < 5%, listo para producción
 
 ---
 
@@ -11,39 +11,39 @@
 > **Documento de referencia:** [`09-SKILLS.md`](./09-SKILLS.md)  
 > **⚠️ TODAS las skills activas:** Esta fase requiere el equipo completo.
 
-| Skill | Rol | Nivel |
-|-------|-----|-------|
-| Ingeniero de IA | Principal | Evaluación de calidad IA |
-| Desarrollador Full Stack | Principal | Testing E2E + integraciones |
-| Líder Técnico | Principal | Go/no-go decisions |
-| Ingeniero Industrial | Principal | Flujo operativo + throughput |
-| Diseñador Gráfico | Soporte | Validación visual PDF/email |
+| Skill                    | Rol       | Nivel                        |
+| ------------------------ | --------- | ---------------------------- |
+| Ingeniero de IA          | Principal | Evaluación de calidad IA     |
+| Desarrollador Full Stack | Principal | Testing E2E + integraciones  |
+| Líder Técnico            | Principal | Go/no-go decisions           |
+| Ingeniero Industrial     | Principal | Flujo operativo + throughput |
+| Diseñador Gráfico        | Soporte   | Validación visual PDF/email  |
 
 ### 📖 Skills del proyecto — LEER antes de ejecutar esta fase:
 
-| Skill (archivo) | Propósito en esta fase |
-|------------------|------------------------|
-| [`.agents/skills/javascript-typescript-jest/SKILL.md`](../.agents/skills/javascript-typescript-jest/SKILL.md) | Testing con Jest, mocking, test structure |
-| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md) | Tipado de tests, mocks tipados |
-| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md) | Testing de API Routes y componentes Next.js |
+| Skill (archivo)                                                                                               | Propósito en esta fase                      |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [`.agents/skills/javascript-typescript-jest/SKILL.md`](../.agents/skills/javascript-typescript-jest/SKILL.md) | Testing con Jest, mocking, test structure   |
+| [`.agents/skills/typescript-advanced-types/SKILL.md`](../.agents/skills/typescript-advanced-types/SKILL.md)   | Tipado de tests, mocks tipados              |
+| [`.agents/skills/nextjs-react-typescript/SKILL.md`](../.agents/skills/nextjs-react-typescript/SKILL.md)       | Testing de API Routes y componentes Next.js |
 
 ### Prompt de contexto — COPIAR antes de iniciar esta fase:
 
 ```
 Actuá como un equipo integrado por:
-- Ingeniero de IA Senior que evalúa calidad de imágenes generadas con criterios 
+- Ingeniero de IA Senior que evalúa calidad de imágenes generadas con criterios
   objetivos (realismo, coherencia lumínica, fidelidad estructural).
-- Líder Técnico Senior que define la matriz de testing, prioriza casos críticos 
+- Líder Técnico Senior que define la matriz de testing, prioriza casos críticos
   y toma decisiones de go/no-go para la expo.
-- Ingeniero Industrial que analiza el flujo operativo completo, identifica cuellos 
+- Ingeniero Industrial que analiza el flujo operativo completo, identifica cuellos
   de botella, calcula throughput y optimiza el proceso de revisión.
-- Desarrollador Full Stack Senior que ejecuta tests E2E, simula condiciones adversas 
+- Desarrollador Full Stack Senior que ejecuta tests E2E, simula condiciones adversas
   (WiFi inestable, concurrencia) y valida integraciones.
 - Diseñador Gráfico Senior que valida calidad visual del PDF, email y experiencia.
 
 CONTEXTO: Faltan días para la expo. Testing exhaustivo pero eficiente.
 PRIORIDAD: Flujo E2E completo > Calidad IA > Edge cases > Performance.
-TAREA: Ejecutar plan de testing completo: banco de 15 fotos de prueba para IA, 
+TAREA: Ejecutar plan de testing completo: banco de 15 fotos de prueba para IA,
 flujo E2E, testing de resiliencia, y completar checklist pre-expo.
 ```
 
@@ -51,18 +51,18 @@ flujo E2E, testing de resiliencia, y completar checklist pre-expo.
 
 ## 7.1 Matriz de testing
 
-| Área | Tipo | Prioridad | Responsable |
-|------|------|-----------|-------------|
-| Upload de fotos | Funcional | CRÍTICA | Frontend dev |
-| Generación IA | Calidad + Funcional | CRÍTICA | Lead dev |
-| Flujo completo E2E | Integración | CRÍTICA | QA |
-| Panel admin | Funcional | ALTA | Frontend dev |
-| PDF | Visual + Funcional | ALTA | Backend dev |
-| WhatsApp | Integración | ALTA | Backend dev |
-| Email | Integración | MEDIA | Backend dev |
-| Responsive | Visual | ALTA | Frontend dev |
-| Performance | No funcional | MEDIA | Lead dev |
-| WiFi inestable | Resiliencia | ALTA | Lead dev |
+| Área               | Tipo                | Prioridad | Responsable  |
+| ------------------ | ------------------- | --------- | ------------ |
+| Upload de fotos    | Funcional           | CRÍTICA   | Frontend dev |
+| Generación IA      | Calidad + Funcional | CRÍTICA   | Lead dev     |
+| Flujo completo E2E | Integración         | CRÍTICA   | QA           |
+| Panel admin        | Funcional           | ALTA      | Frontend dev |
+| PDF                | Visual + Funcional  | ALTA      | Backend dev  |
+| WhatsApp           | Integración         | ALTA      | Backend dev  |
+| Email              | Integración         | MEDIA     | Backend dev  |
+| Responsive         | Visual              | ALTA      | Frontend dev |
+| Performance        | No funcional        | MEDIA     | Lead dev     |
+| WiFi inestable     | Resiliencia         | ALTA      | Lead dev     |
 
 ---
 
@@ -237,15 +237,15 @@ EQUIPO:
 
 ## 7.7 Verificación de la fase
 
-| Check | Criterio |
-|-------|----------|
-| ✅ | 30 generaciones de prueba completadas |
-| ✅ | Tasa de aprobación IA ≥ 70% |
-| ✅ | Flujo E2E funciona en < 3 minutos |
-| ✅ | PDF se genera y descarga correctamente |
-| ✅ | WhatsApp llega al celular de prueba |
-| ✅ | Email llega con diseño correcto |
-| ✅ | Funciona en tablet Samsung + iPad + celular |
-| ✅ | Funciona con conexión 3G (lento pero funcional) |
-| ✅ | 5 solicitudes simultáneas procesadas sin error |
-| ✅ | Checklist pre-expo completo al 100% |
+| Check | Criterio                                        |
+| ----- | ----------------------------------------------- |
+| ✅    | 30 generaciones de prueba completadas           |
+| ✅    | Tasa de aprobación IA ≥ 70%                     |
+| ✅    | Flujo E2E funciona en < 3 minutos               |
+| ✅    | PDF se genera y descarga correctamente          |
+| ✅    | WhatsApp llega al celular de prueba             |
+| ✅    | Email llega con diseño correcto                 |
+| ✅    | Funciona en tablet Samsung + iPad + celular     |
+| ✅    | Funciona con conexión 3G (lento pero funcional) |
+| ✅    | 5 solicitudes simultáneas procesadas sin error  |
+| ✅    | Checklist pre-expo completo al 100%             |
