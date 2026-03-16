@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap");
+
+:root {
+  /* Presisso Colors */
+  --presisso-red: #D42B2B;
+  --presisso-red-hover: #B82424;
+  --presisso-red-light: #FDF2F2;
+  --presisso-black: #1A1A1A;
+  --presisso-white: #FFFFFF;
+  --presisso-gray-light: #F5F5F3;
+  --presisso-gray-mid: #6B6B6B;
+  --presisso-gray-dark: #333333;
+  --presisso-border: #E5E5E5;
+  --presisso-surface: #FAFAF9;
+
+  /* Spacing */
+  --container-max: 1200px;
+  --container-padding: 20px;
+}
+
+body {
+  font-family: "DM Sans", sans-serif;
+  background-color: var(--presisso-gray-light);
+  color: var(--presisso-gray-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Status badges */
+.badge-pendiente { background: #FEF3C7; color: #92400E; }
+.badge-generando { background: #EDE9FE; color: #6D28D9; }
+.badge-revision  { background: #DBEAFE; color: #1E40AF; }
+.badge-enviado   { background: #D1FAE5; color: #065F46; }
+.badge-rechazado { background: #FEE2E2; color: #991B1B; }
