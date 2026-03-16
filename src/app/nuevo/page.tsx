@@ -15,8 +15,7 @@ import Image from "next/image";
 
 export default function NuevoPage() {
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const supabase = createClient(); // TODO: Usar en Fase 3
+  const supabase = createClient();
 
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -48,11 +47,57 @@ export default function NuevoPage() {
     setLoading(true);
     setError(null);
 
-    // TODO: Temporal — skip Supabase hasta Fase 3
-    router.push(
-      `/gracias?id=demo-123&nombre=${encodeURIComponent(nombre)}&pdf=${enviarPdf}&email=${encodeURIComponent(email || "")}`,
-    );
-    return;
+    try {
+      // 1. Subir foto a Supabase Storage
+      const fileName = `${Date.now()}-${photoFile.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("fotos-cocinas")
+        .upload(`originales/${fileName}`, photoFile, {
+          contentType: photoFile.type,
+          upsert: false,
+        });
+
+      if (uploadError) throw new Error("Error al subir la foto");
+
+      // 2. Obtener URL pública
+      const { data: urlData } = supabase.storage
+        .from("fotos-cocinas")
+        .getPublicUrl(uploadData.path);
+
+      // 3. Crear solicitud via API
+      const response = await fetch("/api/solicitudes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre,
+          whatsapp,
+          email: email || undefined,
+          tipo_cocina: kitchenType,
+          enviar_pdf: enviarPdf,
+          foto_original: urlData.publicUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || "Error al enviar solicitud");
+      }
+
+      const result = await response.json();
+
+      // 4. Redirigir a pantalla de gracias
+      router.push(
+        `/gracias?id=${result.id}&nombre=${encodeURIComponent(nombre)}&pdf=${enviarPdf}&email=${encodeURIComponent(email || "")}`,
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error inesperado");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   function canNext(): boolean {
