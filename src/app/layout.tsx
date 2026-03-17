@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://presisso.vercel.app"),
   title: "Presisso — Diseñá tu cocina ideal",
   description:
     "Visualizá cómo quedarían los muebles Presisso en tu cocina con inteligencia artificial",

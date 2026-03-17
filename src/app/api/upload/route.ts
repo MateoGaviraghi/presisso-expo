@@ -7,16 +7,30 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "No se recibió archivo" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No se recibió archivo" },
+        { status: 400 },
+      );
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/heic"];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+    ];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Tipo de archivo no permitido" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Tipo de archivo no permitido" },
+        { status: 400 },
+      );
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "Archivo demasiado grande (máx 10MB)" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Archivo demasiado grande (máx 10MB)" },
+        { status: 400 },
+      );
     }
 
     const ext = file.name.split(".").pop() ?? "jpg";
@@ -35,7 +49,10 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Storage upload error:", error);
-      return NextResponse.json({ error: "Error al subir la foto" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Error al subir la foto" },
+        { status: 500 },
+      );
     }
 
     const { data: urlData } = supabaseAdmin.storage
