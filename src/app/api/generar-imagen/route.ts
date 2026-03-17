@@ -81,7 +81,10 @@ export async function POST(req: NextRequest) {
     console.error("Error subiendo imagen generada:", uploadError);
     await supabaseAdmin
       .from("solicitudes")
-      .update({ estado: "error", notas_admin: `Error storage: ${uploadError.message}` })
+      .update({
+        estado: "error",
+        notas_admin: `Error storage: ${uploadError.message}`,
+      })
       .eq("id", solicitud_id);
 
     return NextResponse.json(

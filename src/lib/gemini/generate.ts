@@ -32,12 +32,13 @@ export async function generateKitchenImage(
     // 1. Descargar la foto del cliente
     const clientRes = await fetch(fotoOriginalUrl);
     if (!clientRes.ok) {
-      throw new Error(`Error descargando foto del cliente: ${clientRes.status}`);
+      throw new Error(
+        `Error descargando foto del cliente: ${clientRes.status}`,
+      );
     }
     const clientBuffer = await clientRes.arrayBuffer();
     const clientBase64 = Buffer.from(clientBuffer).toString("base64");
-    const clientMime =
-      clientRes.headers.get("content-type") || "image/jpeg";
+    const clientMime = clientRes.headers.get("content-type") || "image/jpeg";
 
     // 2. Leer la imagen de referencia Presisso desde /public
     const refPath = path.join(
