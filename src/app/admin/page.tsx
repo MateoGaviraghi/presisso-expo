@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ESTADO_LABELS } from "@/lib/utils/constants";
-import type { Solicitud } from "@/types/solicitud";
+import { useSupabaseRealtime } from "@/hooks/useSupabaseRealtime";
 
 interface Stats {
   total_solicitudes: number;
@@ -17,27 +17,22 @@ interface Stats {
 }
 
 export default function AdminPage() {
+  const solicitudes = useSupabaseRealtime();
   const [stats, setStats] = useState<Stats | null>(null);
-  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const [statsRes, solRes] = await Promise.all([
-          fetch("/api/stats"),
-          fetch("/api/solicitudes?limit=20"),
-        ]);
+        const statsRes = await fetch("/api/stats");
 
-        if (!statsRes.ok || !solRes.ok)
+        if (!statsRes.ok)
           throw new Error("Error al cargar datos");
 
         const statsData = await statsRes.json();
-        const solData = await solRes.json();
 
         setStats(statsData);
-        setSolicitudes(solData.data ?? []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error inesperado");
       } finally {

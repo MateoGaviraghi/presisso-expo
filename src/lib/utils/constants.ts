@@ -49,7 +49,7 @@ export const ESTADO_LABELS: Record<string, string> = {
   error: "Error",
 };
 
-export const STORAGE_BUCKET = "fotos-cocinas";
+export const STORAGE_BUCKET = "cocinas";
 
 export const STORAGE_PATHS = {
   originales: "originales",

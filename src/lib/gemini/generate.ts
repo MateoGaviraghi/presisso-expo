@@ -12,170 +12,146 @@ export interface GenerateResult {
   error?: string;
 }
 
-/**
- * Genera una imagen editada usando Gemini 2.5 Flash Image.
- *
- * Envía dos imágenes al modelo:
- *   1. La foto original del cliente (descargada desde Supabase Storage)
- *   2. La foto de referencia Presisso (leída desde /public)
- *
- * El modelo adapta la cocina del cliente al estilo de la referencia.
- */
-export async function generateKitchenImage(
+/* ── Caché de imágenes de referencia (se leen una sola vez del disco) ── */
+
+type RefEntry = { base64: string; mime: string };
+
+const REFERENCE_FILES: Record<PromptType, string[]> = {
+  moderna: ["cocina-moderna-presisso.jpg"],
+  premium: [
+    "modelo-premiun/Presisso_28022026_02.jpg",
+    "modelo-premiun/Presisso_28022026_03.jpg",
+    "modelo-premiun/Presisso_28022026_04.jpg",
+    "modelo-premiun/Presisso_28022026_05.jpg",
+    "modelo-premiun/Presisso_28022026_06.jpg",
+    "modelo-premiun/Presisso_28022026_07.jpg",
+    "modelo-premiun/Presisso_28022026_08.jpg",
+    "modelo-premiun/Presisso_28022026_10.jpg",
+    "modelo-premiun/Presisso_28022026_12.jpg",
+    "modelo-premiun/Presisso_28022026_13.jpg",
+  ],
+};
+
+const referenceCache = new Map<string, RefEntry[]>();
+
+function loadReferences(tipo: PromptType): RefEntry[] {
+  if (referenceCache.has(tipo)) return referenceCache.get(tipo)!;
+
+  const entries = REFERENCE_FILES[tipo].map((file) => {
+    const refPath = path.join(process.cwd(), "public", file);
+    const buf = fs.readFileSync(refPath);
+    return { base64: buf.toString("base64"), mime: "image/jpeg" };
+  });
+  referenceCache.set(tipo, entries);
+  console.log(
+    `[Gemini] Cargadas ${entries.length} fotos de referencia para "${tipo}"`,
+  );
+  return entries;
+}
+
+/* ── Generación con un modelo específico ── */
+
+type InlinePart = { inlineData?: { data?: string; mimeType?: string } };
+
+async function generateKitchenImage(
   fotoOriginalUrl: string,
   tipoCocina: PromptType,
+  model: string,
 ): Promise<GenerateResult> {
   const startTime = Date.now();
-  const promptConfig = PROMPTS[tipoCocina];
 
-  try {
-    // 1. Descargar la foto del cliente
-    const clientRes = await fetch(fotoOriginalUrl);
-    if (!clientRes.ok) {
-      throw new Error(
-        `Error descargando foto del cliente: ${clientRes.status}`,
-      );
-    }
-    const clientBuffer = await clientRes.arrayBuffer();
-    const clientBase64 = Buffer.from(clientBuffer).toString("base64");
-    const clientMime = clientRes.headers.get("content-type") || "image/jpeg";
-
-    // 2. Leer la imagen de referencia Presisso desde /public
-    const refPath = path.join(
-      process.cwd(),
-      "public",
-      promptConfig.referenceImage,
-    );
-    const refBuffer = fs.readFileSync(refPath);
-    const refBase64 = refBuffer.toString("base64");
-    // Las referencias son JPG
-    const refMime = "image/jpeg";
-
-    // 3. Llamar a Gemini con ambas imágenes + prompt
-    const response = await genAI.models.generateContent({
-      model: MODELS.geminiFlashImage,
-      contents: [
-        {
-          role: "user",
-          parts: [
-            // Imagen 1: foto del cliente
-            {
-              inlineData: {
-                mimeType: clientMime,
-                data: clientBase64,
-              },
-            },
-            // Imagen 2: referencia Presisso
-            {
-              inlineData: {
-                mimeType: refMime,
-                data: refBase64,
-              },
-            },
-            // Instrucción
-            {
-              text: promptConfig.prompt,
-            },
-          ],
-        },
-      ],
-      config: {
-        responseModalities: ["image", "text"],
-        responseMimeType: "image/png",
-      },
-    });
-
-    // 4. Extraer la imagen generada
-    const parts = response.candidates?.[0]?.content?.parts as
-      | { inlineData?: { data?: string; mimeType?: string } }[]
-      | undefined;
-    const imagePart = parts?.find((p) => p.inlineData?.data);
-
-    if (!imagePart?.inlineData?.data) {
-      throw new Error("Gemini no devolvió imagen en la respuesta");
-    }
-
-    return {
-      success: true,
-      imageBase64: imagePart.inlineData.data,
-      promptUsed: promptConfig.prompt.substring(0, 500),
-      model: MODELS.geminiFlashImage,
-      timeMs: Date.now() - startTime,
-    };
-  } catch (error) {
-    console.error("Error en generateKitchenImage:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Error desconocido",
-      timeMs: Date.now() - startTime,
-    };
+  // 1. Descargar foto del cliente
+  const clientRes = await fetch(fotoOriginalUrl);
+  if (!clientRes.ok) {
+    throw new Error(`Error descargando foto del cliente: ${clientRes.status}`);
   }
+  const clientBuffer = await clientRes.arrayBuffer();
+  const clientBase64 = Buffer.from(clientBuffer).toString("base64");
+  const clientMime = clientRes.headers.get("content-type") || "image/jpeg";
+
+  // 2. Referencias Presisso (cacheadas)
+  const refs = loadReferences(tipoCocina);
+
+  // 3. Armar parts: foto cliente + todas las referencias + prompt
+  const parts: {
+    inlineData?: { mimeType: string; data: string };
+    text?: string;
+  }[] = [
+    { inlineData: { mimeType: clientMime, data: clientBase64 } },
+    ...refs.map((r) => ({ inlineData: { mimeType: r.mime, data: r.base64 } })),
+    { text: PROMPTS[tipoCocina] },
+  ];
+
+  // 4. Llamar a Gemini con foto del cliente + referencias + prompt
+  const response = await genAI.models.generateContent({
+    model,
+    contents: [
+      {
+        role: "user",
+        parts,
+      },
+    ],
+    config: {
+      responseModalities: ["image", "text"],
+    },
+  });
+
+  // 5. Extraer imagen generada
+  const responseParts = response.candidates?.[0]?.content?.parts as
+    | InlinePart[]
+    | undefined;
+  const imagePart = responseParts?.find((p) => p.inlineData?.data);
+
+  if (!imagePart?.inlineData?.data) {
+    throw new Error("Gemini no devolvió imagen en la respuesta");
+  }
+
+  return {
+    success: true,
+    imageBase64: imagePart.inlineData.data,
+    promptUsed: PROMPTS[tipoCocina].substring(0, 500),
+    model,
+    timeMs: Date.now() - startTime,
+  };
 }
 
-/**
- * Fallback: genera una cocina Presisso con Imagen 4 (text-to-image puro).
- * No edita la foto del cliente — genera una imagen nueva inspirada en el estilo.
- */
-export async function generateKitchenImageFallback(
-  tipoCocina: PromptType,
-): Promise<GenerateResult> {
-  const startTime = Date.now();
-  const promptConfig = PROMPTS[tipoCocina];
+/* ── Cascade fallback: primary → fallback1 → fallback2 ── */
 
-  try {
-    const response = await genAI.models.generateImages({
-      model: MODELS.imagen4,
-      prompt: `Photorealistic interior photo of a kitchen with Presisso ${promptConfig.label} furniture. ${promptConfig.prompt.split("\n").slice(5).join(" ")}`,
-      config: {
-        numberOfImages: 1,
-        aspectRatio: "4:3",
-      },
-    });
-
-    const generated = response.generatedImages?.[0];
-    if (!generated?.image?.imageBytes) {
-      throw new Error("Imagen 4 no devolvió imagen");
-    }
-
-    const base64 = Buffer.from(generated.image.imageBytes).toString("base64");
-
-    return {
-      success: true,
-      imageBase64: base64,
-      promptUsed: "[FALLBACK Imagen 4]",
-      model: MODELS.imagen4,
-      timeMs: Date.now() - startTime,
-    };
-  } catch (error) {
-    console.error("Error en fallback Imagen 4:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Error en fallback",
-      timeMs: Date.now() - startTime,
-    };
-  }
-}
-
-/**
- * Genera con reintentos y backoff exponencial (1s, 2s, 4s).
- * Si los 3 intentos fallan, usa el fallback de Imagen 4.
- */
-export async function generateWithRetry(
+export async function generateWithFallback(
   fotoUrl: string,
   tipo: PromptType,
-  maxRetries = 3,
 ): Promise<GenerateResult> {
-  for (let i = 0; i < maxRetries; i++) {
-    const result = await generateKitchenImage(fotoUrl, tipo);
-    if (result.success) return result;
+  const modelKeys = ["primary", "fallback1", "fallback2"] as const;
 
-    if (i < maxRetries - 1) {
-      const waitMs = 1000 * Math.pow(2, i);
-      console.warn(`Intento ${i + 1} falló. Reintentando en ${waitMs}ms...`);
-      await new Promise((r) => setTimeout(r, waitMs));
+  for (let i = 0; i < modelKeys.length; i++) {
+    const model = MODELS[modelKeys[i]];
+    try {
+      console.log(`[Gemini] Intento con modelo ${model}...`);
+      const result = await generateKitchenImage(fotoUrl, tipo, model);
+      if (result.success) {
+        console.log(`[Gemini] Éxito con ${model} en ${result.timeMs}ms`);
+        return result;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const detail = err instanceof Error && (err as { status?: number }).status
+        ? ` (HTTP ${(err as { status?: number }).status})`
+        : "";
+      console.warn(`[Gemini] ${model} falló: ${msg}${detail}`);
+
+      if (i < modelKeys.length - 1) {
+        const waitMs = 1000 * Math.pow(2, i);
+        console.log(
+          `[Gemini] Esperando ${waitMs}ms antes del siguiente modelo...`,
+        );
+        await new Promise((r) => setTimeout(r, waitMs));
+      }
     }
   }
 
-  console.warn("Todos los intentos fallaron. Usando fallback Imagen 4...");
-  return generateKitchenImageFallback(tipo);
+  return {
+    success: false,
+    error: "Todos los modelos fallaron",
+    timeMs: 0,
+  };
 }

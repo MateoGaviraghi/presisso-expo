@@ -10,6 +10,7 @@ export default function AdminLayout({
   const [authed, setAuthed] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -18,14 +19,25 @@ export default function AdminLayout({
     setChecking(false);
   }, []);
 
-  function handleLogin() {
-    const correctPass = process.env.NEXT_PUBLIC_ADMIN_PASS || "presisso2026";
-    if (password === correctPass) {
-      sessionStorage.setItem("presisso-admin", "true");
-      setAuthed(true);
-      setError(false);
-    } else {
+  async function handleLogin() {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        sessionStorage.setItem("presisso-admin", "true");
+        setAuthed(true);
+      } else {
+        setError(true);
+      }
+    } catch {
       setError(true);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -57,7 +69,7 @@ export default function AdminLayout({
                 setPassword(e.target.value);
                 setError(false);
               }}
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+              onKeyDown={(e) => e.key === "Enter" && !loading && handleLogin()}
               className={`w-full rounded-xl border px-4 py-3 text-base text-presisso-black outline-none transition-colors focus:border-presisso-red focus:ring-1 focus:ring-presisso-red/50 ${
                 error ? "border-red-400 bg-red-50" : "border-presisso-border"
               }`}
@@ -68,9 +80,10 @@ export default function AdminLayout({
             )}
             <button
               onClick={handleLogin}
-              className="w-full rounded-xl bg-presisso-red py-3 font-semibold text-white transition-colors hover:bg-presisso-red-hover"
+              disabled={loading}
+              className="w-full rounded-xl bg-presisso-red py-3 font-semibold text-white transition-colors hover:bg-presisso-red-hover disabled:opacity-60"
             >
-              Ingresar
+              {loading ? "Verificando..." : "Ingresar"}
             </button>
           </div>
         </div>

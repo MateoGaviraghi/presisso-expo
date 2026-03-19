@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { generateWithRetry } from "@/lib/gemini/generate";
+import { generateWithFallback } from "@/lib/gemini/generate";
 import type { PromptType } from "@/lib/gemini/prompts";
 
 // Vercel: timeout extendido para generación IA
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     .eq("id", solicitud_id);
 
   // 3. Generar imagen con reintentos + fallback
-  const result = await generateWithRetry(
+  const result = await generateWithFallback(
     solicitud.foto_original,
     solicitud.tipo_cocina as PromptType,
   );
@@ -67,12 +67,15 @@ export async function POST(req: NextRequest) {
   }
 
   // 4. Subir imagen generada a Supabase Storage
-  const imageBuffer = Buffer.from(result.imageBase64, "base64");
+  const imageBytes = Uint8Array.from(atob(result.imageBase64), (c) =>
+    c.charCodeAt(0),
+  );
+  const blob = new Blob([imageBytes], { type: "image/png" });
   const fileName = `generadas/${solicitud_id}-${Date.now()}.png`;
 
   const { error: uploadError } = await supabaseAdmin.storage
     .from("cocinas")
-    .upload(fileName, imageBuffer, {
+    .upload(fileName, blob, {
       contentType: "image/png",
       upsert: true,
     });

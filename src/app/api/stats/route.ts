@@ -4,24 +4,11 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 // GET /api/stats — Estadísticas del dashboard admin
 export async function GET() {
   try {
-    // Intentar con la vista stats_expo (se crea en Supabase junto con el schema)
-    const { data: statsView, error: viewError } = await supabaseAdmin
-      .from("stats_expo")
-      .select("*")
-      .single();
-
-    if (!viewError && statsView) {
-      return NextResponse.json(statsView);
-    }
-
-    // Fallback: calcular stats manualmente si la vista no existe aún
     const [totalResult, estadosResult, hoyResult] = await Promise.all([
       supabaseAdmin
         .from("solicitudes")
         .select("*", { count: "exact", head: true }),
-      supabaseAdmin
-        .from("solicitudes")
-        .select("estado"),
+      supabaseAdmin.from("solicitudes").select("estado"),
       supabaseAdmin
         .from("solicitudes")
         .select("*", { count: "exact", head: true })
@@ -52,6 +39,9 @@ export async function GET() {
     });
   } catch (err) {
     console.error("GET /api/stats error:", err);
-    return NextResponse.json({ error: "Error al obtener estadísticas" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error al obtener estadísticas" },
+      { status: 500 },
+    );
   }
 }
