@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 // Proxy server-side para que el admin pueda regenerar sin exponer el INTERNAL_API_SECRET
 export async function POST(req: NextRequest) {
