@@ -4,7 +4,7 @@ import { generateWithFallback } from "@/lib/gemini/generate";
 import type { PromptType } from "@/lib/gemini/prompts";
 
 // Vercel Pro/Enterprise: hasta 300s. Con 2 modelos × 3 reintentos × 55s = ~250s máx
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   // Verificar secret interno — solo llamadas server-to-server autorizadas
