@@ -277,9 +277,9 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
   // ═══════════════════════════════════════════════════════════════
   // FOOTER — fondo blanco, línea roja arriba, logo + links
   // ═══════════════════════════════════════════════════════════════
-  const FOOTER_H = 52;
+  const FOOTER_H = 72;
 
-  // Fondo blanco del footer (fijo al pie de página)
+  // Fondo blanco del footer
   page.drawRectangle({ x: 0, y: 0, width: W, height: FOOTER_H, color: WHITE });
 
   // Línea roja encima del footer
@@ -292,7 +292,7 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
     const footerLogoScaled = footerLogoImg.scaleToFit(90, 22);
     page.drawImage(footerLogoImg, {
       x: M,
-      y: (FOOTER_H - footerLogoScaled.height) / 2,
+      y: FOOTER_H / 2 - footerLogoScaled.height / 2,
       width: footerLogoScaled.width,
       height: footerLogoScaled.height,
     });
@@ -306,26 +306,32 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
     });
   }
 
-  // Links a la derecha
-  const webText = "presisso.com.ar";
-  const webW = regular.widthOfTextAtSize(webText, 8);
-  page.drawText(webText, {
-    x: W - M - webW,
-    y: FOOTER_H / 2 + 4,
-    size: 8,
-    font: regular,
-    color: GRAY_MID,
-  });
+  // Columna derecha: redes y contacto
+  const footerRightX = W - M;
+  const footerFontSize = 7;
+  const footerLineH = 11;
+  let footerY = FOOTER_H / 2 + 22;
 
-  const igText = "@presisso_amoblamientos";
-  const igW = regular.widthOfTextAtSize(igText, 8);
-  page.drawText(igText, {
-    x: W - M - igW,
-    y: FOOTER_H / 2 - 10,
-    size: 8,
-    font: regular,
-    color: GRAY_MID,
-  });
+  const footerLines = [
+    { label: "info@presisso.com.ar", font: regular },
+    { label: "0800-777 3900  •  +54 3483 444 000", font: regular },
+    { label: "", font: regular },
+    { label: "@presisso_amoblamientos  •  presisso.muebles", font: regular },
+    { label: "presisso.com.ar", font: bold },
+  ];
+
+  for (const line of footerLines) {
+    if (line.label === "") { footerY -= 4; continue; }
+    const lw = line.font.widthOfTextAtSize(line.label, footerFontSize);
+    page.drawText(line.label, {
+      x: footerRightX - lw,
+      y: footerY,
+      size: footerFontSize,
+      font: line.font,
+      color: GRAY_MID,
+    });
+    footerY -= footerLineH;
+  }
 
   // ═══════════════════════════════════════════════════════════════
   const pdfBytes = await pdfDoc.save();
