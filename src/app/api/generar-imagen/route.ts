@@ -7,6 +7,11 @@ import type { PromptType } from "@/lib/gemini/prompts";
 export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
+  // Verificar secret interno — solo llamadas server-to-server autorizadas
+  const secret = req.headers.get("x-internal-secret");
+  if (secret !== process.env.INTERNAL_API_SECRET) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
   const body = await req.json().catch(() => null);
   const solicitud_id = body?.solicitud_id;
 

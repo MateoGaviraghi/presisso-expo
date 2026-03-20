@@ -232,7 +232,7 @@ export default function AdminSolicitudPage() {
     if (!solicitud?.foto_original) return;
     setGenerating(true);
     try {
-      const res = await fetch("/api/generar-imagen", {
+      const res = await fetch("/api/admin/generar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ solicitud_id: id }),
