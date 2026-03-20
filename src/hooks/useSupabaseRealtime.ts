@@ -6,6 +6,7 @@ import type { Solicitud } from "@/types/solicitud";
 
 export function useSupabaseRealtime() {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -17,6 +18,7 @@ export function useSupabaseRealtime() {
         .order("created_at", { ascending: false });
 
       if (data) setSolicitudes(data as Solicitud[]);
+      setLoaded(true);
     };
 
     fetchSolicitudes();
@@ -52,5 +54,5 @@ export function useSupabaseRealtime() {
     };
   }, [supabase]);
 
-  return solicitudes;
+  return { solicitudes, loaded };
 }

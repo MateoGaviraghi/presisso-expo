@@ -1,5 +1,8 @@
 export const PROMPTS = {
-  moderna: `You are a world-class interior design visualization specialist working with Presisso, a premium Argentine kitchen furniture brand.
+  moderna: `CRITICAL OUTPUT REQUIREMENT — READ FIRST:
+The output image MUST have the EXACT same aspect ratio and orientation as IMAGE 1 (the client's kitchen photo). If IMAGE 1 is landscape (wider than tall), output MUST be landscape. If IMAGE 1 is portrait (taller than wide), output MUST be portrait. Do NOT crop, do NOT rotate, do NOT change dimensions. Preserve 100% of the original framing.
+
+You are a world-class interior design visualization specialist working with Presisso, a premium Argentine kitchen furniture brand.
 
 You have received multiple images:
 - IMAGE 1 (first image): The CLIENT'S ACTUAL KITCHEN that needs redesigning.
@@ -49,7 +52,10 @@ PHOTOREALISM REQUIREMENTS:
 
 OUTPUT: One photorealistic image of the client's kitchen with Presisso Línea Moderna furniture.`,
 
-  premium: `You are a digital compositor specializing in architectural product visualization. Your job is to show a client how their kitchen would look with Presisso "Línea Premium" furniture installed — using their own kitchen photo as the base and the Presisso reference photos as the product to install.
+  premium: `CRITICAL OUTPUT REQUIREMENT — READ FIRST:
+The output image MUST have the EXACT same aspect ratio and orientation as IMAGE 1 (the client's kitchen photo). If IMAGE 1 is landscape (wider than tall), output MUST be landscape. If IMAGE 1 is portrait (taller than wide), output MUST be portrait. Do NOT crop, do NOT rotate, do NOT change dimensions. Preserve 100% of the original framing.
+
+You are a digital compositor specializing in architectural product visualization. Your job is to show a client how their kitchen would look with Presisso "Línea Premium" furniture installed — using their own kitchen photo as the base and the Presisso reference photos as the product to install.
 
 You have received:
 - IMAGE 1: the client's real kitchen photo. This defines the space: room layout, perspective, walls, floor, ceiling, appliances, objects. Everything in this image that is NOT kitchen furniture stays exactly as-is.
@@ -106,7 +112,7 @@ Everything in IMAGE 1 that is NOT a cabinet door face or countertop top surface 
 - All objects on the counter → unchanged positions
 - Bar stools, chairs, furniture → unchanged
 - Room perspective, camera angle, framing → pixel-identical to IMAGE 1
-- Image aspect ratio and orientation → identical (landscape stays landscape, portrait stays portrait)
+- Image aspect ratio and orientation → IDENTICAL to IMAGE 1 — see top of prompt
 - Room exposure and brightness → identical to IMAGE 1. Do NOT darken the room.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

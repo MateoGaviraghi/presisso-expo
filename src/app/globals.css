@@ -1,29 +1,45 @@
+/* Futura Bold — fuente oficial Presisso */
+@font-face {
+  font-family: "Futura";
+  src: url("/fonts/Futura-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Jost 700 = fallback web si Futura no carga */
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap");
-
 :root {
-  /* Presisso Colors */
-  --presisso-red: #d42b2b;
-  --presisso-red-hover: #b82424;
+  /* Presisso Colors — exactos del manual de marca */
+  --presisso-red: #df0a0a;
+  --presisso-red-hover: #c50909;
   --presisso-red-light: #fdf2f2;
   --presisso-black: #1a1a1a;
   --presisso-white: #ffffff;
+  --presisso-cream: #faf8f6;
   --presisso-gray-light: #f5f5f3;
   --presisso-gray-mid: #6b6b6b;
   --presisso-gray-dark: #333333;
-  --presisso-border: #e5e5e5;
+  --presisso-border: #e8e8e5;
   --presisso-surface: #fafaf9;
 
   /* Spacing */
-  --container-max: 1200px;
-  --container-padding: 20px;
+  --container-max: 1280px;
+  --container-padding: 24px;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Futura", "Century Gothic", "Jost", sans-serif;
+  font-weight: 700;
   background-color: var(--presisso-gray-light);
   color: var(--presisso-gray-dark);
   -webkit-font-smoothing: antialiased;
@@ -36,7 +52,44 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Futura", "Century Gothic", "Jost", sans-serif;
+}
+
+/* ── Utility: animate on scroll (JS-driven class) ── */
+.animate-on-enter {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s ease-out;
+}
+.animate-on-enter.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Stagger delays ── */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+/* ── Hero dot pattern bg ── */
+.bg-dot-pattern {
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.06) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
 }
 
 /* Status badges */

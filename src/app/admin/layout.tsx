@@ -53,9 +53,8 @@ export default function AdminLayout({
     return (
       <div className="flex min-h-screen items-center justify-center bg-presisso-gray-light px-6">
         <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
-          <h1 className="font-heading text-xl font-bold text-presisso-black">
-            presisso<span className="text-presisso-red">.</span>
-          </h1>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-presisso.png" alt="Presisso" className="h-8 w-auto" />
           <p className="mt-1 text-sm text-presisso-gray-mid">
             Panel de administración
           </p>
@@ -93,20 +92,25 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-presisso-gray-light">
-      <header className="border-b border-presisso-border bg-white px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <h1 className="font-heading text-lg font-bold text-presisso-black">
-            presisso<span className="text-presisso-red">.</span>{" "}
-            <span className="text-sm font-normal text-presisso-gray-mid">
-              admin
+      <header className="border-b border-presisso-border bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-presisso.png"
+              alt="Presisso"
+              className="h-8 w-auto"
+            />
+            <span className="text-xs font-medium uppercase tracking-widest text-presisso-gray-mid">
+              Panel Admin
             </span>
-          </h1>
+          </div>
           <button
             onClick={() => {
               sessionStorage.removeItem("presisso-admin");
               setAuthed(false);
             }}
-            className="text-sm text-presisso-gray-mid hover:text-presisso-black"
+            className="rounded-lg px-3 py-1.5 text-sm text-presisso-gray-mid transition-colors hover:bg-presisso-gray-light hover:text-presisso-black"
           >
             Salir
           </button>

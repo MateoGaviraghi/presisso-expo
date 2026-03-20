@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ solicitud_id: data.id }),
+      signal: AbortSignal.timeout(180_000), // 3 min — suficiente para 3 modelos × 55s
     }).catch((err) => console.error("Error disparando generar-imagen:", err));
 
     return NextResponse.json(data, { status: 201 });

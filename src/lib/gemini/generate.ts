@@ -117,41 +117,70 @@ async function generateKitchenImage(
 
 /* ── Cascade fallback: primary → fallback1 → fallback2 ── */
 
+function is503(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return msg.includes('"code":503') || msg.includes('"status":"UNAVAILABLE"');
+}
+
+// Jitter backoff: base + variación aleatoria para evitar thundering herd
+function jitterWait(baseMs: number): Promise<void> {
+  const jitter = Math.random() * baseMs * 0.3; // ±30%
+  const total = Math.round(baseMs + jitter);
+  console.log(`[Gemini] Esperando ${total}ms...`);
+  return new Promise((r) => setTimeout(r, total));
+}
+
+// 503 backoff: 1 solo reintento rápido (5s) y luego cae al siguiente modelo.
+// gemini-3-pro-image-preview funciona bien → no tiene sentido gastar 80s en el modelo roto.
+const RETRY_503_WAITS = [5_000];
+
 export async function generateWithFallback(
   fotoUrl: string,
   tipo: PromptType,
 ): Promise<GenerateResult> {
-  const modelKeys = ["primary", "fallback1", "fallback2"] as const;
+  const modelKeys = ["primary", "fallback1"] as const;
 
   for (let i = 0; i < modelKeys.length; i++) {
     const model = MODELS[modelKeys[i]];
-    try {
-      console.log(`[Gemini] Intento con modelo ${model}...`);
-      const result = await generateKitchenImage(fotoUrl, tipo, model);
-      if (result.success) {
-        console.log(`[Gemini] Éxito con ${model} en ${result.timeMs}ms`);
-        return result;
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      const detail = err instanceof Error && (err as { status?: number }).status
-        ? ` (HTTP ${(err as { status?: number }).status})`
-        : "";
-      console.warn(`[Gemini] ${model} falló: ${msg}${detail}`);
+    const max503Retries = RETRY_503_WAITS.length; // 3 reintentos por modelo en 503
 
-      if (i < modelKeys.length - 1) {
-        const waitMs = 1000 * Math.pow(2, i);
-        console.log(
-          `[Gemini] Esperando ${waitMs}ms antes del siguiente modelo...`,
-        );
-        await new Promise((r) => setTimeout(r, waitMs));
+    let consecutivo503 = 0;
+
+    for (let attempt = 1; attempt <= max503Retries + 1; attempt++) {
+      try {
+        console.log(`[Gemini] ${model} — intento ${attempt}...`);
+        const result = await generateKitchenImage(fotoUrl, tipo, model);
+        if (result.success) {
+          console.log(`[Gemini] Éxito con ${model} en ${result.timeMs}ms`);
+          return result;
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn(`[Gemini] ${model} (intento ${attempt}) falló: ${msg}`);
+
+        if (is503(err) && consecutivo503 < max503Retries) {
+          // 503 = sobrecarga temporal — esperar tiempo creciente y reintentar mismo modelo
+          await jitterWait(RETRY_503_WAITS[consecutivo503]);
+          consecutivo503++;
+          continue;
+        }
+
+        // Error definitivo (404, timeout) o se agotaron los reintentos 503
+        break;
       }
+    }
+
+    // Pausa breve antes de intentar el siguiente modelo
+    if (i < modelKeys.length - 1) {
+      console.log(`[Gemini] Pasando a modelo fallback...`);
+      await jitterWait(2_000);
     }
   }
 
   return {
     success: false,
-    error: "Todos los modelos fallaron",
+    error:
+      "Todos los modelos fallaron. Los modelos de generación de imágenes están experimentando alta demanda. Reintentá en unos minutos.",
     timeMs: 0,
   };
 }

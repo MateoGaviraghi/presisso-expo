@@ -9,14 +9,14 @@ export const KITCHEN_TYPES = {
     label: "Línea Moderna",
     tag: "Tendencia 2026",
     description: "Líneas limpias, acabados minimalistas, tiradores integrados",
-    image: "/kitchens/moderna-preview.jpg",
+    image: "/modelo-premiun/Presisso_28022026_02.jpg",
   },
   premium: {
     id: "premium",
     label: "Línea Premium",
     tag: "Exclusiva",
     description: "Materiales nobles, detalles de lujo, herrajes importados",
-    image: "/kitchens/premium-preview.jpg",
+    image: "/modelo-premiun/Presisso_28022026_12.jpg",
   },
 } as const;
 
