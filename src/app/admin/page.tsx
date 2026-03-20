@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ESTADO_LABELS } from "@/lib/utils/constants";
 import { useSupabaseRealtime } from "@/hooks/useSupabaseRealtime";
@@ -81,25 +81,31 @@ function StatCard({
 export default function AdminPage() {
   const router = useRouter();
   const { solicitudes, loaded: solicitudesLoaded } = useSupabaseRealtime();
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [statsError, setStatsError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<EstadoSolicitud | "all">(
     "all",
   );
 
-  useEffect(() => {
-    fetch("/api/stats")
-      .then((r) => {
-        if (!r.ok) throw new Error("Error al cargar estadísticas");
-        return r.json() as Promise<Stats>;
-      })
-      .then(setStats)
-      .catch((err: unknown) =>
-        setStatsError(err instanceof Error ? err.message : "Error inesperado"),
-      )
-      .finally(() => setLoadingStats(false));
-  }, []);
+  // Stats calculados directamente de las solicitudes en tiempo real
+  const stats = useMemo<Stats | null>(() => {
+    if (!solicitudesLoaded) return null;
+    const today = new Date().toISOString().split("T")[0];
+    const estados: Record<string, number> = {};
+    let hoy = 0;
+    for (const s of solicitudes) {
+      estados[s.estado] = (estados[s.estado] ?? 0) + 1;
+      if (s.created_at.startsWith(today)) hoy++;
+    }
+    return {
+      total_solicitudes: solicitudes.length,
+      solicitudes_hoy: hoy,
+      pendientes: estados["pendiente"] ?? 0,
+      generando: estados["generando"] ?? 0,
+      revision: estados["revision"] ?? 0,
+      aprobadas: estados["aprobada"] ?? 0,
+      enviadas: estados["enviada"] ?? 0,
+      errores: estados["error"] ?? 0,
+    };
+  }, [solicitudes, solicitudesLoaded]);
 
   const filtered = useMemo(
     () =>
@@ -131,7 +137,7 @@ export default function AdminPage() {
       </div>
 
       {/* Stats */}
-      {loadingStats ? (
+      {!solicitudesLoaded ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
@@ -139,10 +145,6 @@ export default function AdminPage() {
               className="h-[100px] animate-pulse rounded-2xl bg-presisso-border"
             />
           ))}
-        </div>
-      ) : statsError ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {statsError}
         </div>
       ) : stats ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
