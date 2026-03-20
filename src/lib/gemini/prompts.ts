@@ -80,8 +80,8 @@ This includes ALL of the following, which MUST remain pixel-identical to IMAGE 1
 - Sinks, faucets, taps, plumbing
 - Walls, tiles, backsplash, paint — ALL wall surfaces
 - Floor, ceiling, windows, doors, light fixtures
-- Every object sitting on the countertop (bottles, jars, appliances, utensils)
-- Every object on the floor
+- Appliances sitting on the countertop (coffee machine, toaster, kettle)
+- Permanent fixtures on walls and floor
 - Shelves, racks, carts, side tables — if it is not a built-in cabinet, do NOT touch it
 - The SPACE between and behind cabinets — do not fill gaps with new furniture
 
@@ -99,6 +99,37 @@ From the reference photos, extract the material properties:
 - HANDLES (UPPER): No handles. Push-to-open. Clean flat surface.
 - COUNTERTOP: Same matte black material as doors. Straight square edge, ~35-40mm thick.
 - GAPS: Hairline thin gaps between adjacent doors.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1.5 — SUBTLE CLEANUP (HOME STAGING)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before reskinning, do a light visual cleanup of the countertop and visible surfaces. Remove ONLY loose clutter — the kind a home stager would clear before a photo shoot:
+
+Be THOROUGH. Scan every centimeter of every countertop, table, and open surface. Remove ALL of these:
+
+REMOVE (clear the surface completely):
+- Bottles, cans, jars, glasses, cups, mugs
+- Pots, pans, skillets, lids, pot lids, baking trays
+- Cutting boards, wooden boards, chopping boards
+- Plates, bowls, dirty dishes, dish racks
+- Rags, cloths, sponges, towels, cleaning products
+- Trash, bags, packaging, boxes, plastic bags
+- Food items: fruit, bread, leftovers, anything edible
+- Utensils left out: spatulas, ladles, knives, spoons
+- Random clutter: keys, papers, magnets on countertop
+- Trash cans / bins that are visible and portable
+
+KEEP (these stay — they are intentional or fixed):
+- Faucets, sinks, taps — PLUMBING, never touch
+- Stove, cooktop, oven, microwave, range hood
+- Washing machine, dishwasher, refrigerator
+- Coffee machine, toaster, kettle — ONLY if they look like permanent countertop appliances (plugged in, intentionally placed)
+- Wall-mounted items (clocks, shelves, lights, racks)
+- Plants in pots (they add life to the scene)
+- Anything built-in or attached to the wall/cabinet
+
+When removing items, seamlessly replace them with the clean countertop surface or wall/backsplash that would naturally be behind them. Match lighting, texture, and perspective. The result should look like the countertop was always clean — as if the homeowner tidied up before a magazine photo shoot.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STEP 2 — RESKIN ONLY CATEGORY A AND B
@@ -119,7 +150,7 @@ NOTHING ELSE CHANGES. This is the complete edit.
 ABSOLUTE PROHIBITIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-DO NOT remove ANY object (washing machine, appliance, bottle, anything)
+DO NOT remove ANY permanent object (washing machine, appliance, faucet, sink, fixture)
 DO NOT add ANY object that doesn't exist in IMAGE 1
 DO NOT add cabinets where there were none
 DO NOT extend the countertop beyond its original footprint
