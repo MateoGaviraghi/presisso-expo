@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
 import { PROMPTS, PromptType } from "./prompts";
 
@@ -66,20 +67,43 @@ async function generateKitchenImage(
     throw new Error(`Error descargando foto del cliente: ${clientRes.status}`);
   }
   const clientBuffer = await clientRes.arrayBuffer();
-  const clientBase64 = Buffer.from(clientBuffer).toString("base64");
+  const clientBuf = Buffer.from(clientBuffer);
+  const clientBase64 = clientBuf.toString("base64");
   const clientMime = clientRes.headers.get("content-type") || "image/jpeg";
+
+  // 1b. Detectar dimensiones y orientación de la foto del cliente
+  let dimensionNote = "";
+  try {
+    const dims = imageSize(clientBuf);
+    if (dims.width && dims.height) {
+      const orientation =
+        dims.width > dims.height
+          ? "LANDSCAPE"
+          : dims.width < dims.height
+            ? "PORTRAIT"
+            : "SQUARE";
+      dimensionNote = `\n\nIMAGE 1 DIMENSIONS: ${dims.width}x${dims.height}px — ${orientation}.\nYour output MUST be ${orientation} with the EXACT same aspect ratio (${dims.width}:${dims.height}). Do NOT crop, rotate, or change orientation under any circumstance.`;
+      console.log(
+        `[Gemini] Foto cliente: ${dims.width}x${dims.height} (${orientation})`,
+      );
+    }
+  } catch {
+    console.warn("[Gemini] No se pudo detectar dimensiones de la imagen");
+  }
 
   // 2. Referencias Presisso (cacheadas)
   const refs = loadReferences(tipoCocina);
 
-  // 3. Armar parts: foto cliente + todas las referencias + prompt
+  // 3. Armar parts: foto cliente + todas las referencias + prompt con dimensiones
+  const promptWithDimensions = PROMPTS[tipoCocina] + dimensionNote;
+
   const parts: {
     inlineData?: { mimeType: string; data: string };
     text?: string;
   }[] = [
     { inlineData: { mimeType: clientMime, data: clientBase64 } },
     ...refs.map((r) => ({ inlineData: { mimeType: r.mime, data: r.base64 } })),
-    { text: PROMPTS[tipoCocina] },
+    { text: promptWithDimensions },
   ];
 
   // 4. Llamar a Gemini con foto del cliente + referencias + prompt
@@ -109,7 +133,7 @@ async function generateKitchenImage(
   return {
     success: true,
     imageBase64: imagePart.inlineData.data,
-    promptUsed: PROMPTS[tipoCocina].substring(0, 500),
+    promptUsed: promptWithDimensions.substring(0, 500),
     model,
     timeMs: Date.now() - startTime,
   };

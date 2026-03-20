@@ -92,7 +92,7 @@ export default function NuevoPage() {
     switch (step) {
       case 0: return !!photoFile;
       case 1: return !!kitchenType;
-      case 2: return nombre.length > 1 && whatsapp.length > 7;
+      case 2: return nombre.length > 1 && email.includes("@");
       case 3: return true;
       default: return false;
     }
