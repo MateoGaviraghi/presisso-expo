@@ -33,6 +33,7 @@ export async function PATCH(
     // Campos permitidos para actualizar (whitelist explícita)
     const allowedFields = [
       "estado",
+      "tipo_cocina",
       "imagen_generada",
       "imagen_generada_2",
       "prompt_usado",

@@ -42,8 +42,12 @@ export async function POST(req: NextRequest) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     fetch(`${appUrl}/api/generar-imagen`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+      },
       body: JSON.stringify({ solicitud_id: data.id }),
+      signal: AbortSignal.timeout(180_000),
     }).catch((err) => console.error("Error disparando generar-imagen:", err));
 
     return NextResponse.json(data, { status: 201 });

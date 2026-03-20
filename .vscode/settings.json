@@ -1,0 +1,7 @@
+{
+  "chat.mcp.serverSampling": {
+    "presisso-expo/.vscode/mcp.json: com.supabase/mcp": {
+      "allowedModels": ["copilot/auto", "copilotcli/claude-sonnet-4.6"]
+    }
+  }
+}
