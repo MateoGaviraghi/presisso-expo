@@ -1,9 +1,11 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+const HMAC_PREFIX = "admin-session";
+
 /**
  * Generates a daily admin session token.
- * Token = HMAC-SHA256(ADMIN_PASSWORD, "presisso-admin:<YYYY-MM-DD>")
+ * Token = HMAC-SHA256(ADMIN_PASSWORD, "admin-session:<YYYY-MM-DD>")
  * Valid for the current day + previous day (midnight rollover).
  */
 export function generateAdminToken(): string | null {
@@ -12,7 +14,7 @@ export function generateAdminToken(): string | null {
 
   const day = new Date().toISOString().slice(0, 10);
   return createHmac("sha256", secret)
-    .update(`presisso-admin:${day}`)
+    .update(`${HMAC_PREFIX}:${day}`)
     .digest("hex");
 }
 
@@ -26,11 +28,11 @@ export function verifyAdminToken(token: string): boolean {
     .slice(0, 10);
 
   const validToday = createHmac("sha256", secret)
-    .update(`presisso-admin:${today}`)
+    .update(`${HMAC_PREFIX}:${today}`)
     .digest("hex");
 
   const validYesterday = createHmac("sha256", secret)
-    .update(`presisso-admin:${yesterday}`)
+    .update(`${HMAC_PREFIX}:${yesterday}`)
     .digest("hex");
 
   try {
