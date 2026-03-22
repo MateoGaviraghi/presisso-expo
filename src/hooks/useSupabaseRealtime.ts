@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Solicitud } from "@/types/solicitud";
 
@@ -16,23 +16,29 @@ export function useSupabaseRealtime() {
   const [loaded, setLoaded] = useState(false);
   const subscribedRef = useRef(false);
 
+  const fetchData = useCallback(async () => {
+    try {
+      // Fetch via API route — uses service role, bypasses RLS
+      const res = await fetch("/api/solicitudes?limit=100");
+      if (!res.ok) throw new Error("fetch failed");
+      const { data } = await res.json();
+      if (data) setSolicitudes(data as Solicitud[]);
+    } catch (err) {
+      console.error("Error fetching solicitudes:", err);
+    } finally {
+      setLoaded(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (subscribedRef.current) return;
     subscribedRef.current = true;
 
+    // Initial fetch via API
+    fetchData();
+
+    // Subscribe to realtime changes for live updates
     const supabase = getClient();
-
-    // Fetch initial data
-    supabase
-      .from("solicitudes")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (data) setSolicitudes(data as Solicitud[]);
-        setLoaded(true);
-      });
-
-    // Subscribe to realtime changes
     const channel = supabase
       .channel("solicitudes-realtime")
       .on(
@@ -62,7 +68,7 @@ export function useSupabaseRealtime() {
       subscribedRef.current = false;
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetchData]);
 
-  return { solicitudes, loaded };
+  return { solicitudes, loaded, refetch: fetchData };
 }
