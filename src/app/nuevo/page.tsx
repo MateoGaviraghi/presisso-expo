@@ -18,6 +18,7 @@ export default function NuevoPage() {
 
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -43,6 +44,7 @@ export default function NuevoPage() {
     if (!photoFile || !kitchenType) return;
 
     setLoading(true);
+    setLoadingMsg("Subiendo foto…");
     setError(null);
 
     try {
@@ -57,6 +59,12 @@ export default function NuevoPage() {
         throw new Error(uploadErr.error || "Error al subir la foto");
       }
       const { url: fotoUrl } = await uploadResponse.json();
+
+      if (!fotoUrl) {
+        throw new Error("No se recibió la URL de la foto subida");
+      }
+
+      setLoadingMsg("Creando solicitud…");
 
       const response = await fetch("/api/solicitudes", {
         method: "POST",
@@ -78,13 +86,17 @@ export default function NuevoPage() {
 
       const result = await response.json();
 
+      setLoadingMsg("¡Listo! Redirigiendo…");
+
       router.push(
         `/gracias?id=${result.id}&nombre=${encodeURIComponent(nombre)}&pdf=${enviarPdf}&email=${encodeURIComponent(email || "")}`,
       );
     } catch (err) {
+      console.error("Error en submit:", err);
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
       setLoading(false);
+      setLoadingMsg("");
     }
   }
 
@@ -229,7 +241,7 @@ export default function NuevoPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Enviando...
+                  {loadingMsg || "Enviando..."}
                 </>
               ) : (
                 <>

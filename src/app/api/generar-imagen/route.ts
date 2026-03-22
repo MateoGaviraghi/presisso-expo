@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseAdmin, createAdminClient } from "@/lib/supabase/admin";
 import { generateWithFallback } from "@/lib/gemini/generate";
 import type { PromptType } from "@/lib/gemini/prompts";
 import { solicitudIdBody, parseBody } from "@/lib/validations/api";
@@ -85,38 +85,62 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: result.error }, { status: 500 });
     }
 
-    // 4. Subir imagen generada a Supabase Storage
-    const imageBytes = Uint8Array.from(atob(result.imageBase64), (c) =>
-      c.charCodeAt(0),
-    );
-    const blob = new Blob([imageBytes], { type: "image/png" });
+    // 4. Subir imagen generada a Supabase Storage (con retry)
+    const imageBuffer = Buffer.from(result.imageBase64, "base64");
     const fileName = `generadas/${solicitud_id}-${Date.now()}.png`;
 
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from("cocinas")
-      .upload(fileName, blob, {
-        contentType: "image/png",
-        upsert: true,
-      });
+    let uploaded = false;
+    for (let attempt = 0; attempt <= 2; attempt++) {
+      try {
+        const storageClient = createAdminClient();
+        const { error: uploadError } = await storageClient.storage
+          .from("cocinas")
+          .upload(fileName, imageBuffer, {
+            contentType: "image/png",
+            upsert: true,
+          });
 
-    if (uploadError) {
-      console.error("Error subiendo imagen generada:", uploadError);
-      Sentry.captureException(uploadError, {
-        extra: { solicitud_id, paso: "storage_upload" },
-      });
+        if (uploadError) {
+          console.error(`Storage upload error (intento ${attempt + 1}):`, uploadError);
+          if (attempt < 2) continue;
 
-      await supabaseAdmin
-        .from("solicitudes")
-        .update({
-          estado: "error",
-          notas_admin: `Error storage: ${uploadError.message}`,
-        })
-        .eq("id", solicitud_id);
+          Sentry.captureException(uploadError, {
+            extra: { solicitud_id, paso: "storage_upload" },
+          });
 
-      return NextResponse.json(
-        { error: "Error almacenando imagen generada" },
-        { status: 500 },
-      );
+          await supabaseAdmin
+            .from("solicitudes")
+            .update({
+              estado: "error",
+              notas_admin: `Error storage: ${uploadError.message}`,
+            })
+            .eq("id", solicitud_id);
+
+          return NextResponse.json(
+            { error: "Error almacenando imagen generada" },
+            { status: 500 },
+          );
+        }
+
+        uploaded = true;
+        break;
+      } catch (err) {
+        console.error(`Upload attempt ${attempt + 1} failed:`, err);
+        if (attempt >= 2) {
+          Sentry.captureException(err, {
+            extra: { solicitud_id, paso: "storage_upload" },
+          });
+          await supabaseAdmin
+            .from("solicitudes")
+            .update({ estado: "error", notas_admin: "Error subiendo imagen tras reintentos" })
+            .eq("id", solicitud_id);
+          return NextResponse.json({ error: "Error almacenando imagen generada" }, { status: 500 });
+        }
+      }
+    }
+
+    if (!uploaded) {
+      return NextResponse.json({ error: "Error almacenando imagen generada" }, { status: 500 });
     }
 
     const { data: urlData } = supabaseAdmin.storage

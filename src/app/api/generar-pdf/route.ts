@@ -1,12 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
-import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseAdmin, createAdminClient } from "@/lib/supabase/admin";
 import { generatePDF } from "@/lib/pdf/generator";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { solicitudIdBody, parseBody } from "@/lib/validations/api";
 import { logAction } from "@/lib/audit";
 
 export const maxDuration = 60;
+
+const MAX_RETRIES = 2;
+
+async function uploadWithRetry(
+  fileName: string,
+  buffer: Buffer,
+  contentType: string,
+): Promise<void> {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const client = createAdminClient();
+      const { error } = await client.storage
+        .from("cocinas")
+        .upload(fileName, buffer, { contentType, upsert: true });
+
+      if (error) {
+        console.error(`Storage upload error (intento ${attempt + 1}):`, error);
+        if (attempt < MAX_RETRIES) continue;
+        throw error;
+      }
+      return;
+    } catch (err) {
+      if (attempt >= MAX_RETRIES) throw err;
+      console.error(`Upload retry ${attempt + 1}:`, err);
+    }
+  }
+}
 
 export async function POST(req: NextRequest) {
   const denied = requireAdmin(req);
@@ -45,14 +72,7 @@ export async function POST(req: NextRequest) {
     const pdfBuffer = await generatePDF(solicitud);
 
     const fileName = `pdfs/${solicitud_id}.pdf`;
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from("cocinas")
-      .upload(fileName, pdfBuffer, {
-        contentType: "application/pdf",
-        upsert: true,
-      });
-
-    if (uploadError) throw uploadError;
+    await uploadWithRetry(fileName, pdfBuffer, "application/pdf");
 
     const { data: urlData } = supabaseAdmin.storage
       .from("cocinas")
