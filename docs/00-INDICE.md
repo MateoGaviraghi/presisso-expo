@@ -20,6 +20,7 @@
 | 6 | PDF + WhatsApp + Email | [`06-FASE-PDF-ENVIO.md`](./06-FASE-PDF-ENVIO.md) | S3 — Días 3-5 |
 | 7 | Testing y QA | [`07-FASE-TESTING.md`](./07-FASE-TESTING.md) | S4 — Días 1-3 |
 | 8 | Deploy a Producción | [`08-FASE-DEPLOY.md`](./08-FASE-DEPLOY.md) | S4 — Días 3-5 |
+| 11 | **Mejoras V2: Robustez y Seguridad** | [`11-FASE-MEJORAS-V2.md`](./11-FASE-MEJORAS-V2.md) | Post-expo |
 
 ---
 
@@ -55,6 +56,5 @@ MARCA EXTENDIDA:
 - Cuenta en Google AI Studio con API Key de Gemini
 - Cuenta en Supabase (free tier)
 - Cuenta en Vercel
-- Cuenta en Twilio (WhatsApp Business API)
-- Cuenta en Resend (email transaccional)
+- Gmail con App Password (SMTP para email transaccional)
 - Editor: VS Code recomendado con extensiones ESLint + Tailwind CSS IntelliSense

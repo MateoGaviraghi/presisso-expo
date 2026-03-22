@@ -1,31 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Solicitud } from "@/types/solicitud";
+
+// Singleton client reference to avoid re-creating on every render
+let _client: ReturnType<typeof createClient> | null = null;
+function getClient() {
+  if (!_client) _client = createClient();
+  return _client;
+}
 
 export function useSupabaseRealtime() {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const supabase = createClient();
+  const subscribedRef = useRef(false);
 
   useEffect(() => {
+    if (subscribedRef.current) return;
+    subscribedRef.current = true;
+
+    const supabase = getClient();
+
     // Fetch initial data
-    const fetchSolicitudes = async () => {
-      const { data } = await supabase
-        .from("solicitudes")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (data) setSolicitudes(data as Solicitud[]);
-      setLoaded(true);
-    };
-
-    fetchSolicitudes();
+    supabase
+      .from("solicitudes")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data) setSolicitudes(data as Solicitud[]);
+        setLoaded(true);
+      });
 
     // Subscribe to realtime changes
     const channel = supabase
-      .channel("solicitudes-changes")
+      .channel("solicitudes-realtime")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "solicitudes" },
@@ -50,9 +59,10 @@ export function useSupabaseRealtime() {
       .subscribe();
 
     return () => {
+      subscribedRef.current = false;
       supabase.removeChannel(channel);
     };
-  }, [supabase]);
+  }, []);
 
   return { solicitudes, loaded };
 }

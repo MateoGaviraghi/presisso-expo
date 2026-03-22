@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         tipo_cocina: validated.tipo_cocina,
         enviar_pdf: validated.enviar_pdf,
         foto_original: validated.foto_original,
-        estado: "pendiente",
+        estado: "generando",
       })
       .select()
       .single();

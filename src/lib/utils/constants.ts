@@ -30,12 +30,10 @@ export const STEPS = [
 ] as const;
 
 export const ESTADOS_SOLICITUD = [
-  "pendiente",
   "generando",
   "revision",
   "aprobada",
   "enviada",
-  "rechazada",
   "error",
 ] as const;
 
@@ -45,7 +43,6 @@ export const ESTADO_LABELS: Record<string, string> = {
   revision: "En Revisión",
   aprobada: "Aprobada",
   enviada: "Enviada",
-  rechazada: "Rechazada",
   error: "Error",
 };
 

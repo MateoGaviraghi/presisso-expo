@@ -29,7 +29,11 @@ export default function AdminLayout({
         body: JSON.stringify({ password }),
       });
       if (res.ok) {
+        const data = await res.json();
         sessionStorage.setItem("presisso-admin", "true");
+        if (data.token) {
+          sessionStorage.setItem("presisso-admin-token", data.token);
+        }
         setAuthed(true);
       } else {
         setError(true);
@@ -108,6 +112,7 @@ export default function AdminLayout({
           <button
             onClick={() => {
               sessionStorage.removeItem("presisso-admin");
+              sessionStorage.removeItem("presisso-admin-token");
               setAuthed(false);
             }}
             className="rounded-lg px-3 py-1.5 text-sm text-presisso-gray-mid transition-colors hover:bg-presisso-gray-light hover:text-presisso-black"

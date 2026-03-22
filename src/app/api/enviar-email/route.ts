@@ -1,14 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/email/sender";
+import { requireAdmin } from "@/lib/auth/admin-guard";
+import { solicitudIdBody, parseBody } from "@/lib/validations/api";
+import { logAction } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => null);
-  const solicitud_id = body?.solicitud_id;
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
-  if (!solicitud_id) {
-    return NextResponse.json({ error: "solicitud_id requerido" }, { status: 400 });
+  const body = await req.json().catch(() => null);
+  const parsed = parseBody(solicitudIdBody, body);
+
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
+
+  const { solicitud_id } = parsed.data;
 
   const { data: solicitud, error } = await supabaseAdmin
     .from("solicitudes")
@@ -17,15 +26,24 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error || !solicitud) {
-    return NextResponse.json({ error: "Solicitud no encontrada" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Solicitud no encontrada" },
+      { status: 404 },
+    );
   }
 
   if (!solicitud.email) {
-    return NextResponse.json({ error: "El cliente no tiene email registrado" }, { status: 422 });
+    return NextResponse.json(
+      { error: "El cliente no tiene email registrado" },
+      { status: 422 },
+    );
   }
 
   if (!solicitud.pdf_url || !solicitud.imagen_generada) {
-    return NextResponse.json({ error: "Falta PDF o imagen generada" }, { status: 422 });
+    return NextResponse.json(
+      { error: "Falta PDF o imagen generada" },
+      { status: 422 },
+    );
   }
 
   try {
@@ -42,9 +60,14 @@ export async function POST(req: NextRequest) {
       .update({ email_id: emailId ?? null })
       .eq("id", solicitud_id);
 
+    logAction(solicitud_id, "enviar_email", { email: solicitud.email, emailId });
     return NextResponse.json({ success: true, emailId });
   } catch (err) {
     console.error("Email error:", err);
-    return NextResponse.json({ error: "Error enviando email" }, { status: 500 });
+    Sentry.captureException(err, { extra: { solicitud_id } });
+    return NextResponse.json(
+      { error: "Error enviando email" },
+      { status: 500 },
+    );
   }
 }
