@@ -29,13 +29,11 @@ export async function GET() {
     return NextResponse.json({
       total_solicitudes: total,
       solicitudes_hoy: hoy,
-      pendientes: estados["pendiente"] ?? 0,
       generando: estados["generando"] ?? 0,
       revision: estados["revision"] ?? 0,
       aprobadas: estados["aprobada"] ?? 0,
       enviadas: estados["enviada"] ?? 0,
       errores: estados["error"] ?? 0,
-      rechazadas: estados["rechazada"] ?? 0,
     });
   } catch (err) {
     console.error("GET /api/stats error:", err);

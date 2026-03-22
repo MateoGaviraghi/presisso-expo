@@ -3,10 +3,6 @@
 import { ESTADO_LABELS } from "@/lib/utils/constants";
 
 const CONFIG: Record<string, { dot: string; badge: string; animate?: true }> = {
-  pendiente: {
-    dot: "bg-amber-400",
-    badge: "bg-amber-50 border-amber-200 text-amber-800",
-  },
   generando: {
     dot: "bg-blue-500",
     badge: "bg-blue-50 border-blue-200 text-blue-800",
@@ -24,13 +20,13 @@ const CONFIG: Record<string, { dot: string; badge: string; animate?: true }> = {
     dot: "bg-emerald-500",
     badge: "bg-emerald-50 border-emerald-200 text-emerald-800",
   },
-  rechazada: {
-    dot: "bg-red-400",
-    badge: "bg-red-50 border-red-200 text-red-700",
+  pendiente: {
+    dot: "bg-amber-400",
+    badge: "bg-amber-50 border-amber-200 text-amber-700",
   },
   error: {
-    dot: "bg-gray-400",
-    badge: "bg-gray-100 border-gray-200 text-gray-600",
+    dot: "bg-red-400",
+    badge: "bg-red-50 border-red-200 text-red-600",
   },
 };
 

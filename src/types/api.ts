@@ -40,11 +40,6 @@ export interface GenerarPdfResponse {
   pdf_url: string;
 }
 
-// POST /api/enviar-whatsapp
-export interface EnviarWhatsappRequest {
-  solicitud_id: string;
-}
-
 // POST /api/enviar-email
 export interface EnviarEmailRequest {
   solicitud_id: string;

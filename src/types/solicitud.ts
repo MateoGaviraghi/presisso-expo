@@ -1,15 +1,14 @@
 export type EstadoSolicitud =
-  | "pendiente"
   | "generando"
   | "revision"
   | "aprobada"
   | "enviada"
-  | "rechazada"
   | "error";
 
 export type TipoCocina = "moderna" | "premium";
 
-export interface Solicitud {
+// ── Base fields shared by all states ────────────────────────────────
+interface SolicitudBase {
   id: string;
   created_at: string;
   updated_at: string;
@@ -19,19 +18,83 @@ export interface Solicitud {
   tipo_cocina: TipoCocina;
   enviar_pdf: boolean;
   foto_original: string;
-  imagen_generada: string | null;
   imagen_generada_2: string | null;
-  estado: EstadoSolicitud;
-  prompt_usado: string | null;
   modelo_ia: string;
   intentos_generacion: number;
+  notas_admin: string | null;
+  whatsapp_sid: string | null;
+}
+
+// ── Discriminated unions by estado ──────────────────────────────────
+
+interface SolicitudGenerando extends SolicitudBase {
+  estado: "generando";
+  imagen_generada: string | null;
   tiempo_generacion_ms: number | null;
   pdf_url: string | null;
-  whatsapp_sid: string | null;
   email_id: string | null;
   enviado_at: string | null;
-  notas_admin: string | null;
+  prompt_usado: string | null;
 }
+
+interface SolicitudRevision extends SolicitudBase {
+  estado: "revision";
+  imagen_generada: string;
+  tiempo_generacion_ms: number;
+  pdf_url: string | null;
+  email_id: string | null;
+  enviado_at: string | null;
+  prompt_usado: string;
+}
+
+interface SolicitudAprobada extends SolicitudBase {
+  estado: "aprobada";
+  imagen_generada: string;
+  tiempo_generacion_ms: number;
+  pdf_url: string | null;
+  email_id: string | null;
+  enviado_at: string | null;
+  prompt_usado: string;
+}
+
+interface SolicitudEnviada extends SolicitudBase {
+  estado: "enviada";
+  imagen_generada: string;
+  tiempo_generacion_ms: number;
+  pdf_url: string;
+  email_id: string | null;
+  enviado_at: string;
+  prompt_usado: string;
+}
+
+interface SolicitudError extends SolicitudBase {
+  estado: "error";
+  imagen_generada: string | null;
+  tiempo_generacion_ms: number | null;
+  pdf_url: string | null;
+  email_id: string | null;
+  enviado_at: string | null;
+  prompt_usado: string | null;
+}
+
+export type Solicitud =
+  | SolicitudGenerando
+  | SolicitudRevision
+  | SolicitudAprobada
+  | SolicitudEnviada
+  | SolicitudError;
+
+// ── Type guards ─────────────────────────────────────────────────────
+
+export function hasImage(s: Solicitud): s is SolicitudRevision | SolicitudAprobada | SolicitudEnviada {
+  return s.estado === "revision" || s.estado === "aprobada" || s.estado === "enviada";
+}
+
+export function isEnviada(s: Solicitud): s is SolicitudEnviada {
+  return s.estado === "enviada";
+}
+
+// ── Payload for creating new solicitudes ────────────────────────────
 
 export interface CreateSolicitudPayload {
   nombre: string;
