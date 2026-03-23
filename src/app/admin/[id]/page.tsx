@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ESTADO_LABELS } from "@/lib/utils/constants";
 import { EstadoBadge } from "@/components/admin/EstadoBadge";
@@ -96,6 +96,7 @@ function StatePipeline({ estado }: { estado: string }) {
 
 export default function AdminSolicitudPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [solicitud, setSolicitud] = useState<Solicitud | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -103,6 +104,7 @@ export default function AdminSolicitudPage() {
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [savingNotes, setSavingNotes] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "ok" | "error" } | null>(null);
   const [notas, setNotas] = useState("");
@@ -274,6 +276,23 @@ export default function AdminSolicitudPage() {
       showToast(err instanceof Error ? err.message : "Error", "error");
     } finally {
       setSavingNotes(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirm("¿Estás seguro de eliminar esta solicitud? Se borrarán las imágenes y el PDF. Esta acción no se puede deshacer.")) return;
+    setDeleting(true);
+    try {
+      const res = await adminFetch(`/api/solicitudes/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Error al eliminar");
+      }
+      showToast("Solicitud eliminada");
+      setTimeout(() => router.push("/admin"), 500);
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Error al eliminar", "error");
+      setDeleting(false);
     }
   }
 
@@ -732,6 +751,31 @@ export default function AdminSolicitudPage() {
                 className="mt-2 w-full rounded-lg border border-presisso-border py-2 text-xs font-semibold text-presisso-gray-dark transition-colors hover:bg-presisso-surface disabled:opacity-50"
               >
                 {savingNotes ? "Guardando…" : "Guardar notas"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── Eliminar ─────────────────────────────────────────────────── */}
+          <div className="overflow-hidden rounded-2xl border border-red-200 bg-white shadow-card">
+            <div className="border-b border-red-200 bg-red-50 px-5 py-3">
+              <h3 className="text-[11px] font-semibold uppercase tracking-widest text-red-500">
+                Zona de peligro
+              </h3>
+            </div>
+            <div className="p-5">
+              <p className="mb-3 text-xs text-presisso-gray-mid">
+                Eliminar esta solicitud borrará todos los datos, imágenes generadas y PDF asociados. Esta acción no se puede deshacer.
+              </p>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-red-200 py-3 text-sm font-semibold text-red-600 transition-all hover:border-red-500 hover:bg-red-50 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+                {deleting ? "Eliminando…" : "Eliminar solicitud"}
               </button>
             </div>
           </div>

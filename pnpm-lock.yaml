@@ -23,6 +23,9 @@ dependencies:
   '@types/nodemailer':
     specifier: ^7.0.11
     version: 7.0.11
+  '@vercel/functions':
+    specifier: ^3.4.3
+    version: 3.4.3
   date-fns:
     specifier: ^4.1.0
     version: 4.1.0
@@ -2703,6 +2706,23 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@vercel/functions@3.4.3:
+    resolution: {integrity: sha512-kA14KIUVgAY6VXbhZ5jjY+s0883cV3cZqIU3WhrSRxuJ9KvxatMjtmzl0K23HK59oOUjYl7HaE/eYMmhmqpZzw==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      '@aws-sdk/credential-provider-web-identity': '*'
+    peerDependenciesMeta:
+      '@aws-sdk/credential-provider-web-identity':
+        optional: true
+    dependencies:
+      '@vercel/oidc': 3.2.0
+    dev: false
+
+  /@vercel/oidc@3.2.0:
+    resolution: {integrity: sha512-UycprH3T6n3jH0k44NHMa7pnFHGu/N05MjojYr+Mc6I7obkoLIJujSWwin1pCvdy/eOxrI/l3uDLQsmcrOb4ug==}
+    engines: {node: '>= 20'}
+    dev: false
 
   /@vitest/expect@4.1.0:
     resolution: {integrity: sha512-EIxG7k4wlWweuCLG9Y5InKFwpMEOyrMb6ZJ1ihYu02LVj/bzUwn2VMU+13PinsjRW75XnITeFrQBMH5+dLvCDA==}

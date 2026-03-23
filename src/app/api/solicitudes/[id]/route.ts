@@ -94,3 +94,54 @@ export async function PATCH(
     return NextResponse.json({ error: "Error interno" }, { status: 500 });
   }
 }
+
+// DELETE /api/solicitudes/:id — Admin only
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
+
+  const idResult = uuidParam.safeParse(params.id);
+  if (!idResult.success) {
+    return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+  }
+
+  // Obtener solicitud para limpiar archivos de Storage
+  const { data: solicitud } = await supabaseAdmin
+    .from("solicitudes")
+    .select("foto_original, imagen_generada, pdf_url")
+    .eq("id", idResult.data)
+    .single();
+
+  // Eliminar archivos de Storage (best-effort)
+  if (solicitud) {
+    const filesToDelete: string[] = [];
+    const bucketUrl = supabaseAdmin.storage.from("cocinas").getPublicUrl("").data.publicUrl;
+
+    for (const url of [solicitud.foto_original, solicitud.imagen_generada, solicitud.pdf_url]) {
+      if (url && url.startsWith(bucketUrl)) {
+        filesToDelete.push(url.replace(bucketUrl, ""));
+      }
+    }
+
+    if (filesToDelete.length > 0) {
+      await supabaseAdmin.storage.from("cocinas").remove(filesToDelete).catch(() => {});
+    }
+  }
+
+  // Eliminar de la base de datos
+  const { error } = await supabaseAdmin
+    .from("solicitudes")
+    .delete()
+    .eq("id", idResult.data);
+
+  if (error) {
+    console.error("DELETE /api/solicitudes/:id error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  logAction(idResult.data, "eliminar" as "generar_imagen", { accion: "solicitud eliminada" });
+  return NextResponse.json({ success: true });
+}
