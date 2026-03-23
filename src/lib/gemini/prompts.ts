@@ -34,6 +34,17 @@ ISLAND (if space exists):
 SHELVING:
 - Column of open shelves in light natural oak with dark cube inserts
 
+HOME STAGING CLEANUP (do this BEFORE replacing furniture):
+Before applying new furniture, clean up the scene like a professional home stager preparing for a magazine photo shoot. Remove ALL loose clutter from every surface:
+- ALL bottles, cans, jars, glasses, cups, food items, packages
+- ALL dirty dishes, dish racks, pots/pans left on counters or stove
+- ALL rags, towels, sponges, cleaning products
+- ALL loose utensils, cutting boards, random small items
+- ALL trash cans/bins, bags, boxes on the floor
+- ALL items sitting on top of appliances (trays on oven, stuff on fridge)
+Fill cleared areas with clean countertop or backsplash surface. The scene should look pristine.
+You MAY add 1-2 minimal decorative elements (a plant, a wine glass, a fruit bowl) for a styled look.
+
 PRESERVE EXACTLY FROM IMAGE 1 — DO NOT CHANGE:
 - Walls: original color, texture, finish
 - Floor: original material and color
@@ -41,6 +52,7 @@ PRESERVE EXACTLY FROM IMAGE 1 — DO NOT CHANGE:
 - Windows, doors, all architectural features
 - Room perspective, camera angle, proportions
 - Lighting conditions and shadow directions
+- Large appliances: refrigerator, oven, microwave, washing machine, range hood
 
 PHOTOREALISM REQUIREMENTS:
 - Must look like a real photograph, not a render
@@ -54,41 +66,57 @@ OUTPUT: One photorealistic image of the client's kitchen with Presisso Línea Mo
 
   premium: `OUTPUT FORMAT: The output image MUST have the EXACT same aspect ratio, orientation, and framing as IMAGE 1. Landscape stays landscape. Portrait stays portrait. No crop. No zoom. No rotation.
 
-You are a Photoshop compositor. You will RESKIN existing kitchen furniture in IMAGE 1 using the Presisso material shown in IMAGES 2+. You are NOT redesigning the kitchen. You are NOT adding furniture. You are NOT removing anything. You are changing the MATERIAL of surfaces that already exist.
+You are a professional real estate photographer editing a kitchen photo for a Presisso furniture catalog. Your job has TWO parts: (1) stage the scene like a magazine shoot, and (2) reskin the cabinet doors and countertop with Presisso material.
 
 IMAGES PROVIDED:
-- IMAGE 1: The client's actual kitchen. This is your canvas. Every pixel in this image is sacred unless it is a cabinet door face or countertop surface.
-- IMAGES 2+: Reference photos of Presisso "Línea Premium" installed kitchens. Study the MATERIAL, not the layout.
+- IMAGE 1: The client's actual kitchen photo. This is your canvas.
+- IMAGES 2+: Reference photos of Presisso "Línea Premium" installed kitchens. Study the MATERIAL from these.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0 — THINK BEFORE YOU EDIT
+STEP 1 — HOME STAGING CLEANUP (DO THIS FIRST)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Before making any edit, mentally scan IMAGE 1 and classify every object:
+This is the MOST IMPORTANT step. Imagine a professional home stager walked into this kitchen before the photo shoot and cleaned up EVERYTHING that looks messy, cluttered, or lived-in. The goal is a MAGAZINE-READY scene.
 
-CATEGORY A — CABINET DOORS & DRAWER FRONTS (you WILL reskin these):
-These are the flat front panels of kitchen storage units: upper wall cabinets, lower base cabinets, drawer fronts. They have hinges or slides. They are attached to a cabinet box.
+Scan the ENTIRE image systematically — left to right, top to bottom. Check every surface: countertops, tables, islands, the top of appliances, the floor around cabinets, open shelves.
 
-CATEGORY B — COUNTERTOP SURFACE (you WILL reskin this):
-The horizontal work surface on top of the lower cabinets. Only the existing surface area — same shape, same size, same footprint.
+★ MUST REMOVE — every single one of these, no exceptions:
+- ALL bottles (water, oil, wine, cleaning products, ANY bottle)
+- ALL cans, jars, containers left on counters
+- ALL glasses, cups, mugs that are sitting out
+- ALL plates, bowls, dirty dishes, dish drying racks
+- ALL food items (bread, fruit, packages, milk cartons, leftovers)
+- ALL loose utensils (spatulas, knives, spoons, ladles)
+- ALL cutting boards and wooden boards on counters
+- ALL rags, cloths, sponges, towels on surfaces
+- ALL trash bags, packaging, cardboard, plastic bags
+- ALL pots, pans, skillets, baking trays left on stove or counter
+- ALL portable trash cans and bins (especially open/lidless ones)
+- ALL random small items (keys, pills, medicine, papers, chargers, bags)
+- ALL items sitting ON TOP of appliances (trays on the oven, things on the fridge top, items on the microwave)
+- ALL items on the floor that are not furniture (buckets, bags, boxes)
 
-CATEGORY C — EVERYTHING ELSE (you will NOT touch these):
-This includes ALL of the following, which MUST remain pixel-identical to IMAGE 1:
-- Washing machines, dishwashers, dryers — these are APPLIANCES, not cabinets
-- Refrigerators, freezers
-- Ovens, microwaves, stovetops, cooktops, range hoods
-- Sinks, faucets, taps, plumbing
-- Walls, tiles, backsplash, paint — ALL wall surfaces
-- Floor, ceiling, windows, doors, light fixtures
-- Appliances sitting on the countertop (coffee machine, toaster, kettle)
-- Permanent fixtures on walls and floor
-- Shelves, racks, carts, side tables — if it is not a built-in cabinet, do NOT touch it
-- The SPACE between and behind cabinets — do not fill gaps with new furniture
+★ MUST KEEP — these are permanent fixtures, do NOT remove:
+- Refrigerator, freezer (large appliances that Presisso does not sell)
+- Oven, stove, cooktop, range hood, microwave
+- Washing machine, dishwasher
+- Sink, faucet, all plumbing
+- Coffee machine, toaster, kettle — ONLY if they appear intentionally placed and plugged in (treat them as part of the décor)
+- Wall-mounted shelves, clocks, lights, racks
+- Plants in pots
+- Built-in or attached fixtures
 
-CRITICAL RULE: If an object exists in IMAGE 1, it MUST exist in the output. If a space is empty in IMAGE 1, it MUST be empty in the output. The count, position, and size of every object is FROZEN.
+★ AFTER REMOVING clutter, the cleared surfaces should show CLEAN countertop/backsplash. Fill the empty space with the natural surface that would be behind the removed object — matching the lighting, color, texture, and perspective seamlessly. It should look like those items were NEVER there.
+
+★ OPTIONAL MINIMAL STAGING — after cleanup, you may place 1-2 small decorative elements to make the scene feel styled (NOT cluttered):
+- A small plant or herb pot
+- A clean wine glass or two
+- A decorative bowl with fruit (styled, not random)
+- A nice cutting board leaning against the wall
+These are OPTIONAL. Only add if it looks natural. Less is more. If in doubt, leave the surface clean.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1 — STUDY THE PRESISSO MATERIAL (IMAGES 2+)
+STEP 2 — STUDY THE PRESISSO MATERIAL (IMAGES 2+)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 From the reference photos, extract the material properties:
@@ -101,66 +129,53 @@ From the reference photos, extract the material properties:
 - GAPS: Hairline thin gaps between adjacent doors.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1.5 — SUBTLE CLEANUP (HOME STAGING)
+STEP 3 — RESKIN CABINETS AND COUNTERTOP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Before reskinning, do a light visual cleanup of the countertop and visible surfaces. Remove ONLY loose clutter — the kind a home stager would clear before a photo shoot:
+Now, on the CLEANED scene from Step 1, apply the Presisso material:
 
-Be THOROUGH. Scan every centimeter of every countertop, table, and open surface. Remove ALL of these:
+RESKIN these (Category A — CABINET DOORS & DRAWER FRONTS):
+→ Replace ONLY the front face panel with Presisso matte black flat slab
+→ Keep exact same door dimensions, position, and count
+→ The black material stops at the exact edge of the door — no bleed
 
-REMOVE (clear the surface completely):
-- Bottles, cans, jars, glasses, cups, mugs
-- Pots, pans, skillets, lids, pot lids, baking trays
-- Cutting boards, wooden boards, chopping boards
-- Plates, bowls, dirty dishes, dish racks
-- Rags, cloths, sponges, towels, cleaning products
-- Trash, bags, packaging, boxes, plastic bags
-- Food items: fruit, bread, leftovers, anything edible
-- Utensils left out: spatulas, ladles, knives, spoons
-- Random clutter: keys, papers, magnets on countertop
-- Trash cans / bins that are visible and portable
-
-KEEP (these stay — they are intentional or fixed):
-- Faucets, sinks, taps — PLUMBING, never touch
-- Stove, cooktop, oven, microwave, range hood
-- Washing machine, dishwasher, refrigerator
-- Coffee machine, toaster, kettle — ONLY if they look like permanent countertop appliances (plugged in, intentionally placed)
-- Wall-mounted items (clocks, shelves, lights, racks)
-- Plants in pots (they add life to the scene)
-- Anything built-in or attached to the wall/cabinet
-
-When removing items, seamlessly replace them with the clean countertop surface or wall/backsplash that would naturally be behind them. Match lighting, texture, and perspective. The result should look like the countertop was always clean — as if the homeowner tidied up before a magazine photo shoot.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 2 — RESKIN ONLY CATEGORY A AND B
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-For each CATEGORY A element (cabinet door/drawer front) in IMAGE 1:
-→ Replace ONLY the front face panel with the Presisso matte black flat slab material
-→ Keep the exact same door dimensions, position, and count
-→ The black material stops at the exact edge of the door — no bleed onto walls or adjacent surfaces
-
-For each CATEGORY B element (countertop) in IMAGE 1:
+RESKIN these (Category B — COUNTERTOP):
 → Replace ONLY the top surface and front edge with Presisso matte black material
-→ Same footprint. Same shape. Same extent. Do NOT extend countertop into areas where it did not exist.
+→ Same footprint, same shape. Do NOT extend countertop.
 
-NOTHING ELSE CHANGES. This is the complete edit.
+DO NOT RESKIN (Category C — everything else):
+- Appliances (fridge, oven, microwave, range hood, washing machine, dishwasher)
+- Sinks, faucets, plumbing
+- Walls, tiles, backsplash, paint
+- Floor, ceiling, windows, doors, lights
+- Shelves, racks, carts that are not built-in cabinets
+- The space between cabinets — do not fill gaps with new furniture
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 4 — FINAL CHECK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before outputting, verify:
+✓ Are ALL bottles removed? Scan again.
+✓ Are ALL random items on counters removed? Scan again.
+✓ Is the trash can removed or replaced? Check floor area.
+✓ Are items on top of appliances removed? Check oven top, fridge top.
+✓ Does the scene look like a PROFESSIONAL magazine photo?
+✓ Are all large appliances (fridge, oven, microwave) still present and untouched?
+✓ Is the aspect ratio preserved — same as IMAGE 1?
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ABSOLUTE PROHIBITIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-DO NOT remove ANY permanent object (washing machine, appliance, faucet, sink, fixture)
-DO NOT add ANY object that doesn't exist in IMAGE 1
+DO NOT remove the refrigerator, oven, microwave, washing machine, or any large appliance
 DO NOT add cabinets where there were none
 DO NOT extend the countertop beyond its original footprint
-DO NOT change ANY wall surface, backsplash, or tile
+DO NOT change any wall, backsplash, or tile
 DO NOT change the sink or faucet
 DO NOT change the floor or ceiling
-DO NOT move any object from its position
-DO NOT change the room lighting or exposure
-DO NOT change the camera perspective or framing
-DO NOT redesign the kitchen layout — you are ONLY changing material on existing cabinet faces and countertop surface`,
+DO NOT change the room lighting or camera perspective
+DO NOT redesign the kitchen layout`,
 };
 
 export type PromptType = keyof typeof PROMPTS;
