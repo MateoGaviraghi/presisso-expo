@@ -53,7 +53,7 @@ const STEPS = [
   {
     number: "03",
     title: "Recibí tu diseño",
-    desc: "En minutos obtenés el render de tu cocina con amoblamientos Presisso reales, directo a tu WhatsApp.",
+    desc: "En minutos obtenés el render de tu cocina con amoblamientos Presisso reales, directo a tu Correo.",
     icon: (
       <svg
         viewBox="0 0 24 24"
