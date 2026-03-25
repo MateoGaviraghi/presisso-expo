@@ -33,7 +33,7 @@ const STEPS = [
   {
     number: "02",
     title: "Elegí tu estilo",
-    desc: "Seleccioná entre la Línea Moderna o la Línea Premium de muebles Presisso.",
+    desc: "Seleccioná entre la Línea Moderna o la Línea Premium de amoblamientos Presisso.",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -53,7 +53,7 @@ const STEPS = [
   {
     number: "03",
     title: "Recibí tu diseño",
-    desc: "En minutos obtenés el render de tu cocina con muebles Presisso reales, directo a tu WhatsApp.",
+    desc: "En minutos obtenés el render de tu cocina con amoblamientos Presisso reales, directo a tu WhatsApp.",
     icon: (
       <svg
         viewBox="0 0 24 24"

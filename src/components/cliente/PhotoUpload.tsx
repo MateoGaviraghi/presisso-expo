@@ -128,7 +128,7 @@ export default function PhotoUpload({
           {/* Bottom bar */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-5">
             <p className="text-sm text-white/80 font-medium">
-              La IA va a transformar estos muebles con el estilo Presisso
+              La IA va a transformar estos amoblamientos con el estilo Presisso
             </p>
           </div>
         </div>

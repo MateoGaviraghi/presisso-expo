@@ -100,7 +100,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
           <!-- TEXTO CTA -->
           <tr>
             <td align="center" style="padding:10px 32px 28px;">
-              <p style="font-size:13px;color:${grayMid};margin:0;line-height:1.5;">&iquest;Te gust&oacute; el resultado? Visitanos en nuestro stand para ver los muebles en persona.</p>
+              <p style="font-size:13px;color:${grayMid};margin:0;line-height:1.5;">&iquest;Te gust&oacute; el resultado? Visitanos en nuestro stand para ver los amoblamientos en persona.</p>
             </td>
           </tr>
 

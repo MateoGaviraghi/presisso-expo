@@ -338,7 +338,7 @@ export default function AdminSolicitudPage() {
 
   const whatsappUrl =
     solicitud.whatsapp && solicitud.pdf_url
-      ? `https://wa.me/${solicitud.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`¡Hola ${solicitud.nombre}! 👋\n\nTu cocina con muebles *Presisso Línea ${solicitud.tipo_cocina === "moderna" ? "Moderna" : "Premium"}* ya está lista.\n\nDescargá tu diseño en PDF:\n${solicitud.pdf_url}\n\n_Presisso — Amoblamientos de diseño_`)}`
+      ? `https://wa.me/${solicitud.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`¡Hola ${solicitud.nombre}! 👋\n\nTu cocina con amoblamientos *Presisso Línea ${solicitud.tipo_cocina === "moderna" ? "Moderna" : "Premium"}* ya está lista.\n\nDescargá tu diseño en PDF:\n${solicitud.pdf_url}\n\n_Presisso — Amoblamientos de diseño_`)}`
       : null;
 
   return (

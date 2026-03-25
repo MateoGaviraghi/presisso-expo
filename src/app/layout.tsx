@@ -5,10 +5,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://presisso.vercel.app"),
   title: "Presisso — Diseñá tu cocina ideal",
   description:
-    "Visualizá cómo quedarían los muebles Presisso en tu cocina con inteligencia artificial",
+    "Visualizá cómo quedarían los amoblamientos Presisso en tu cocina con inteligencia artificial",
   openGraph: {
     title: "Presisso — Diseñá tu cocina ideal",
-    description: "Visualizá cómo quedarían los muebles Presisso en tu cocina",
+    description: "Visualizá cómo quedarían los amoblamientos Presisso en tu cocina",
     images: ["/og-image.jpg"],
   },
 };
