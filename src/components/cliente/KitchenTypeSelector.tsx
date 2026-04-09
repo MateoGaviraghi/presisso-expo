@@ -29,7 +29,7 @@ export default function KitchenTypeSelector({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         {types.map((type) => {
           const isSelected = selected === type.id;
 
@@ -45,7 +45,7 @@ export default function KitchenTypeSelector({
               }`}
             >
               {/* Image */}
-              <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-60">
+              <div className="relative h-56 overflow-hidden bg-gray-100 sm:h-72">
                 <Image
                   src={type.image}
                   fill

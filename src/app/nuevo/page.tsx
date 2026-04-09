@@ -154,7 +154,7 @@ export default function NuevoPage() {
       <StepIndicator steps={STEPS} currentStep={step} />
 
       {/* ── Content ── */}
-      <main className="mx-auto w-full max-w-lg flex-1 px-5 pt-6 pb-40 sm:px-6">
+      <main className={`mx-auto w-full flex-1 px-5 pt-6 pb-40 sm:px-6 ${step === 1 ? "max-w-3xl" : "max-w-lg"}`}>
 
         {/* Step panels */}
         {step === 0 && (
