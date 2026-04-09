@@ -29,7 +29,7 @@ export default function KitchenTypeSelector({
         </p>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         {types.map((type) => {
           const isSelected = selected === type.id;
 

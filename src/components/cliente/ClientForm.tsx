@@ -104,14 +104,21 @@ export default function ClientForm({
         </div>
 
         {/* PDF Toggle */}
-        <div
+        <label
+          htmlFor="enviar-pdf"
           className={`flex items-center justify-between rounded-2xl border-2 p-5 transition-all duration-300 cursor-pointer ${
             enviarPdf
               ? "border-presisso-red/30 bg-red-50"
               : "border-gray-100 bg-gray-50"
           }`}
-          onClick={() => onEnviarPdfChange(!enviarPdf)}
         >
+          <input
+            id="enviar-pdf"
+            type="checkbox"
+            checked={enviarPdf}
+            onChange={(e) => onEnviarPdfChange(e.target.checked)}
+            className="sr-only"
+          />
           <div className="flex items-start gap-3">
             <div className={`mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${enviarPdf ? "bg-presisso-red" : "bg-gray-200"}`}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4 text-white">
@@ -128,30 +135,19 @@ export default function ClientForm({
             </div>
           </div>
 
-          {/* Toggle switch */}
-          <label
-            aria-label="Recibir PDF por email"
-            className="ml-3 flex-shrink-0 cursor-pointer"
+          {/* Toggle switch visual */}
+          <div
+            className={`ml-3 flex-shrink-0 relative h-7 w-12 rounded-full border-2 border-transparent transition-colors duration-200 ${
+              enviarPdf ? "bg-presisso-red" : "bg-gray-200"
+            }`}
           >
-            <input
-              type="checkbox"
-              checked={enviarPdf}
-              onChange={(e) => onEnviarPdfChange(e.target.checked)}
-              className="sr-only"
-            />
-            <div
-              className={`relative h-7 w-12 rounded-full border-2 border-transparent transition-colors duration-200 ${
-                enviarPdf ? "bg-presisso-red" : "bg-gray-200"
+            <span
+              className={`absolute top-0.5 left-0.5 inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${
+                enviarPdf ? "translate-x-5" : "translate-x-0"
               }`}
-            >
-              <span
-                className={`absolute top-0.5 left-0.5 inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${
-                  enviarPdf ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </div>
-          </label>
-        </div>
+            />
+          </div>
+        </label>
 
         {/* Trust note */}
         <p className="flex items-center gap-2 text-xs text-gray-400 pt-1">
