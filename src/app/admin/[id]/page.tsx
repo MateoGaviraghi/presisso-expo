@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ESTADO_LABELS } from "@/lib/utils/constants";
@@ -115,7 +115,7 @@ export default function AdminSolicitudPage() {
   if (solicitud?.foto_original)
     lightboxImages.push({ src: solicitud.foto_original, label: "Original" });
   if (solicitud?.imagen_generada)
-    lightboxImages.push({ src: solicitud.imagen_generada, label: `Generada — ${solicitud.tipo_cocina}` });
+    lightboxImages.push({ src: solicitud.imagen_generada, label: `Generada — ${solicitud.tipo_cocina === "negro_mate" ? "Negro Mate" : solicitud.tipo_cocina}` });
 
   function showToast(msg: string, type: "ok" | "error" = "ok") {
     setToast({ msg, type });
@@ -163,26 +163,63 @@ export default function AdminSolicitudPage() {
     })();
   }, [id]);
 
-  /* Realtime */
+  /* Realtime + polling fallback */
+  const generatingRef = useRef(generating);
+  generatingRef.current = generating;
+  const generateStartRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!id) return;
+
+    // Callback reutilizable para procesar actualizaciones
+    function handleUpdate(updated: Solicitud) {
+      setSolicitud(updated);
+      setNotas(updated.notas_admin ?? "");
+      if (updated.estado === "revision" && generatingRef.current) {
+        setGenerating(false);
+        generateStartRef.current = null;
+        const timeStr = updated.tiempo_generacion_ms
+          ? ` en ${Math.round(updated.tiempo_generacion_ms / 1000)}s`
+          : "";
+        const modelStr = updated.modelo_ia ? ` (${updated.modelo_ia})` : "";
+        showToast(`Imagen generada${timeStr}${modelStr} — lista para revisión`);
+      }
+      if (updated.estado === "error" && generatingRef.current) {
+        setGenerating(false);
+        generateStartRef.current = null;
+        showToast(updated.notas_admin || "Error en la generación de imagen", "error");
+      }
+    }
+
+    // Realtime subscription
     const channel = supabase
       .channel(`solicitud-detail-${id}`)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "solicitudes", filter: `id=eq.${id}` },
-        (payload) => {
-          const updated = payload.new as Solicitud;
-          setSolicitud(updated);
-          if (updated.estado === "revision" && generating) {
-            setGenerating(false);
-            showToast("Imagen generada — lista para revisión");
-          }
-          if (updated.estado === "error") setGenerating(false);
-        },
+        (payload) => handleUpdate(payload.new as Solicitud),
       )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+
+    // Polling fallback: cada 5s mientras se está generando
+    // Solo acepta resultados si updated_at es posterior al inicio de la generación
+    const poll = setInterval(async () => {
+      if (!generatingRef.current || !generateStartRef.current) return;
+      try {
+        const res = await adminFetch(`/api/solicitudes/${id}`);
+        if (!res.ok) return;
+        const data: Solicitud = await res.json();
+        const updatedAfterStart = data.updated_at > generateStartRef.current;
+        if (updatedAfterStart && data.estado !== "generando") {
+          handleUpdate(data);
+        }
+      } catch { /* silent */ }
+    }, 5000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(poll);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, supabase]);
 
@@ -191,20 +228,20 @@ export default function AdminSolicitudPage() {
   async function handleGenerate() {
     if (!solicitud?.foto_original) return;
     setGenerating(true);
+    setError(null);
+    generateStartRef.current = new Date().toISOString();
     try {
       const res = await adminFetch("/api/admin/generar", {
         method: "POST",
         body: JSON.stringify({ solicitud_id: id }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Error en generación");
-      showToast(`Imagen generada con ${data.model} en ${Math.round(data.time_ms / 1000)}s`);
-      const updated = await adminFetch(`/api/solicitudes/${id}`);
-      if (updated.ok) setSolicitud(await updated.json());
+      if (!res.ok) throw new Error(data.error ?? "Error al iniciar generación");
+      showToast("Generación iniciada — esperá el resultado en tiempo real");
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Error al generar", "error");
-    } finally {
       setGenerating(false);
+      generateStartRef.current = null;
     }
   }
 
@@ -338,7 +375,7 @@ export default function AdminSolicitudPage() {
 
   const whatsappUrl =
     solicitud.whatsapp && solicitud.pdf_url
-      ? `https://wa.me/${solicitud.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`¡Hola ${solicitud.nombre}! 👋\n\nTu cocina con amoblamientos *Presisso Línea ${solicitud.tipo_cocina === "moderna" ? "Moderna" : "Premium"}* ya está lista.\n\nDescargá tu diseño en PDF:\n${solicitud.pdf_url}\n\n_Presisso — Amoblamientos de diseño_`)}`
+      ? `https://wa.me/${solicitud.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Hola ${solicitud.nombre}!\n\nTu cocina rediseñada con amoblamientos *Presisso Negro Mate* ya está lista.\n\nPodés descargar tu diseño en PDF desde el siguiente enlace:\n${solicitud.pdf_url}\n\nSi tenés alguna consulta, estamos a tu disposición en el stand.\n\n_Presisso — Amoblamientos de cocina_`)}`
       : null;
 
   return (
@@ -403,7 +440,7 @@ export default function AdminSolicitudPage() {
           </h1>
           <div className="flex items-center gap-2">
             <span className="rounded-md bg-presisso-gray-light px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-presisso-gray-dark">
-              {solicitud.tipo_cocina}
+              {solicitud.tipo_cocina === "negro_mate" ? "Negro Mate" : solicitud.tipo_cocina}
             </span>
             <EstadoBadge estado={solicitud.estado} />
           </div>
@@ -419,22 +456,29 @@ export default function AdminSolicitudPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-semibold text-blue-900">Generando imagen con IA</p>
-            <p className="text-xs text-blue-600">Esto puede tardar hasta 60 segundos…</p>
+            <p className="text-xs text-blue-600">
+              Procesando con Gemini — se actualiza automáticamente cuando termine.
+              {solicitud.intentos_generacion > 1 && (
+                <span className="ml-1 font-semibold">Intento #{solicitud.intentos_generacion}</span>
+              )}
+            </p>
           </div>
         </div>
       )}
       {isError && (
         <div className="flex items-center gap-3 rounded-xl border border-red-100 bg-gradient-to-r from-red-50 to-orange-50 px-5 py-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-red-100">
             <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-red-900">Error en la generación</p>
-            <p className="text-xs text-red-600">Podés reintentar desde el panel de acciones</p>
+            <p className="text-xs text-red-600 break-words">
+              {solicitud.notas_admin || "Podés reintentar desde el panel de acciones"}
+            </p>
           </div>
         </div>
       )}
@@ -479,7 +523,7 @@ export default function AdminSolicitudPage() {
                 </div>
                 <div className="group relative bg-white">
                   <div className="absolute left-3 top-3 z-10 rounded-md bg-presisso-red/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-sm">
-                    Presisso {solicitud.tipo_cocina}
+                    Presisso {solicitud.tipo_cocina === "negro_mate" ? "Negro Mate" : solicitud.tipo_cocina}
                   </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -567,7 +611,7 @@ export default function AdminSolicitudPage() {
             <div className="grid gap-px bg-presisso-border sm:grid-cols-2">
               <DataCell label="WhatsApp" value={solicitud.whatsapp} mono />
               <DataCell label="Email" value={solicitud.email ?? "—"} />
-              <DataCell label="Estilo" value={solicitud.tipo_cocina} capitalize />
+              <DataCell label="Color" value={solicitud.tipo_cocina === "negro_mate" ? "Negro Mate" : solicitud.tipo_cocina} />
               <DataCell label="PDF solicitado" value={solicitud.enviar_pdf ? "Sí" : "No"} />
               <DataCell label="Fecha" value={new Date(solicitud.created_at).toLocaleString("es-AR")} />
               <DataCell label="Estado" badge={<EstadoBadge estado={solicitud.estado} />} />

@@ -16,13 +16,13 @@ const LOGO_URL =
 interface SendEmailParams {
   to: string;
   nombre: string;
-  tipoCocina: "moderna" | "premium";
+  tipoCocina: string;
   pdfUrl: string;
   imagenUrl: string;
 }
 
 export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: SendEmailParams) {
-  const linea = tipoCocina === "moderna" ? "Moderna" : "Premium";
+  const colorLabel = tipoCocina === "negro_mate" ? "Negro Mate" : tipoCocina;
   const red = "#DF0A0A";
   const black = "#1A1A1A";
   const grayMid = "#6B6B6B";
@@ -31,7 +31,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
   const info = await transporter.sendMail({
     from: `"Presisso" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to,
-    subject: `${nombre}, tu diseño Presisso Línea ${linea} está listo`,
+    subject: `${nombre}, tu diseño Presisso ${colorLabel} está listo`,
     html: `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -59,7 +59,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="width:50%;"><img src="${LOGO_URL}" alt="presisso." width="120" style="display:block;border:0;max-width:120px;height:auto;" /></td>
-                  <td align="right" valign="middle" style="width:50%;"><span style="font-size:10px;font-weight:700;color:${red};letter-spacing:0.1em;white-space:nowrap;">L&Iacute;NEA ${linea.toUpperCase()}</span></td>
+                  <td align="right" valign="middle" style="width:50%;"><span style="font-size:10px;font-weight:700;color:${red};letter-spacing:0.1em;white-space:nowrap;">${colorLabel.toUpperCase()}</span></td>
                 </tr>
               </table>
             </td>

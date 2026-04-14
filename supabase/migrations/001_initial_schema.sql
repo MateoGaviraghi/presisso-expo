@@ -14,7 +14,7 @@ CREATE TABLE solicitudes (
   email           TEXT,
 
   -- Configuración
-  tipo_cocina     TEXT NOT NULL CHECK (tipo_cocina IN ('moderna', 'premium')),
+  tipo_cocina     TEXT NOT NULL CHECK (tipo_cocina IN ('negro_mate')),
   enviar_pdf      BOOLEAN DEFAULT true,
 
   -- Imágenes

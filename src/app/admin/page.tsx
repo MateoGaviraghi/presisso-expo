@@ -230,8 +230,8 @@ export default function AdminPage() {
                         <span className="text-presisso-gray-mid/30">—</span>
                       )}
                     </td>
-                    <td className="hidden px-5 py-3.5 text-xs capitalize text-presisso-gray-mid lg:table-cell">
-                      {s.tipo_cocina}
+                    <td className="hidden px-5 py-3.5 text-xs text-presisso-gray-mid lg:table-cell">
+                      {s.tipo_cocina === "negro_mate" ? "Negro Mate" : s.tipo_cocina}
                     </td>
                     <td className="px-5 py-3.5">
                       <EstadoBadge estado={s.estado} />
@@ -269,7 +269,7 @@ export default function AdminPage() {
                       {s.nombre}
                     </p>
                     <p className="mt-0.5 text-[11px] text-presisso-gray-mid">
-                      {s.tipo_cocina} · {timeAgo(s.created_at)}
+                      {s.tipo_cocina === "negro_mate" ? "Negro Mate" : s.tipo_cocina} · {timeAgo(s.created_at)}
                     </p>
                   </div>
                   <EstadoBadge estado={s.estado} />

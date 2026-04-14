@@ -72,8 +72,8 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
     });
   }
 
-  // Badge "LÍNEA PREMIUM" en rojo
-  const lineaLabel = solicitud.tipo_cocina === "moderna" ? "LÍNEA MODERNA" : "LÍNEA PREMIUM";
+  // Badge color en rojo
+  const lineaLabel = "NEGRO MATE";
   const badgeFontSize = 9;
   const badgeTextW = bold.widthOfTextAtSize(lineaLabel, badgeFontSize);
   page.drawText(lineaLabel, {
@@ -264,7 +264,7 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
     });
   }
 
-  const tipoLabel = solicitud.tipo_cocina === "moderna" ? "Línea Moderna" : "Línea Premium";
+  const tipoLabel = "Negro Mate";
   const tipoW = bold.widthOfTextAtSize(tipoLabel, 9);
   page.drawText(tipoLabel, {
     x: rightX - tipoW,

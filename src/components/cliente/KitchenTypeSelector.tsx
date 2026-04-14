@@ -22,14 +22,14 @@ export default function KitchenTypeSelector({
           Paso 2 de 4
         </p>
         <h2 className="font-heading text-3xl font-bold text-presisso-black sm:text-4xl leading-tight">
-          Elegí tu estilo
+          Elegí tu color
         </h2>
         <p className="mt-3 text-base leading-relaxed text-presisso-gray-mid">
-          Seleccioná el diseño Presisso que más te identifique.
+          Seleccioná el color Presisso para tus amoblamientos.
         </p>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-5 sm:grid-cols-2">
         {types.map((type) => {
           const isSelected = selected === type.id;
 
@@ -45,7 +45,7 @@ export default function KitchenTypeSelector({
               }`}
             >
               {/* Image */}
-              <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-60">
+              <div className="relative h-56 overflow-hidden bg-gray-100 sm:h-72">
                 <Image
                   src={type.image}
                   fill

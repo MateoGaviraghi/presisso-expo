@@ -5,10 +5,10 @@ import { generateWithFallback } from "@/lib/gemini/generate";
 import type { PromptType } from "@/lib/gemini/prompts";
 import { solicitudIdBody, parseBody } from "@/lib/validations/api";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
-// Safety margin: abort 5s before Vercel kills the function
-const TIMEOUT_MS = 55_000;
+// Safety margin: abort 15s before Vercel kills the function
+const TIMEOUT_MS = 285_000;
 
 export async function POST(req: NextRequest) {
   // Verificar secret interno — solo llamadas server-to-server autorizadas

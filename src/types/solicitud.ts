@@ -5,7 +5,7 @@ export type EstadoSolicitud =
   | "enviada"
   | "error";
 
-export type TipoCocina = "moderna" | "premium";
+export type TipoCocina = "negro_mate";
 
 // ── Base fields shared by all states ────────────────────────────────
 interface SolicitudBase {
@@ -100,7 +100,7 @@ export interface CreateSolicitudPayload {
   nombre: string;
   whatsapp: string;
   email?: string;
-  tipo_cocina: "moderna" | "premium";
+  tipo_cocina: "negro_mate";
   enviar_pdf: boolean;
   foto_original: string;
 }
