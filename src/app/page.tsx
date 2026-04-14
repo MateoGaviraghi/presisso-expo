@@ -32,8 +32,8 @@ const STEPS = [
   },
   {
     number: "02",
-    title: "Elegí tu estilo",
-    desc: "Seleccioná entre la Línea Moderna o la Línea Premium de amoblamientos Presisso.",
+    title: "Elegí tu color",
+    desc: "Seleccioná el color de amoblamientos Presisso para tu cocina.",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -74,7 +74,7 @@ const STEPS = [
 
 const TRUST_CHIPS = [
   "Diseño en minutos",
-  "Muebles Presisso reales",
+  "Amoblamientos Presisso reales",
   "Gratis en la Expo",
 ];
 
@@ -150,7 +150,7 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="mt-6 max-w-[20rem] text-[1.05rem] leading-[1.7] text-presisso-gray-mid sm:max-w-sm sm:text-lg">
-              Sacá una foto, elegí el estilo y recibí el diseño de tu nueva
+              Sacá una foto, elegí el color y recibí el diseño de tu nueva
               cocina en minutos.
             </p>
 

@@ -22,10 +22,10 @@ export default function KitchenTypeSelector({
           Paso 2 de 4
         </p>
         <h2 className="font-heading text-3xl font-bold text-presisso-black sm:text-4xl leading-tight">
-          Elegí tu estilo
+          Elegí tu color
         </h2>
         <p className="mt-3 text-base leading-relaxed text-presisso-gray-mid">
-          Seleccioná el diseño Presisso que más te identifique.
+          Seleccioná el color Presisso para tus amoblamientos.
         </p>
       </div>
 

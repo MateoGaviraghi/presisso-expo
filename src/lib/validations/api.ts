@@ -13,7 +13,7 @@ export const patchSolicitud = z
     estado: z
       .enum(["generando", "revision", "aprobada", "enviada", "error"])
       .optional(),
-    tipo_cocina: z.enum(["moderna", "premium"]).optional(),
+    tipo_cocina: z.enum(["negro_mate"]).optional(),
     imagen_generada: z.string().optional(),
     imagen_generada_2: z.string().nullable().optional(),
     prompt_usado: z.string().nullable().optional(),

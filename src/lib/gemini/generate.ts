@@ -18,8 +18,7 @@ export interface GenerateResult {
 type RefEntry = { base64: string; mime: string };
 
 const REFERENCE_FILES: Record<PromptType, string[]> = {
-  moderna: ["cocina-moderna-presisso.jpg"],
-  premium: [
+  negro_mate: [
     "modelo-premiun/Presisso_28022026_02.jpg",
     "modelo-premiun/Presisso_28022026_03.jpg",
     "modelo-premiun/Presisso_28022026_04.jpg",
