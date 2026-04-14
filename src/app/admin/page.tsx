@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ESTADO_LABELS } from "@/lib/utils/constants";
+import { ESTADO_LABELS, getMaterialLabel } from "@/lib/utils/constants";
 import { useSupabaseRealtime } from "@/hooks/useSupabaseRealtime";
 import { EstadoBadge } from "@/components/admin/EstadoBadge";
 import type { EstadoSolicitud } from "@/types/solicitud";
@@ -231,7 +231,7 @@ export default function AdminPage() {
                       )}
                     </td>
                     <td className="hidden px-5 py-3.5 text-xs text-presisso-gray-mid lg:table-cell">
-                      {s.tipo_cocina === "negro_mate" ? "Negro Mate" : s.tipo_cocina}
+                      {getMaterialLabel(s.tipo_cocina)}
                     </td>
                     <td className="px-5 py-3.5">
                       <EstadoBadge estado={s.estado} />
@@ -269,7 +269,7 @@ export default function AdminPage() {
                       {s.nombre}
                     </p>
                     <p className="mt-0.5 text-[11px] text-presisso-gray-mid">
-                      {s.tipo_cocina === "negro_mate" ? "Negro Mate" : s.tipo_cocina} · {timeAgo(s.created_at)}
+                      {getMaterialLabel(s.tipo_cocina)} · {timeAgo(s.created_at)}
                     </p>
                   </div>
                   <EstadoBadge estado={s.estado} />

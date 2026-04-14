@@ -1,5 +1,5 @@
 export const PROMPTS = {
-  negro_mate: `You are editing a kitchen photo for a Presisso furniture catalog. Presisso ONLY sells kitchen cabinetry — cabinet doors, drawer fronts, and countertops. Nothing else. Think of it this way: a carpenter walks in, removes the old cabinet doors and countertop, installs brand-new Presisso "Negro Mate" ones, and leaves. Everything else in the kitchen stays exactly as it was.
+  politex_negro: `You are editing a kitchen photo for a Presisso furniture catalog. Presisso ONLY sells kitchen cabinetry — cabinet doors, drawer fronts, and countertops. Nothing else. Think of it this way: a carpenter walks in, removes the old cabinet doors and countertop, installs brand-new Presisso "Politex Negro" ones, and leaves. Everything else in the kitchen stays exactly as it was.
 
 CRITICAL RULE — PRESERVE THE KITCHEN LAYOUT: The kitchen in IMAGE 1 may have a counter that extends outward into the room — a peninsula, a breakfast bar, an island, or an L-shaped / U-shaped counter extension. This is a STRUCTURAL part of the kitchen, like a wall. It MUST appear in your output with the same shape, size, and position as in IMAGE 1. You may reskin its doors and countertop surface, but the structure itself MUST NOT be removed, shrunk, or altered. Count the number of distinct counter sections in IMAGE 1 — your output must have the same number.
 
@@ -7,7 +7,7 @@ OUTPUT: The result MUST preserve the EXACT aspect ratio, orientation, framing, a
 
 IMAGES PROVIDED:
 - IMAGE 1: The client's kitchen photo — your canvas.
-- IMAGES 2+: Reference photos of Presisso "Negro Mate" installed kitchens — study the MATERIAL from these.
+- IMAGES 2+: Reference photos of Presisso "Politex Negro" installed kitchens — study the MATERIAL from these.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TASK 1 — DECLUTTER THE SCENE
@@ -30,7 +30,7 @@ Where you remove clutter, fill the space with the clean surface behind it — ma
 TASK 2 — RESKIN ONLY CABINET DOORS AND COUNTERTOP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Study the Presisso "Negro Mate" material from IMAGES 2+:
+Study the Presisso "Politex Negro" material from IMAGES 2+:
 - FINISH: Deep matte black, nano-textured micro-grain like brushed leather. Absorbs light — NOT glossy, NOT reflective, NOT shiny.
 - DOOR STYLE: Flat slab — no frames, no panels, no moldings. Pure flat rectangle.
 - HANDLES (lower cabinets): Recessed vertical channel groove on the door edge, same black, nearly invisible. Not a bar, not a knob.
@@ -66,8 +66,8 @@ Before outputting, compare your result against IMAGE 1 and verify:
 ✓ Small appliances (coffee machine, kettle, toaster) still present? They must stay.
 ✓ ALL large appliances identical to IMAGE 1? Compare the fridge — same color, same brand, same magnets. Compare the oven, microwave, range hood. Nothing changed?
 ✓ Breakfast bar / island / peninsula still present with original shape? Only the surface material changed?
-✓ No new appliance or furniture was ADDED that was not in IMAGE 1?
-✓ Cabinet doors and countertop show Presisso Negro Mate finish?
+✓ No new object was ADDED that was not in IMAGE 1? Check ceiling carefully — no fans, lights, or fixtures that weren't in the original. Check walls — no new shelves, clocks, or decorations. If you added ANYTHING not in IMAGE 1, remove it.
+✓ Cabinet doors and countertop show Presisso Politex Negro finish?
 ✓ Walls, floor, sink, backsplash, faucet — all identical to original?
 ✓ Aspect ratio matches IMAGE 1 exactly?`,
 };

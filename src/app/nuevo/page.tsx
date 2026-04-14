@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { validateImageFile } from "@/lib/utils/validators";
 import { STEPS } from "@/lib/utils/constants";
-import type { KitchenType } from "@/lib/utils/constants";
+import type { MaterialColorKey } from "@/lib/utils/constants";
 import StepIndicator from "@/components/cliente/StepIndicator";
 import PhotoUpload from "@/components/cliente/PhotoUpload";
 import KitchenTypeSelector from "@/components/cliente/KitchenTypeSelector";
@@ -23,7 +23,7 @@ export default function NuevoPage() {
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [kitchenType, setKitchenType] = useState<KitchenType | null>(null);
+  const [kitchenType, setKitchenType] = useState<MaterialColorKey | null>(null);
   const [nombre, setNombre] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");

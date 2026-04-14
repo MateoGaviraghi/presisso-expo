@@ -18,17 +18,17 @@ export interface GenerateResult {
 type RefEntry = { base64: string; mime: string };
 
 const REFERENCE_FILES: Record<PromptType, string[]> = {
-  negro_mate: [
-    "modelo-premiun/Presisso_28022026_02.jpg",
-    "modelo-premiun/Presisso_28022026_03.jpg",
-    "modelo-premiun/Presisso_28022026_04.jpg",
-    "modelo-premiun/Presisso_28022026_05.jpg",
-    "modelo-premiun/Presisso_28022026_06.jpg",
-    "modelo-premiun/Presisso_28022026_07.jpg",
-    "modelo-premiun/Presisso_28022026_08.jpg",
-    "modelo-premiun/Presisso_28022026_10.jpg",
-    "modelo-premiun/Presisso_28022026_12.jpg",
-    "modelo-premiun/Presisso_28022026_13.jpg",
+  politex_negro: [
+    "Politex - Negro/Presisso_28022026_02.jpg",
+    "Politex - Negro/Presisso_28022026_03.jpg",
+    "Politex - Negro/Presisso_28022026_04.jpg",
+    "Politex - Negro/Presisso_28022026_05.jpg",
+    "Politex - Negro/Presisso_28022026_06.jpg",
+    "Politex - Negro/Presisso_28022026_07.jpg",
+    "Politex - Negro/Presisso_28022026_08.jpg",
+    "Politex - Negro/Presisso_28022026_10.jpg",
+    "Politex - Negro/Presisso_28022026_12.jpg",
+    "Politex - Negro/Presisso_28022026_13.jpg",
   ],
 };
 

@@ -32,8 +32,8 @@ const STEPS = [
   },
   {
     number: "02",
-    title: "Elegí tu color",
-    desc: "Seleccioná el color de amoblamientos Presisso para tu cocina.",
+    title: "Elegí tu material",
+    desc: "Seleccioná el material y color de amoblamientos Presisso para tu cocina.",
     icon: (
       <svg
         viewBox="0 0 24 24"

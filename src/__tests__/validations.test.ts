@@ -108,7 +108,7 @@ describe("clientFormSchema", () => {
     const result = clientFormSchema.safeParse({
       nombre: "Juan Pérez",
       email: "juan@test.com",
-      tipo_cocina: "negro_mate",
+      tipo_cocina: "politex_negro",
       enviar_pdf: true,
     });
     expect(result.success).toBe(true);
@@ -118,7 +118,7 @@ describe("clientFormSchema", () => {
     const result = clientFormSchema.safeParse({
       nombre: "J",
       email: "juan@test.com",
-      tipo_cocina: "negro_mate",
+      tipo_cocina: "politex_negro",
       enviar_pdf: true,
     });
     expect(result.success).toBe(false);
@@ -128,7 +128,7 @@ describe("clientFormSchema", () => {
     const result = clientFormSchema.safeParse({
       nombre: "Juan",
       email: "not-email",
-      tipo_cocina: "negro_mate",
+      tipo_cocina: "politex_negro",
       enviar_pdf: true,
     });
     expect(result.success).toBe(false);
