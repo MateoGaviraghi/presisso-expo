@@ -2,7 +2,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
-import { PROMPTS, DESIGN_PROMPTS, CLEAN_PROMPT, PromptType } from "./prompts";
+import { PROMPTS, type PromptType } from "./prompts-rediseno";
+import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
 export type ModoSolicitud = "rediseno" | "diseno";
 
@@ -31,19 +32,23 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-negro/Presisso_28022026_13.jpg",
   ],
   melamina_litio: [
-    "melamina-litio/MPucci_Presisso_20210323_081.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_082.jpg",
     "melamina-litio/MPucci_Presisso_20210323_009.jpg",
     "melamina-litio/MPucci_Presisso_20210323_036__.jpg",
     "melamina-litio/MPucci_Presisso_20210323_070.jpg",
-    "melamina-litio/MPucci_Presisso_20210323_082.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_085.jpg",
   ],
   politex_gris_grafito: [
-    "politex-gris-grafito/IMG_7552-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
+    "politex-gris-grafito/IMG_7552-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7554.jpg.jpg",
     "politex-gris-grafito/IMG_7555.jpg.jpg",
     "politex-gris-grafito/IMG_7571-Pano.jpg 2.jpg",
     "politex-gris-grafito/Cocinas mayo 233.png",
+    // Close-ups showing countertop stone texture (different from cabinet color)
+    "politex-gris-grafito/Screenshot 2026-04-15 181648.png",
+    "politex-gris-grafito/Screenshot 2026-04-15 181657.png",
+    "politex-gris-grafito/Screenshot 2026-04-15 181705.png",
   ],
   melamina_grafito_scotch: [
     "melamina-grafito-scotch/DSC05054.jpg",
