@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
-import { PROMPTS, DESIGN_PROMPTS, PromptType } from "./prompts";
+import { PROMPTS, DESIGN_PROMPTS, CLEAN_PROMPT, PromptType } from "./prompts";
 
 export type ModoSolicitud = "rediseno" | "diseno";
 
@@ -42,6 +42,7 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7554.jpg.jpg",
     "politex-gris-grafito/IMG_7555.jpg.jpg",
+    "politex-gris-grafito/IMG_7571-Pano.jpg 2.jpg",
     "politex-gris-grafito/Cocinas mayo 233.png",
   ],
   melamina_grafito_scotch: [
@@ -77,6 +78,67 @@ function loadReferences(tipo: PromptType): RefEntry[] {
 
 type InlinePart = { inlineData?: { data?: string; mimeType?: string } };
 
+/* ── Helper: single Gemini call ── */
+
+async function callGemini(
+  model: string,
+  parts: { inlineData?: { mimeType: string; data: string }; text?: string }[],
+): Promise<string> {
+  const response = await genAI.models.generateContent({
+    model,
+    contents: [{ role: "user", parts }],
+    config: { responseModalities: ["image", "text"] },
+  });
+
+  const responseParts = response.candidates?.[0]?.content?.parts as
+    | InlinePart[]
+    | undefined;
+  const imagePart = responseParts?.find((p) => p.inlineData?.data);
+
+  if (!imagePart?.inlineData?.data) {
+    throw new Error("Gemini no devolvió imagen en la respuesta");
+  }
+  return imagePart.inlineData.data;
+}
+
+/* ── Build dimension note from image buffer ── */
+
+function buildDimensionNote(buf: Buffer): string {
+  try {
+    const dims = imageSize(buf);
+    if (dims.width && dims.height) {
+      const orientation =
+        dims.width > dims.height
+          ? "LANDSCAPE"
+          : dims.width < dims.height
+            ? "PORTRAIT"
+            : "SQUARE";
+      console.log(
+        `[Gemini] Foto cliente: ${dims.width}x${dims.height} (${orientation})`,
+      );
+      return `\n\n⚠️ MANDATORY OUTPUT DIMENSIONS: IMAGE 1 is ${dims.width}x${dims.height}px (${orientation}). Your output MUST be EXACTLY ${dims.width}x${dims.height}px — same ${orientation} orientation, same aspect ratio. Do NOT crop, zoom, rotate, or change framing.`;
+    }
+  } catch {
+    console.warn("[Gemini] No se pudo detectar dimensiones de la imagen");
+  }
+  return "";
+}
+
+/* ── Download client photo ── */
+
+async function downloadClientPhoto(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Error descargando foto del cliente: ${res.status}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  return {
+    base64: buf.toString("base64"),
+    mime: res.headers.get("content-type") || "image/jpeg",
+    buffer: buf,
+  };
+}
+
+/* ── Main generation (supports 1-step rediseño and 2-step diseño) ── */
+
 async function generateKitchenImage(
   fotoOriginalUrl: string,
   tipoCocina: PromptType,
@@ -86,79 +148,54 @@ async function generateKitchenImage(
   const startTime = Date.now();
 
   // 1. Descargar foto del cliente
-  const clientRes = await fetch(fotoOriginalUrl);
-  if (!clientRes.ok) {
-    throw new Error(`Error descargando foto del cliente: ${clientRes.status}`);
-  }
-  const clientBuffer = await clientRes.arrayBuffer();
-  const clientBuf = Buffer.from(clientBuffer);
-  const clientBase64 = clientBuf.toString("base64");
-  const clientMime = clientRes.headers.get("content-type") || "image/jpeg";
-
-  // 1b. Detectar dimensiones y orientación de la foto del cliente
-  let dimensionNote = "";
-  try {
-    const dims = imageSize(clientBuf);
-    if (dims.width && dims.height) {
-      const orientation =
-        dims.width > dims.height
-          ? "LANDSCAPE"
-          : dims.width < dims.height
-            ? "PORTRAIT"
-            : "SQUARE";
-      dimensionNote = `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️ MANDATORY OUTPUT DIMENSIONS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nIMAGE 1 is ${dims.width}x${dims.height}px (${orientation}).\nYour output image MUST be EXACTLY ${dims.width}x${dims.height}px — same ${orientation} orientation, same aspect ratio.\n- Do NOT crop any part of the scene. Every edge of IMAGE 1 (left, right, top, bottom) must appear in your output.\n- Do NOT zoom in. The fridge on one side and the stove/oven on the other side must both be fully visible if they are in IMAGE 1.\n- Do NOT rotate or change orientation.\n- The output must show the COMPLETE kitchen scene from wall to wall, exactly as framed in IMAGE 1.`;
-      console.log(
-        `[Gemini] Foto cliente: ${dims.width}x${dims.height} (${orientation})`,
-      );
-    }
-  } catch {
-    console.warn("[Gemini] No se pudo detectar dimensiones de la imagen");
-  }
+  const client = await downloadClientPhoto(fotoOriginalUrl);
+  const dimensionNote = buildDimensionNote(client.buffer);
+  const clientPart = { inlineData: { mimeType: client.mime, data: client.base64 } };
 
   // 2. Referencias Presisso (cacheadas)
   const refs = loadReferences(tipoCocina);
+  const refParts = refs.map((r) => ({ inlineData: { mimeType: r.mime, data: r.base64 } }));
 
-  // 3. Armar parts: foto cliente + todas las referencias + prompt con dimensiones
-  const basePrompt = modo === "diseno" ? DESIGN_PROMPTS[tipoCocina] : PROMPTS[tipoCocina];
-  const promptWithDimensions = basePrompt + dimensionNote;
+  let imageBase64: string;
+  let promptUsed: string;
 
-  const parts: {
-    inlineData?: { mimeType: string; data: string };
-    text?: string;
-  }[] = [
-    { inlineData: { mimeType: clientMime, data: clientBase64 } },
-    ...refs.map((r) => ({ inlineData: { mimeType: r.mime, data: r.base64 } })),
-    { text: promptWithDimensions },
-  ];
+  if (modo === "diseno") {
+    // ── DESIGN MODE: 2-step process ──
+    // Step 1: Clean the photo (no refs needed — just the photo + clean prompt)
+    console.log(`[Gemini] Diseño paso 1/2: limpiando foto con ${model}...`);
+    const cleanPrompt = CLEAN_PROMPT + dimensionNote;
+    const cleanedBase64 = await callGemini(model, [
+      clientPart,
+      { text: cleanPrompt },
+    ]);
+    console.log(`[Gemini] Paso 1 completado — foto limpia obtenida`);
 
-  // 4. Llamar a Gemini con foto del cliente + referencias + prompt
-  const response = await genAI.models.generateContent({
-    model,
-    contents: [
-      {
-        role: "user",
-        parts,
-      },
-    ],
-    config: {
-      responseModalities: ["image", "text"],
-    },
-  });
-
-  // 5. Extraer imagen generada
-  const responseParts = response.candidates?.[0]?.content?.parts as
-    | InlinePart[]
-    | undefined;
-  const imagePart = responseParts?.find((p) => p.inlineData?.data);
-
-  if (!imagePart?.inlineData?.data) {
-    throw new Error("Gemini no devolvió imagen en la respuesta");
+    // Step 2: Insert furniture into the CLEANED photo
+    console.log(`[Gemini] Diseño paso 2/2: insertando muebles con ${model}...`);
+    const cleanedPart = { inlineData: { mimeType: "image/png", data: cleanedBase64 } };
+    const designPrompt = DESIGN_PROMPTS[tipoCocina] + dimensionNote;
+    imageBase64 = await callGemini(model, [
+      cleanedPart,
+      ...refParts,
+      cleanedPart,
+      { text: designPrompt },
+    ]);
+    promptUsed = `[2-step] CLEAN + ${designPrompt.substring(0, 400)}`;
+  } else {
+    // ── REDESIGN MODE: 1-step (existing flow) ──
+    const redesignPrompt = PROMPTS[tipoCocina] + dimensionNote;
+    imageBase64 = await callGemini(model, [
+      clientPart,
+      ...refParts,
+      { text: redesignPrompt },
+    ]);
+    promptUsed = redesignPrompt.substring(0, 500);
   }
 
   return {
     success: true,
-    imageBase64: imagePart.inlineData.data,
-    promptUsed: promptWithDimensions.substring(0, 500),
+    imageBase64,
+    promptUsed,
     model,
     timeMs: Date.now() - startTime,
   };
