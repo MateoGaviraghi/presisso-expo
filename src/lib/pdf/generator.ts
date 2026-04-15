@@ -3,7 +3,12 @@ import fs from "fs";
 import path from "path";
 import type { Solicitud } from "@/types/solicitud";
 
-const MATERIAL_LABELS: Record<string, string> = { politex_negro: "Politex Negro" };
+const MATERIAL_LABELS: Record<string, string> = {
+  politex_negro: "Politex Negro",
+  melamina_litio: "Melamina Litio",
+  politex_gris_grafito: "Politex Gris Grafito",
+  melamina_grafito_scotch: "Melamina Grafito Scotch",
+};
 
 /* ── Colores de marca Presisso (escala 0–1) ── */
 const RED = rgb(223 / 255, 10 / 255, 10 / 255); // #DF0A0A

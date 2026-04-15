@@ -5,7 +5,11 @@ export type EstadoSolicitud =
   | "enviada"
   | "error";
 
-export type MaterialColor = "politex_negro";
+export type MaterialColor =
+  | "politex_negro"
+  | "melamina_litio"
+  | "politex_gris_grafito"
+  | "melamina_grafito_scotch";
 
 // ── Base fields shared by all states ────────────────────────────────
 interface SolicitudBase {
