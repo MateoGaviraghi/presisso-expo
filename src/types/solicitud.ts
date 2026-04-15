@@ -5,7 +5,11 @@ export type EstadoSolicitud =
   | "enviada"
   | "error";
 
-export type TipoCocina = "negro_mate";
+export type MaterialColor =
+  | "politex_negro"
+  | "melamina_litio"
+  | "politex_gris_grafito"
+  | "melamina_grafito_scotch";
 
 // ── Base fields shared by all states ────────────────────────────────
 interface SolicitudBase {
@@ -15,7 +19,7 @@ interface SolicitudBase {
   nombre: string;
   whatsapp: string;
   email: string | null;
-  tipo_cocina: TipoCocina;
+  tipo_cocina: MaterialColor;
   enviar_pdf: boolean;
   foto_original: string;
   imagen_generada_2: string | null;
@@ -100,7 +104,7 @@ export interface CreateSolicitudPayload {
   nombre: string;
   whatsapp: string;
   email?: string;
-  tipo_cocina: "negro_mate";
+  tipo_cocina: MaterialColor;
   enviar_pdf: boolean;
   foto_original: string;
 }

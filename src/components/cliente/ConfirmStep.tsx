@@ -1,11 +1,11 @@
 "use client";
 
-import { KITCHEN_TYPES } from "@/lib/utils/constants";
-import type { KitchenType } from "@/lib/utils/constants";
+import { MATERIAL_OPTIONS } from "@/lib/utils/constants";
+import type { MaterialColorKey } from "@/lib/utils/constants";
 
 interface ConfirmStepProps {
   photoPreview: string;
-  kitchenType: KitchenType;
+  kitchenType: MaterialColorKey;
   nombre: string;
   whatsapp: string;
   email: string;
@@ -20,7 +20,7 @@ export default function ConfirmStep({
   email,
   enviarPdf,
 }: ConfirmStepProps) {
-  const kitchen = KITCHEN_TYPES[kitchenType];
+  const kitchen = MATERIAL_OPTIONS[kitchenType];
 
   return (
     <div>
@@ -64,7 +64,7 @@ export default function ConfirmStep({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
               </svg>
             }
-            label="Color elegido"
+            label="Material elegido"
             value={kitchen.label}
             highlight
           />

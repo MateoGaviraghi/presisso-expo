@@ -18,17 +18,39 @@ export interface GenerateResult {
 type RefEntry = { base64: string; mime: string };
 
 const REFERENCE_FILES: Record<PromptType, string[]> = {
-  negro_mate: [
-    "modelo-premiun/Presisso_28022026_02.jpg",
-    "modelo-premiun/Presisso_28022026_03.jpg",
-    "modelo-premiun/Presisso_28022026_04.jpg",
-    "modelo-premiun/Presisso_28022026_05.jpg",
-    "modelo-premiun/Presisso_28022026_06.jpg",
-    "modelo-premiun/Presisso_28022026_07.jpg",
-    "modelo-premiun/Presisso_28022026_08.jpg",
-    "modelo-premiun/Presisso_28022026_10.jpg",
-    "modelo-premiun/Presisso_28022026_12.jpg",
-    "modelo-premiun/Presisso_28022026_13.jpg",
+  politex_negro: [
+    "politex-negro/Presisso_28022026_12.jpg",
+    "politex-negro/Presisso_28022026_03.jpg",
+    "politex-negro/Presisso_28022026_04.jpg",
+    "politex-negro/Presisso_28022026_05.jpg",
+    "politex-negro/Presisso_28022026_06.jpg",
+    "politex-negro/Presisso_28022026_08.jpg",
+    "politex-negro/Presisso_28022026_10.jpg",
+    "politex-negro/Presisso_28022026_13.jpg",
+  ],
+  melamina_litio: [
+    "melamina-litio/MPucci_Presisso_20210323_081.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_009.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_036__.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_070.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_082.jpg",
+  ],
+  politex_gris_grafito: [
+    "politex-gris-grafito/IMG_7552-Pano.jpg.jpg",
+    "politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
+    "politex-gris-grafito/IMG_7554.jpg.jpg",
+    "politex-gris-grafito/IMG_7555.jpg.jpg",
+    "politex-gris-grafito/Cocinas mayo 233.png",
+  ],
+  melamina_grafito_scotch: [
+    "melamina-grafito-scotch/DSC05054.jpg",
+    "melamina-grafito-scotch/DSC05162.jpg",
+    "melamina-grafito-scotch/DSC05029.jpg",
+    "melamina-grafito-scotch/DSC05114.jpg",
+    "melamina-grafito-scotch/DSC05058.jpg",
+    "melamina-grafito-scotch/DSC05077.jpg",
+    "melamina-grafito-scotch/DSC05080.jpg",
+    "melamina-grafito-scotch/DSC05089.jpg",
   ],
 };
 
@@ -81,7 +103,7 @@ async function generateKitchenImage(
           : dims.width < dims.height
             ? "PORTRAIT"
             : "SQUARE";
-      dimensionNote = `\n\nIMAGE 1 DIMENSIONS: ${dims.width}x${dims.height}px — ${orientation}.\nYour output MUST be ${orientation} with the EXACT same aspect ratio (${dims.width}:${dims.height}). Do NOT crop, rotate, or change orientation under any circumstance.`;
+      dimensionNote = `\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️ MANDATORY OUTPUT DIMENSIONS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nIMAGE 1 is ${dims.width}x${dims.height}px (${orientation}).\nYour output image MUST be EXACTLY ${dims.width}x${dims.height}px — same ${orientation} orientation, same aspect ratio.\n- Do NOT crop any part of the scene. Every edge of IMAGE 1 (left, right, top, bottom) must appear in your output.\n- Do NOT zoom in. The fridge on one side and the stove/oven on the other side must both be fully visible if they are in IMAGE 1.\n- Do NOT rotate or change orientation.\n- The output must show the COMPLETE kitchen scene from wall to wall, exactly as framed in IMAGE 1.`;
       console.log(
         `[Gemini] Foto cliente: ${dims.width}x${dims.height} (${orientation})`,
       );

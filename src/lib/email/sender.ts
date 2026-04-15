@@ -22,7 +22,13 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: SendEmailParams) {
-  const colorLabel = tipoCocina === "negro_mate" ? "Negro Mate" : tipoCocina;
+  const MATERIAL_LABELS: Record<string, string> = {
+    politex_negro: "Politex Negro",
+    melamina_litio: "Melamina Litio",
+    politex_gris_grafito: "Politex Gris Grafito",
+    melamina_grafito_scotch: "Melamina Grafito Scotch",
+  };
+  const colorLabel = MATERIAL_LABELS[tipoCocina] ?? tipoCocina;
   const red = "#DF0A0A";
   const black = "#1A1A1A";
   const grayMid = "#6B6B6B";

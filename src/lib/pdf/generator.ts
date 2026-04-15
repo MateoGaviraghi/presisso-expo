@@ -3,6 +3,13 @@ import fs from "fs";
 import path from "path";
 import type { Solicitud } from "@/types/solicitud";
 
+const MATERIAL_LABELS: Record<string, string> = {
+  politex_negro: "Politex Negro",
+  melamina_litio: "Melamina Litio",
+  politex_gris_grafito: "Politex Gris Grafito",
+  melamina_grafito_scotch: "Melamina Grafito Scotch",
+};
+
 /* ── Colores de marca Presisso (escala 0–1) ── */
 const RED = rgb(223 / 255, 10 / 255, 10 / 255); // #DF0A0A
 const BLACK = rgb(26 / 255, 26 / 255, 26 / 255); // #1A1A1A
@@ -73,7 +80,7 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
   }
 
   // Badge color en rojo
-  const lineaLabel = "NEGRO MATE";
+  const lineaLabel = (MATERIAL_LABELS[solicitud.tipo_cocina] ?? solicitud.tipo_cocina).toUpperCase();
   const badgeFontSize = 9;
   const badgeTextW = bold.widthOfTextAtSize(lineaLabel, badgeFontSize);
   page.drawText(lineaLabel, {
@@ -264,7 +271,7 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
     });
   }
 
-  const tipoLabel = "Negro Mate";
+  const tipoLabel = MATERIAL_LABELS[solicitud.tipo_cocina] ?? solicitud.tipo_cocina;
   const tipoW = bold.widthOfTextAtSize(tipoLabel, 9);
   page.drawText(tipoLabel, {
     x: rightX - tipoW,

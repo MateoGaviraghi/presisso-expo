@@ -1,19 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { KITCHEN_TYPES } from "@/lib/utils/constants";
-import type { KitchenType } from "@/lib/utils/constants";
+import { MATERIAL_OPTIONS } from "@/lib/utils/constants";
+import type { MaterialColorKey } from "@/lib/utils/constants";
 
 interface KitchenTypeSelectorProps {
-  selected: KitchenType | null;
-  onSelect: (type: KitchenType) => void;
+  selected: MaterialColorKey | null;
+  onSelect: (type: MaterialColorKey) => void;
 }
 
 export default function KitchenTypeSelector({
   selected,
   onSelect,
 }: KitchenTypeSelectorProps) {
-  const types = Object.values(KITCHEN_TYPES);
+  const types = Object.values(MATERIAL_OPTIONS);
 
   return (
     <div>
@@ -22,10 +22,10 @@ export default function KitchenTypeSelector({
           Paso 2 de 4
         </p>
         <h2 className="font-heading text-3xl font-bold text-presisso-black sm:text-4xl leading-tight">
-          Elegí tu color
+          Elegí tu material
         </h2>
         <p className="mt-3 text-base leading-relaxed text-presisso-gray-mid">
-          Seleccioná el color Presisso para tus amoblamientos.
+          Seleccioná el material y color Presisso para tus amoblamientos.
         </p>
       </div>
 
@@ -37,7 +37,7 @@ export default function KitchenTypeSelector({
             <button
               type="button"
               key={type.id}
-              onClick={() => onSelect(type.id as KitchenType)}
+              onClick={() => onSelect(type.id as MaterialColorKey)}
               className={`group w-full overflow-hidden rounded-2xl border-2 text-left transition-all duration-300 active:scale-[0.99] ${
                 isSelected
                   ? "border-presisso-red shadow-[0_0_0_4px_rgba(212,43,43,0.12)]"
