@@ -120,51 +120,64 @@ Before outputting, compare your result against IMAGE 1 and verify:
 ✓ Aspect ratio matches IMAGE 1 exactly?`;
 }
 
-/* ── Prompt template for DESIGN mode (empty kitchen) ────────────────── */
+/* ── Step 1 prompt: CLEAN the photo (no furniture changes) ──────────── */
+
+export const CLEAN_PROMPT = `Edit this image. Clean this kitchen photo for a professional photoshoot. Preserve layout, keep perspective, retain structure. Same dimensions, same aspect ratio, same orientation.
+
+REMOVE: All construction debris, clutter, and temporary objects — rolled carpets, tools, bicycle parts, wheelbarrows, bags, loose items on counters and floor. Fill those areas with the clean surface behind them.
+
+CLEAN ALL WALLS: Every wall in the image — back wall, side walls, corners, ceiling. If tiles exist, make them look clean and uniform (same color, no stains). If walls are damaged, peeling, or bare concrete, give them a fresh smooth painted finish in soft white or warm cream. The ceiling should look clean.
+
+KEEP: The floor exactly as-is (just clean). All doors, windows, and structural openings exactly where they are. Any existing cabinets, countertops, sinks, or appliances — keep them in place, unchanged. The room layout does not change.
+
+OUTPUT: The same photo, cleaned and ready for a kitchen installation photoshoot. Same room, same framing, no new objects added.`;
+
+/* ── Step 2 prompt: INSERT furniture into the cleaned photo ─────────── */
 
 function buildDesignPrompt(mat: MaterialDef): string {
-  return `Edit this image. Insert Presisso "${mat.name}" kitchen furniture into this EXACT photo.
+  return `Edit this image. Preserve layout, keep perspective, retain structure. Insert Presisso "${mat.name}" kitchen furniture into this clean room.
 
-CRITICAL: You are NOT generating a new image. You are EDITING IMAGE 1. Every pixel of the room that is not a cabinet, countertop, or backsplash area must remain IDENTICAL — same room, same walls, same floor, same perspective, same camera angle, same doors, same windows, same dimensions. If you compare your output with IMAGE 1, the room structure must match perfectly. Only the furniture changes.
+BEFORE EDITING — ANALYZE IMAGE 1:
+Look at IMAGE 1. What is the kitchen layout? (linear? L-shaped? U-shaped?) Where are walls, doors, windows, existing cabinets? This layout is FIXED — do not change it.
 
-IMAGE 1: The client's kitchen — your base photo. Do not change this room.
-IMAGES 2+: Presisso "${mat.name}" reference — copy the material finish and cabinet style from these photos.
+⚠️ DO NOT:
+- Generate a new room or change the layout
+- Change image dimensions, aspect ratio, orientation, or camera angle
+- Add an island, peninsula, L-extension, or any structure NOT in IMAGE 1
+- Move, resize, or remove doors, windows, or walls
+- Place cabinets over or in front of any window
+- Invent pipes, tubes, or structural elements not in IMAGE 1
+- Add decorative items (no plants, vases, fruit, stools)
+- Crop, zoom, or reframe
 
-STEP 1 — CLEAN THE PHOTO:
-Remove construction debris and clutter from IMAGE 1: rolled carpets, tools, bicycle parts, loose objects on counters and floor. Fill those areas with the clean wall/floor surface behind them. Clean up wall imperfections — keep the same wall color and tile pattern, just make them look freshly maintained. A subtle complementary wall color is acceptable where walls are visibly unfinished (bare concrete, peeling paint). The floor stays exactly as-is.
+IMAGES:
+- IMAGE 1 (first): Client's clean kitchen — edit this room. Do not change its structure.
+- MIDDLE: Presisso "${mat.name}" kitchens — copy ONLY material finish and door style. Do NOT copy their layout.
+- LAST: Client's kitchen again — confirms framing and dimensions.
 
-STEP 2 — RESKIN EXISTING CABINETS:
-If IMAGE 1 already has lower cabinets and/or a countertop, they stay in their EXACT position, size, and shape. Only change the surface:
-- Replace door fronts with Presisso "${mat.name}" flat slab doors. FINISH: ${mat.finish}
-- Replace countertop surface with matching material. Straight square edge, ~35-40mm thick.
-- Lower cabinet handles: recessed vertical channel groove, same color as door.
+STEP 1 — RESKIN EXISTING CABINETS (if any):
+Keep EXACT position, shape, count. Change ONLY surfaces:
+- Door fronts → "${mat.name}" flat slab. ${mat.finish}
+- Countertop → same material, straight square edge, ~35mm thick.
+- Lower handles: recessed vertical groove, same color as door.
 
-STEP 3 — INSERT UPPER CABINETS:
-If there are no upper cabinets in IMAGE 1, insert them on the wall above the existing countertop:
-- ~55cm gap between countertop and bottom of upper cabinets.
-- Same "${mat.name}" flat slab finish. No handles (push-to-open).
-- They must align with the lower cabinets below — same width coverage.
-- Do NOT place over windows or doors.
-- Insert a backsplash panel (same "${mat.name}" material) covering ONLY the wall strip between countertop and upper cabinets. Wall above and beside cabinets stays as the original wall.
+STEP 2 — ADD UPPER CABINETS:
+Mount above countertop ONLY on clear wall (no windows, no doors):
+- ~55cm gap. Same "${mat.name}" flat slab, no handles.
+- Align above lower cabinets. STOP before any window.
+- Backsplash: only the strip between countertop and uppers.
 
-STEP 4 — INSERT APPLIANCES (only what fits):
-Look at the ACTUAL available space in IMAGE 1. Only insert appliances that physically fit:
-- COOKTOP: Black induction, flush in countertop. Only if there is counter space for it.
-- RANGE HOOD: Slim, dark, above the cooktop. Only if there is wall space.
-- SMALL OVEN or MICROWAVE: Built into the cabinet run. Only if there is a gap or space for it.
-- SMALL COUNTER APPLIANCES: A coffee machine, kettle, or toaster on the countertop — 1 or 2 items max.
-- REFRIGERATOR: Only if IMAGE 1 has a clearly open area at one end large enough for a fridge. If the space is narrow or there is no room, do NOT add a fridge.
-- If an appliance already exists in IMAGE 1, keep it exactly where it is.
-- Do NOT force any appliance into a space where it does not fit. Leave gaps around appliances — a real kitchen has breathing room.
+STEP 3 — ADD APPLIANCES (important — a finished kitchen needs these):
+Place these on the countertop: a black induction cooktop (flush-mounted), a coffee machine, and an electric kettle or toaster.
+Mount a slim dark range hood on the wall above the cooktop.
+Place a modern stainless steel refrigerator at one end of the cabinet run if there is open floor space for it.
+If there is cabinet space, add a small built-in oven.
+Keep any appliance already in IMAGE 1 exactly as-is.
 
-STEP 5 — PHOTOREALISM:
-- Lighting on new elements must match IMAGE 1's existing light sources and direction.
-- New cabinets cast realistic shadows on walls and floor.
-- Cabinets sit flush on the existing floor and against existing walls.
-- All new edges follow IMAGE 1's exact perspective and vanishing points.
-- The result should look like a real photograph of a finished kitchen, not a 3D render.
+STEP 4 — PHOTOREALISM:
+Match IMAGE 1 lighting. Realistic shadows. Flush against walls and floor. Follow room's vanishing points.
 
-REMEMBER: IMAGE 1 is the base. You are inserting furniture INTO it, like placing furniture in an architectural floor plan. The room does not change. The camera does not move. Only furniture and appliances are added or reskinned.`;
+OUTPUT: The SAME photo, same room, same layout, same dimensions — with Presisso "${mat.name}" furniture inserted. This is the same photograph, edited.`;
 }
 
 /* ── Export generated prompts ───────────────────────────────────────── */
