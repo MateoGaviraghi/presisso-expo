@@ -5,6 +5,7 @@ import { validateImageFile } from "@/lib/utils/validators";
 import { STEPS } from "@/lib/utils/constants";
 import type { MaterialColorKey } from "@/lib/utils/constants";
 import StepIndicator from "@/components/cliente/StepIndicator";
+import ModeSelector from "@/components/cliente/ModeSelector";
 import PhotoUpload from "@/components/cliente/PhotoUpload";
 import KitchenTypeSelector from "@/components/cliente/KitchenTypeSelector";
 import ClientForm from "@/components/cliente/ClientForm";
@@ -12,6 +13,7 @@ import ConfirmStep from "@/components/cliente/ConfirmStep";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import type { ModoSolicitud } from "@/types/solicitud";
 
 export default function NuevoPage() {
   const router = useRouter();
@@ -21,6 +23,7 @@ export default function NuevoPage() {
   const [loadingMsg, setLoadingMsg] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const [modo, setModo] = useState<ModoSolicitud | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [kitchenType, setKitchenType] = useState<MaterialColorKey | null>(null);
@@ -41,7 +44,7 @@ export default function NuevoPage() {
   }
 
   async function handleSubmit() {
-    if (!photoFile || !kitchenType) return;
+    if (!photoFile || !kitchenType || !modo) return;
 
     setLoading(true);
     setLoadingMsg("Subiendo foto…");
@@ -74,6 +77,7 @@ export default function NuevoPage() {
           whatsapp,
           email: email || undefined,
           tipo_cocina: kitchenType,
+          modo,
           enviar_pdf: enviarPdf,
           foto_original: fotoUrl,
         }),
@@ -100,19 +104,22 @@ export default function NuevoPage() {
     }
   }
 
+  const LAST_STEP = STEPS.length - 1;
+
   function canNext(): boolean {
     switch (step) {
-      case 0: return !!photoFile;
-      case 1: return !!kitchenType;
-      case 2: return nombre.length > 1 && email.includes("@");
-      case 3: return true;
+      case 0: return !!modo;
+      case 1: return !!photoFile;
+      case 2: return !!kitchenType;
+      case 3: return nombre.length > 1 && email.includes("@");
+      case 4: return true;
       default: return false;
     }
   }
 
   function handleNext() {
     setError(null);
-    if (step < 3) {
+    if (step < LAST_STEP) {
       setStep(step + 1);
     } else {
       handleSubmit();
@@ -121,7 +128,7 @@ export default function NuevoPage() {
 
   const ctaLabel = loading
     ? "Enviando..."
-    : step === 3
+    : step === LAST_STEP
       ? "Enviar solicitud"
       : "Continuar";
 
@@ -154,23 +161,29 @@ export default function NuevoPage() {
       <StepIndicator steps={STEPS} currentStep={step} />
 
       {/* ── Content ── */}
-      <main className={`mx-auto w-full flex-1 px-5 pt-6 pb-40 sm:px-6 ${step === 1 ? "max-w-3xl" : "max-w-lg"}`}>
+      <main className={`mx-auto w-full flex-1 px-5 pt-6 pb-40 sm:px-6 ${step === 2 ? "max-w-3xl" : "max-w-lg"}`}>
 
         {/* Step panels */}
         {step === 0 && (
+          <ModeSelector
+            selected={modo}
+            onSelect={setModo}
+          />
+        )}
+        {step === 1 && (
           <PhotoUpload
             preview={photoPreview}
             onSelect={handlePhotoSelect}
             onRemove={() => { setPhotoFile(null); setPhotoPreview(null); }}
           />
         )}
-        {step === 1 && (
+        {step === 2 && (
           <KitchenTypeSelector
             selected={kitchenType}
             onSelect={setKitchenType}
           />
         )}
-        {step === 2 && (
+        {step === 3 && (
           <ClientForm
             nombre={nombre}
             whatsapp={whatsapp}
@@ -182,10 +195,11 @@ export default function NuevoPage() {
             onEnviarPdfChange={setEnviarPdf}
           />
         )}
-        {step === 3 && (
+        {step === 4 && (
           <ConfirmStep
             photoPreview={photoPreview!}
             kitchenType={kitchenType!}
+            modo={modo!}
             nombre={nombre}
             whatsapp={whatsapp}
             email={email}
@@ -246,12 +260,12 @@ export default function NuevoPage() {
               ) : (
                 <>
                   {ctaLabel}
-                  {step < 3 && (
+                  {step < LAST_STEP && (
                     <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                       <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
                     </svg>
                   )}
-                  {step === 3 && (
+                  {step === LAST_STEP && (
                     <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                       <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z" />
                     </svg>

@@ -21,6 +21,7 @@ export interface Database {
           whatsapp: string;
           email: string | null;
           tipo_cocina: string;
+          modo: string;
           enviar_pdf: boolean;
           foto_original: string;
           imagen_generada: string | null;
@@ -44,6 +45,7 @@ export interface Database {
           whatsapp: string;
           email?: string | null;
           tipo_cocina: string;
+          modo?: string;
           enviar_pdf?: boolean;
           foto_original: string;
           imagen_generada?: string | null;
@@ -67,6 +69,7 @@ export interface Database {
           whatsapp?: string;
           email?: string | null;
           tipo_cocina?: string;
+          modo?: string;
           enviar_pdf?: boolean;
           foto_original?: string;
           imagen_generada?: string | null;

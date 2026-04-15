@@ -11,6 +11,8 @@ export type MaterialColor =
   | "politex_gris_grafito"
   | "melamina_grafito_scotch";
 
+export type ModoSolicitud = "rediseno" | "diseno";
+
 // ── Base fields shared by all states ────────────────────────────────
 interface SolicitudBase {
   id: string;
@@ -20,6 +22,7 @@ interface SolicitudBase {
   whatsapp: string;
   email: string | null;
   tipo_cocina: MaterialColor;
+  modo: ModoSolicitud;
   enviar_pdf: boolean;
   foto_original: string;
   imagen_generada_2: string | null;
@@ -105,6 +108,7 @@ export interface CreateSolicitudPayload {
   whatsapp: string;
   email?: string;
   tipo_cocina: MaterialColor;
+  modo: ModoSolicitud;
   enviar_pdf: boolean;
   foto_original: string;
 }

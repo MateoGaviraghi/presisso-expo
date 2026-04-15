@@ -55,10 +55,11 @@ export function getMaterialLabel(tipoCocina: string): string {
 }
 
 export const STEPS = [
-  { id: 0, label: "Foto", icon: "camera" },
-  { id: 1, label: "Material", icon: "palette" },
-  { id: 2, label: "Datos", icon: "user" },
-  { id: 3, label: "Enviar", icon: "check" },
+  { id: 0, label: "Modo", icon: "sparkles" },
+  { id: 1, label: "Foto", icon: "camera" },
+  { id: 2, label: "Material", icon: "palette" },
+  { id: 3, label: "Datos", icon: "user" },
+  { id: 4, label: "Enviar", icon: "check" },
 ] as const;
 
 export const ESTADOS_SOLICITUD = [
@@ -68,6 +69,30 @@ export const ESTADOS_SOLICITUD = [
   "enviada",
   "error",
 ] as const;
+
+export const MODO_OPTIONS = {
+  rediseno: {
+    id: "rediseno" as const,
+    label: "Renovar mi cocina",
+    description: "Ya tengo muebles y quiero ver cómo quedarían con amoblamientos Presisso",
+    icon: "refresh",
+  },
+  diseno: {
+    id: "diseno" as const,
+    label: "Diseñar desde cero",
+    description: "Tengo el espacio vacío y quiero ver cómo quedaría una cocina Presisso completa",
+    icon: "plus",
+  },
+} as const;
+
+export const MODO_LABELS: Record<string, string> = {
+  rediseno: "Rediseño",
+  diseno: "Diseño nuevo",
+};
+
+export function getModoLabel(modo: string): string {
+  return MODO_LABELS[modo] ?? modo;
+}
 
 export const ESTADO_LABELS: Record<string, string> = {
   pendiente: "Pendiente",

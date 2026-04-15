@@ -1,11 +1,14 @@
 import { z } from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "./constants";
 
+export const MODOS = ["rediseno", "diseno"] as const;
+
 export const solicitudSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
   whatsapp: z.string().optional().or(z.literal("")),
   email: z.string().email("Email inválido").min(1, "El email es requerido"),
   tipo_cocina: z.enum(["politex_negro", "melamina_litio", "politex_gris_grafito", "melamina_grafito_scotch"]),
+  modo: z.enum(MODOS),
   enviar_pdf: z.boolean().default(true),
 });
 
@@ -17,6 +20,7 @@ export const clientFormSchema = z.object({
   whatsapp: z.string().max(20).optional().or(z.literal("")),
   email: z.string().email("Ingresá un email válido").min(1, "El email es requerido"),
   tipo_cocina: z.enum(["politex_negro", "melamina_litio", "politex_gris_grafito", "melamina_grafito_scotch"]),
+  modo: z.enum(MODOS),
   enviar_pdf: z.boolean(),
 });
 

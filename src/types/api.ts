@@ -1,4 +1,4 @@
-import type { Solicitud, MaterialColor } from "./solicitud";
+import type { Solicitud, MaterialColor, ModoSolicitud } from "./solicitud";
 
 // POST /api/solicitudes
 export interface CreateSolicitudRequest {
@@ -6,6 +6,7 @@ export interface CreateSolicitudRequest {
   whatsapp: string;
   email?: string;
   tipo_cocina: MaterialColor;
+  modo: ModoSolicitud;
   enviar_pdf?: boolean;
   foto_original: string;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ESTADO_LABELS, getMaterialLabel } from "@/lib/utils/constants";
+import { ESTADO_LABELS, getMaterialLabel, getModoLabel } from "@/lib/utils/constants";
 import { useSupabaseRealtime } from "@/hooks/useSupabaseRealtime";
 import { EstadoBadge } from "@/components/admin/EstadoBadge";
 import type { EstadoSolicitud } from "@/types/solicitud";
@@ -191,6 +191,9 @@ export default function AdminPage() {
                   <th className="hidden px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-presisso-gray-mid lg:table-cell">
                     Estilo
                   </th>
+                  <th className="hidden px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-presisso-gray-mid lg:table-cell">
+                    Modo
+                  </th>
                   <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-presisso-gray-mid">
                     Estado
                   </th>
@@ -232,6 +235,9 @@ export default function AdminPage() {
                     </td>
                     <td className="hidden px-5 py-3.5 text-xs text-presisso-gray-mid lg:table-cell">
                       {getMaterialLabel(s.tipo_cocina)}
+                    </td>
+                    <td className="hidden px-5 py-3.5 text-xs text-presisso-gray-mid lg:table-cell">
+                      {getModoLabel(s.modo)}
                     </td>
                     <td className="px-5 py-3.5">
                       <EstadoBadge estado={s.estado} />
