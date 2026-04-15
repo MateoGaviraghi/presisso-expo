@@ -14,6 +14,7 @@ export const patchSolicitud = z
       .enum(["generando", "revision", "aprobada", "enviada", "error"])
       .optional(),
     tipo_cocina: z.enum(["politex_negro", "melamina_litio", "politex_gris_grafito", "melamina_grafito_scotch"]).optional(),
+    modo: z.enum(["rediseno", "diseno"]).optional(),
     imagen_generada: z.string().optional(),
     imagen_generada_2: z.string().nullable().optional(),
     prompt_usado: z.string().nullable().optional(),

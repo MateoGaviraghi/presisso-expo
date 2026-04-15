@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 import { supabaseAdmin, createAdminClient } from "@/lib/supabase/admin";
 import { generateWithFallback } from "@/lib/gemini/generate";
+import type { ModoSolicitud } from "@/lib/gemini/generate";
 import type { PromptType } from "@/lib/gemini/prompts";
 import { solicitudIdBody, parseBody } from "@/lib/validations/api";
 
@@ -63,6 +64,7 @@ export async function POST(req: NextRequest) {
       generateWithFallback(
         solicitud.foto_original,
         solicitud.tipo_cocina as PromptType,
+        (solicitud.modo as ModoSolicitud) || "rediseno",
       ),
       new Promise<never>((_, reject) =>
         setTimeout(

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ESTADO_LABELS, getMaterialLabel } from "@/lib/utils/constants";
+import { ESTADO_LABELS, getMaterialLabel, getModoLabel } from "@/lib/utils/constants";
 import { EstadoBadge } from "@/components/admin/EstadoBadge";
 import { createClient } from "@/lib/supabase/client";
 import { adminFetch } from "@/lib/auth/admin-fetch";
@@ -441,6 +441,9 @@ export default function AdminSolicitudPage() {
           <div className="flex items-center gap-2">
             <span className="rounded-md bg-presisso-gray-light px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-presisso-gray-dark">
               {getMaterialLabel(solicitud.tipo_cocina)}
+            </span>
+            <span className="rounded-md bg-blue-50 border border-blue-200 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+              {getModoLabel(solicitud.modo)}
             </span>
             <EstadoBadge estado={solicitud.estado} />
           </div>

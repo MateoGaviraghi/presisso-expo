@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
         whatsapp: validated.whatsapp,
         email: validated.email || null,
         tipo_cocina: validated.tipo_cocina,
+        modo: validated.modo,
         enviar_pdf: validated.enviar_pdf,
         foto_original: validated.foto_original,
         estado: "generando",

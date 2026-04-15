@@ -2,7 +2,9 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
-import { PROMPTS, PromptType } from "./prompts";
+import { PROMPTS, DESIGN_PROMPTS, PromptType } from "./prompts";
+
+export type ModoSolicitud = "rediseno" | "diseno";
 
 export interface GenerateResult {
   success: boolean;
@@ -79,6 +81,7 @@ async function generateKitchenImage(
   fotoOriginalUrl: string,
   tipoCocina: PromptType,
   model: string,
+  modo: ModoSolicitud = "rediseno",
 ): Promise<GenerateResult> {
   const startTime = Date.now();
 
@@ -116,7 +119,8 @@ async function generateKitchenImage(
   const refs = loadReferences(tipoCocina);
 
   // 3. Armar parts: foto cliente + todas las referencias + prompt con dimensiones
-  const promptWithDimensions = PROMPTS[tipoCocina] + dimensionNote;
+  const basePrompt = modo === "diseno" ? DESIGN_PROMPTS[tipoCocina] : PROMPTS[tipoCocina];
+  const promptWithDimensions = basePrompt + dimensionNote;
 
   const parts: {
     inlineData?: { mimeType: string; data: string };
@@ -182,6 +186,7 @@ const RETRY_503_WAITS = [5_000];
 export async function generateWithFallback(
   fotoUrl: string,
   tipo: PromptType,
+  modo: ModoSolicitud = "rediseno",
 ): Promise<GenerateResult> {
   const modelKeys = ["primary", "fallback1"] as const;
 
@@ -194,7 +199,7 @@ export async function generateWithFallback(
     for (let attempt = 1; attempt <= max503Retries + 1; attempt++) {
       try {
         console.log(`[Gemini] ${model} — intento ${attempt}...`);
-        const result = await generateKitchenImage(fotoUrl, tipo, model);
+        const result = await generateKitchenImage(fotoUrl, tipo, model, modo);
         if (result.success) {
           console.log(`[Gemini] Éxito con ${model} en ${result.timeMs}ms`);
           return result;

@@ -120,11 +120,60 @@ Before outputting, compare your result against IMAGE 1 and verify:
 ✓ Aspect ratio matches IMAGE 1 exactly?`;
 }
 
+/* ── Prompt template for DESIGN mode (empty kitchen) ────────────────── */
+
+function buildDesignPrompt(mat: MaterialDef): string {
+  return `Edit this image. Insert Presisso "${mat.name}" kitchen furniture into this EXACT photo.
+
+CRITICAL: You are NOT generating a new image. You are EDITING IMAGE 1. Every pixel of the room that is not a cabinet, countertop, or backsplash area must remain IDENTICAL — same room, same walls, same floor, same perspective, same camera angle, same doors, same windows, same dimensions. If you compare your output with IMAGE 1, the room structure must match perfectly. Only the furniture changes.
+
+IMAGE 1: The client's kitchen — your base photo. Do not change this room.
+IMAGES 2+: Presisso "${mat.name}" reference — copy the material finish and cabinet style from these photos.
+
+STEP 1 — CLEAN THE PHOTO:
+Remove construction debris and clutter from IMAGE 1: rolled carpets, tools, bicycle parts, loose objects on counters and floor. Fill those areas with the clean wall/floor surface behind them. Clean up wall imperfections — keep the same wall color and tile pattern, just make them look freshly maintained. A subtle complementary wall color is acceptable where walls are visibly unfinished (bare concrete, peeling paint). The floor stays exactly as-is.
+
+STEP 2 — RESKIN EXISTING CABINETS:
+If IMAGE 1 already has lower cabinets and/or a countertop, they stay in their EXACT position, size, and shape. Only change the surface:
+- Replace door fronts with Presisso "${mat.name}" flat slab doors. FINISH: ${mat.finish}
+- Replace countertop surface with matching material. Straight square edge, ~35-40mm thick.
+- Lower cabinet handles: recessed vertical channel groove, same color as door.
+
+STEP 3 — INSERT UPPER CABINETS:
+If there are no upper cabinets in IMAGE 1, insert them on the wall above the existing countertop:
+- ~55cm gap between countertop and bottom of upper cabinets.
+- Same "${mat.name}" flat slab finish. No handles (push-to-open).
+- They must align with the lower cabinets below — same width coverage.
+- Do NOT place over windows or doors.
+- Insert a backsplash panel (same "${mat.name}" material) covering ONLY the wall strip between countertop and upper cabinets. Wall above and beside cabinets stays as the original wall.
+
+STEP 4 — INSERT APPLIANCES (only what fits):
+Look at the ACTUAL available space in IMAGE 1. Only insert appliances that physically fit:
+- COOKTOP: Black induction, flush in countertop. Only if there is counter space for it.
+- RANGE HOOD: Slim, dark, above the cooktop. Only if there is wall space.
+- SMALL OVEN or MICROWAVE: Built into the cabinet run. Only if there is a gap or space for it.
+- SMALL COUNTER APPLIANCES: A coffee machine, kettle, or toaster on the countertop — 1 or 2 items max.
+- REFRIGERATOR: Only if IMAGE 1 has a clearly open area at one end large enough for a fridge. If the space is narrow or there is no room, do NOT add a fridge.
+- If an appliance already exists in IMAGE 1, keep it exactly where it is.
+- Do NOT force any appliance into a space where it does not fit. Leave gaps around appliances — a real kitchen has breathing room.
+
+STEP 5 — PHOTOREALISM:
+- Lighting on new elements must match IMAGE 1's existing light sources and direction.
+- New cabinets cast realistic shadows on walls and floor.
+- Cabinets sit flush on the existing floor and against existing walls.
+- All new edges follow IMAGE 1's exact perspective and vanishing points.
+- The result should look like a real photograph of a finished kitchen, not a 3D render.
+
+REMEMBER: IMAGE 1 is the base. You are inserting furniture INTO it, like placing furniture in an architectural floor plan. The room does not change. The camera does not move. Only furniture and appliances are added or reskinned.`;
+}
+
 /* ── Export generated prompts ───────────────────────────────────────── */
 
 export const PROMPTS: Record<string, string> = {};
+export const DESIGN_PROMPTS: Record<string, string> = {};
 for (const [key, mat] of Object.entries(MATERIALS)) {
   PROMPTS[key] = buildPrompt(mat);
+  DESIGN_PROMPTS[key] = buildDesignPrompt(mat);
 }
 
 export type PromptType = keyof typeof MATERIALS;

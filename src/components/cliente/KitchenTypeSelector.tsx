@@ -19,7 +19,7 @@ export default function KitchenTypeSelector({
     <div>
       <div className="mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-presisso-red mb-2">
-          Paso 2 de 4
+          Paso 3 de 5
         </p>
         <h2 className="font-heading text-3xl font-bold text-presisso-black sm:text-4xl leading-tight">
           Elegí tu material

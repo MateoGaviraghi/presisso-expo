@@ -1,11 +1,13 @@
 "use client";
 
-import { MATERIAL_OPTIONS } from "@/lib/utils/constants";
+import { MATERIAL_OPTIONS, MODO_LABELS } from "@/lib/utils/constants";
 import type { MaterialColorKey } from "@/lib/utils/constants";
+import type { ModoSolicitud } from "@/types/solicitud";
 
 interface ConfirmStepProps {
   photoPreview: string;
   kitchenType: MaterialColorKey;
+  modo: ModoSolicitud;
   nombre: string;
   whatsapp: string;
   email: string;
@@ -15,6 +17,7 @@ interface ConfirmStepProps {
 export default function ConfirmStep({
   photoPreview,
   kitchenType,
+  modo,
   nombre,
   whatsapp,
   email,
@@ -26,7 +29,7 @@ export default function ConfirmStep({
     <div>
       <div className="mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-presisso-red mb-2">
-          Paso 4 de 4
+          Paso 5 de 5
         </p>
         <h2 className="font-heading text-3xl font-bold text-presisso-black sm:text-4xl leading-tight">
           Todo listo
@@ -58,6 +61,16 @@ export default function ConfirmStep({
           </p>
         </div>
         <div className="divide-y divide-gray-100">
+          <SummaryRow
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4 text-presisso-red">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+              </svg>
+            }
+            label="Tipo de proyecto"
+            value={MODO_LABELS[modo] ?? modo}
+            highlight
+          />
           <SummaryRow
             icon={
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-presisso-red">
