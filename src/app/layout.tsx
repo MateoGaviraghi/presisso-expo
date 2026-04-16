@@ -8,10 +8,26 @@ export const metadata: Metadata = {
   title: "Presisso — Diseñá tu cocina ideal",
   description:
     "Visualizá cómo quedarían los amoblamientos Presisso en tu cocina con inteligencia artificial",
+  icons: {
+    icon: "/logo-p-presisso.png",
+    apple: "/logo-p-presisso.png",
+  },
   openGraph: {
     title: "Presisso — Diseñá tu cocina ideal",
     description: "Visualizá cómo quedarían los amoblamientos Presisso en tu cocina",
-    images: ["/og-image.jpg"],
+    images: [
+      {
+        url: "/logo-p-presisso.png",
+        width: 1080,
+        height: 1080,
+        alt: "Presisso",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    images: ["/logo-p-presisso.png"],
   },
 };
 
