@@ -57,7 +57,11 @@ export async function POST(req: NextRequest) {
 
     await supabaseAdmin
       .from("solicitudes")
-      .update({ email_id: emailId ?? null })
+      .update({
+        email_id: emailId ?? null,
+        estado: "enviada",
+        enviado_at: new Date().toISOString(),
+      })
       .eq("id", solicitud_id);
 
     logAction(solicitud_id, "enviar_email", { email: solicitud.email, emailId });

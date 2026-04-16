@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/auth/admin-guard";
 import { clientFormSchema } from "@/lib/utils/validators";
 import { z } from "zod";
+
+export const dynamic = "force-dynamic";
 
 // POST /api/solicitudes — Crear nueva solicitud
 export async function POST(req: NextRequest) {
@@ -70,8 +73,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/solicitudes — Listar solicitudes (admin)
+// GET /api/solicitudes — Listar solicitudes (admin only)
 export async function GET(req: NextRequest) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
   const { searchParams } = new URL(req.url);
   const estado = searchParams.get("estado");
   const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 100);

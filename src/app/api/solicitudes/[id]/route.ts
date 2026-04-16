@@ -142,6 +142,6 @@ export async function DELETE(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  logAction(idResult.data, "eliminar" as "generar_imagen", { accion: "solicitud eliminada" });
+  logAction(idResult.data, "eliminar", { accion: "solicitud eliminada" });
   return NextResponse.json({ success: true });
 }

@@ -20,5 +20,5 @@ export function adminFetch(
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
-  return fetch(url, { ...options, headers });
+  return fetch(url, { ...options, headers, cache: "no-store" });
 }
