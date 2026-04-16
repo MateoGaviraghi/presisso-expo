@@ -8,10 +8,6 @@ export const metadata: Metadata = {
   title: "Presisso — Diseñá tu cocina ideal",
   description:
     "Visualizá cómo quedarían los amoblamientos Presisso en tu cocina con inteligencia artificial",
-  icons: {
-    icon: "/logo-p-presisso.png",
-    apple: "/logo-p-presisso.png",
-  },
   openGraph: {
     title: "Presisso — Diseñá tu cocina ideal",
     description: "Visualizá cómo quedarían los amoblamientos Presisso en tu cocina",
@@ -46,8 +42,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <link rel="icon" href="/logo-p-presisso.png?v=2" type="image/png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700;800;900&display=swap"
