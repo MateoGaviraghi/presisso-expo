@@ -282,6 +282,30 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
   });
 
   // ═══════════════════════════════════════════════════════════════
+  // DISCLAIMER IA
+  // ═══════════════════════════════════════════════════════════════
+  const disclaimerLines = [
+    "Imagen generada por inteligencia artificial con fines ilustrativos.",
+    "Los colores, proporciones y acabados pueden variar respecto al producto real.",
+    "Consultá con nuestros asesores para una cotización personalizada.",
+  ];
+  const disclaimerFontSize = 7;
+  const disclaimerLineH = 10;
+  let disclaimerY = CARD_Y - 18;
+
+  for (const line of disclaimerLines) {
+    const lw = regular.widthOfTextAtSize(line, disclaimerFontSize);
+    page.drawText(line, {
+      x: (W - lw) / 2,
+      y: disclaimerY,
+      size: disclaimerFontSize,
+      font: regular,
+      color: GRAY_MID,
+    });
+    disclaimerY -= disclaimerLineH;
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // FOOTER — fondo blanco, línea roja arriba, logo + links
   // ═══════════════════════════════════════════════════════════════
   const FOOTER_H = 72;

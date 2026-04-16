@@ -30,7 +30,7 @@ export const MATERIALS: Record<string, MaterialDef> = {
   },
   melamina_grafito_scotch: {
     name: "Melamina Grafito Scotch",
-    finish: "TWO-TONE SYSTEM — this kitchen uses TWO cabinet materials plus a special countertop:\n  1. MAIN CABINETS (lower doors + upper top row): Dark matte graphite gray melamine — a deep blue-gray charcoal, smooth uniform surface. Similar darkness to dark slate/anthracite. NOT glossy, NOT shiny.\n  2. ACCENT BAND (upper cabinets middle row, between the top grafito row and the countertop): Warm WALNUT WOOD melamine with visible natural wood grain pattern, medium-brown tone with golden/honey undertones.\n  3. COUNTERTOP: \"Armani Dark Gray\" sintered stone — dark gray base with fine white marble-like veining. NOT the same material as the cabinets.\nLook at the reference photos carefully: the upper cabinets have a dark grafito section on top AND a walnut wood section below it. The countertop is a dark veined stone, distinct from the cabinet material.",
+    finish: "TWO-TONE SYSTEM — this kitchen uses TWO cabinet materials plus a special countertop:\n  1. MAIN CABINETS (lower doors + upper top row): Dark matte graphite gray melamine — a neutral dark charcoal, like graphite pencil lead or dark slate. The gray is NEUTRAL — absolutely NO blue tint, NO blue undertone, NO blue-gray. It is a pure dark gray, warm-neutral. Smooth uniform matte surface.\n  2. ACCENT BAND (upper cabinets middle row, between the top grafito row and the countertop): Warm WALNUT WOOD melamine with visible natural wood grain pattern, medium-brown tone with golden/honey undertones.\n  3. COUNTERTOP: \"Armani Dark Gray\" sintered stone — dark gray base with fine white marble-like veining. NOT the same material as the cabinets.\nLook at the reference photos carefully: the upper cabinets have a dark grafito section on top AND a walnut wood section below it. The countertop is a dark veined stone, distinct from the cabinet material.",
     apply: `Apply this material to:
 → LOWER cabinet door fronts and drawer fronts — replace ONLY the front face with the dark graphite gray flat slab.
 → UPPER cabinets TOP ROW — replace with the same dark graphite gray.
@@ -53,6 +53,14 @@ IMAGES (in order):
 - LAST: The client's kitchen photo AGAIN — your output must match this exact framing, dimensions, and aspect ratio.
 
 OUTPUT DIMENSIONS: Your output must have the EXACT same aspect ratio, dimensions, orientation, and framing as the client's kitchen photo. Show the complete scene edge to edge. Landscape stays landscape, portrait stays portrait. Do not crop, zoom, or reframe.
+
+BEFORE EDITING — CATALOG THE ORIGINAL PHOTO:
+Look at the client's kitchen photo and identify these elements. Your output MUST contain every single one:
+- How many separate counter/cabinet sections are there? (Count islands, peninsulas, L-shapes separately)
+- What appliances are visible? (fridge, oven, microwave, range hood, dishwasher, washing machine — note each one's color and position)
+- What structural elements are in the foreground? (islands, breakfast bars, peninsulas)
+- What is the camera angle and framing? (your output must match it exactly)
+Every element you identify here MUST appear in your output, unchanged except for cabinet door fronts and countertop surfaces.
 
 STEP 1 — THOROUGHLY CLEAN THE SCENE
 
@@ -79,29 +87,26 @@ PHOTOREALISM — make the new surfaces look naturally installed, not pasted on:
 - The material color shifts naturally under the room's light: warmer near warm light sources, cooler in shadow. Copy this behavior from how the original cabinets interacted with the light.
 - Edges, gaps between doors, and shadow lines should look three-dimensional, not flat.
 
-STRICTLY FORBIDDEN — do not add ANY of these:
-- No islands, peninsulas, breakfast bars, or counter extensions that are not in the original photo
-- No new appliances, furniture, stools, chairs, or decorative objects
-- No new cabinets or countertop sections where none existed
-- If the original kitchen does NOT have a bar or peninsula, your output must NOT have one either
+MANDATORY — every item below MUST be true in your output (verify each one):
+1. Output is the SAME photo with only cabinet door fronts and countertop surfaces changed
+2. Every counter section from the original (islands, peninsulas, L-shapes) appears with SAME shape, size, position — count them
+3. Every appliance from the original appears identical — same color, brand, position (check: fridge, oven, range hood, microwave)
+4. ALL cabinet doors show the correct Presisso ${mat.name} finish from the reference photos — match the material exactly
+5. Walls, floor, ceiling, tiles, backsplash, sink, faucet — all identical to original
+6. Aspect ratio, framing, and camera angle match the original exactly
+7. All loose clutter removed from surfaces — countertops are clean
 
-KEEP IDENTICAL — everything Presisso does not sell:
-- All appliances exactly as they appear (same color, brand, position)
-- Sink and faucet
-- Walls, tiles, backsplash, paint, floor, ceiling
-- Windows, doors, lights, room layout, camera angle, lighting
-- If the kitchen has an island or peninsula, keep its exact shape and position — only reskin surfaces
+PROHIBITIONS — if ANY of these appear, the output is WRONG:
+1. NO islands, peninsulas, bars, or counter extensions that are NOT in the original photo
+2. NO removed islands, peninsulas, or counter sections that ARE in the original photo
+3. NO new appliances, furniture, stools, chairs, or decorative objects not in the original
+4. NO changed appliance colors, brands, or positions
+5. NO modified walls, floor, tiles, or backsplash
+6. NO cropping, zooming, reframing, or aspect ratio change
+7. NO single-material cabinets if the material spec defines multiple tones — follow the FINISH description exactly
+8. NO flat, pasted-on look — surfaces must show realistic lighting, shadows, and depth
 
-You may place 1-2 small countertop items (coffee machine, kettle, or toaster) for a lived-in look.
-
-VERIFY before outputting:
-✓ Output is the same photo with only surfaces changed — not a new image
-✓ Count the counter sections in the original — your output must have the SAME number. If the original has no island/bar, your output must have none.
-✓ Every appliance identical to the original (check fridge color, oven, range hood)
-✓ Countertops are thoroughly clean — no clutter remaining on any surface
-✓ Cabinet doors and countertop show Presisso ${mat.name} finish
-✓ Walls, floor, sink, backsplash — all identical to original
-✓ Aspect ratio and framing match the original exactly`;
+You may place 1-2 small countertop items (coffee machine, kettle, or toaster) for a lived-in look.`;
 }
 
 /* ── Export generated prompts ───────────────────────────────────────── */
