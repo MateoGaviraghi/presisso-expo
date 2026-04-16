@@ -3,62 +3,61 @@ import type { PromptType } from "./prompts-rediseno";
 
 /* ── Step 1 prompt: CLEAN the photo (no furniture changes) ──────────── */
 
-export const CLEAN_PROMPT = `Edit this image. Clean this kitchen photo for a professional photoshoot. Preserve layout, keep perspective, retain structure. Same dimensions, same aspect ratio, same orientation.
+export const CLEAN_PROMPT = `Edit this image. Prepare this kitchen space for a professional interior design photoshoot. Same dimensions, same aspect ratio, same orientation.
 
-REMOVE: All construction debris, clutter, and temporary objects — rolled carpets, tools, bicycle parts, wheelbarrows, bags, loose items on counters and floor. Fill those areas with the clean surface behind them.
+REMOVE everything that is not permanent structure: all construction debris, clutter, tools, bags, boxes, temporary objects, loose items on counters and floor. Scan every surface left to right, top to bottom. Fill cleaned areas seamlessly with the clean surface behind them.
 
-CLEAN ALL WALLS: Every wall in the image — back wall, side walls, corners, ceiling. If tiles exist, make them look clean and uniform (same color, no stains). If walls are damaged, peeling, or bare concrete, give them a fresh smooth painted finish in soft white or warm cream. The ceiling should look clean.
+CLEAN ALL WALLS: Scan every wall — back, sides, corners, ceiling. If tiles exist, make them look clean and uniform. If walls are damaged, peeling, or bare concrete, give them a fresh smooth painted finish in soft white or warm cream. Apply the SAME color to ALL walls uniformly — do not paint some walls one color and others a different color. The ceiling should look clean and finished.
 
-KEEP: The floor exactly as-is (just clean). All doors, windows, and structural openings exactly where they are. Any existing cabinets, countertops, sinks, or appliances — keep them in place, unchanged. The room layout does not change.
+KEEP exactly as-is: the floor (just clean it), all doors, windows, structural openings, and the room's shape. If any cabinets, countertops, sinks, or appliances exist, keep them in place unchanged.
 
-OUTPUT: The same photo, cleaned and ready for a kitchen installation photoshoot. Same room, same framing, no new objects added.`;
+The output should look like a clean, empty kitchen space ready for a furniture installation — like a professional real estate photo of a newly finished room.`;
 
 /* ── Step 2 prompt: INSERT furniture into the cleaned photo ─────────── */
 
 function buildDesignPrompt(mat: { name: string; finish: string }): string {
-  return `Edit this image. Preserve layout, keep perspective, retain structure. Insert Presisso "${mat.name}" kitchen furniture into this clean room.
+  return `Edit this image. Install Presisso "${mat.name}" kitchen furniture into this room, creating a photorealistic result that looks like a professional interior design magazine photo — real, aspirational, and premium.
 
-BEFORE EDITING — ANALYZE IMAGE 1:
-Look at IMAGE 1. What is the kitchen layout? (linear? L-shaped? U-shaped?) Where are walls, doors, windows, existing cabinets? This layout is FIXED — do not change it.
+IMAGES (in order):
+- FIRST: The client's clean kitchen space — this is the room you are furnishing.
+- MIDDLE: Reference photos of Presisso "${mat.name}" installed kitchens — study the material finish, door style, and overall aesthetic. Copy the material quality, not their room layout.
+- LAST: The client's kitchen again — your output must match this exact framing, dimensions, and aspect ratio.
 
-⚠️ DO NOT:
-- Generate a new room or change the layout
-- Change image dimensions, aspect ratio, orientation, or camera angle
-- Add an island, peninsula, L-extension, or any structure NOT in IMAGE 1
-- Move, resize, or remove doors, windows, or walls
-- Place cabinets over or in front of any window
-- Invent pipes, tubes, or structural elements not in IMAGE 1
-- Add decorative items (no plants, vases, fruit, stools)
-- Crop, zoom, or reframe
+WHAT TO INSTALL:
 
-IMAGES:
-- IMAGE 1 (first): Client's clean kitchen — edit this room. Do not change its structure.
-- MIDDLE: Presisso "${mat.name}" kitchens — copy ONLY material finish and door style. Do NOT copy their layout.
-- LAST: Client's kitchen again — confirms framing and dimensions.
+1. LOWER CABINETS along existing walls where counter space makes sense:
+   - "${mat.name}" flat slab doors. ${mat.finish}
+   - Straight square-edge countertop, ~35mm thick, same material family.
+   - Lower handles: recessed vertical groove, same color as door.
+   - If cabinets already exist, reskin their surfaces — keep their exact position and count.
 
-STEP 1 — RESKIN EXISTING CABINETS (if any):
-Keep EXACT position, shape, count. Change ONLY surfaces:
-- Door fronts → "${mat.name}" flat slab. ${mat.finish}
-- Countertop → same material, straight square edge, ~35mm thick.
-- Lower handles: recessed vertical groove, same color as door.
+2. UPPER CABINETS on clear wall sections above the lower cabinets:
+   - Same "${mat.name}" flat slab, no handles (push-to-open).
+   - ~55cm gap between countertop and upper cabinet bottom.
+   - Place only on solid wall — never over windows or doors.
+   - Add a matching backsplash in the strip between countertop and uppers.
 
-STEP 2 — ADD UPPER CABINETS:
-Mount above countertop ONLY on clear wall (no windows, no doors):
-- ~55cm gap. Same "${mat.name}" flat slab, no handles.
-- Align above lower cabinets. STOP before any window.
-- Backsplash: only the strip between countertop and uppers.
+3. ESSENTIAL APPLIANCES to make the kitchen look complete and lived-in:
+   - A cooktop on the counter (induction or gas, flush-mounted).
+   - A slim range hood mounted above the cooktop.
+   - A stainless steel refrigerator at one end of the cabinet run if there is open floor space.
+   - A built-in oven if there is cabinet space for it.
+   - 1-2 small countertop items: coffee machine, kettle, or toaster.
+   - Keep any existing appliance exactly as-is.
 
-STEP 3 — ADD APPLIANCES (important — a finished kitchen needs these):
-Place these on the countertop: a black induction cooktop (flush-mounted), a coffee machine, and an electric kettle or toaster.
-Mount a slim dark range hood on the wall above the cooktop.
-Place a modern stainless steel refrigerator at one end of the cabinet run if there is open floor space for it.
-If there is cabinet space, add a small built-in oven.
-Keep any appliance already in IMAGE 1 exactly as-is.
+RULES — the room structure is sacred:
+- WALLS: Keep every wall exactly as it appears in the cleaned photo — same color, same paint, same tiles, same texture across the ENTIRE wall. Do not repaint, recolor, or darken any wall or section of a wall. If a wall is cream, every part of that wall stays cream. The only thing that may cover a wall section is the backsplash strip between countertop and upper cabinets.
+- The room shape, floor, ceiling, doors, windows stay exactly as they are.
+- Cabinets sit flush against walls and floor, following the room's perspective and vanishing points.
+- Output dimensions and aspect ratio must match the input photo exactly.
+- Do not add islands, peninsulas, or counter extensions that don't fit naturally in the space.
 
-STEP 4 — PHOTOREALISM:
-Match IMAGE 1 lighting. Realistic shadows. Flush against walls and floor. Follow room's vanishing points.
-
-OUTPUT: The SAME photo, same room, same layout, same dimensions — with Presisso "${mat.name}" furniture inserted. This is the same photograph, edited.`;
+PHOTOREALISM — this must look like a real installed kitchen, not a render:
+- Match the room's existing natural light: warm where light enters from windows, darker in corners and shadows.
+- Cabinets cast realistic shadows on walls and floor — soft, directional, consistent with the light source.
+- Materials respond to light naturally: highlights on surfaces facing the light, subtle reflections on countertops, depth in recessed handle grooves.
+- The furniture should feel grounded and heavy — flush against walls, touching the floor, integrated into the space as if it was always there.
+- Think of a high-end interior design photoshoot: clean, warm, aspirational, but completely believable.`;
 }
 
 /* ── Export generated design prompts ───────────────────────────────── */

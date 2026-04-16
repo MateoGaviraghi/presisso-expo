@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { adminFetch } from "@/lib/auth/admin-fetch";
 import type { Solicitud } from "@/types/solicitud";
 
 // Singleton client reference to avoid re-creating on every render
@@ -11,15 +12,17 @@ function getClient() {
   return _client;
 }
 
+const POLL_INTERVAL = 5_000; // 5s fallback polling
+
 export function useSupabaseRealtime() {
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
   const [loaded, setLoaded] = useState(false);
   const subscribedRef = useRef(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
-      // Fetch via API route — uses service role, bypasses RLS
-      const res = await fetch("/api/solicitudes?limit=100");
+      const res = await adminFetch("/api/solicitudes?limit=100");
       if (!res.ok) throw new Error("fetch failed");
       const { data } = await res.json();
       if (data) setSolicitudes(data as Solicitud[]);
@@ -34,39 +37,57 @@ export function useSupabaseRealtime() {
     if (subscribedRef.current) return;
     subscribedRef.current = true;
 
-    // Initial fetch via API
+    // Initial fetch
+    console.log("[Dashboard] Fetch inicial...");
     fetchData();
 
-    // Subscribe to realtime changes for live updates
+    // Subscribe to realtime changes
     const supabase = getClient();
+
     const channel = supabase
       .channel("solicitudes-realtime")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "solicitudes" },
         (payload) => {
+          console.log(`[Realtime] Evento: ${payload.eventType}`, payload.new);
           if (payload.eventType === "INSERT") {
-            setSolicitudes((prev) => [payload.new as Solicitud, ...prev]);
+            setSolicitudes((prev) => {
+              if (prev.some((s) => s.id === (payload.new as Solicitud).id)) {
+                console.log("[Realtime] INSERT duplicado, ignorando");
+                return prev;
+              }
+              console.log("[Realtime] INSERT — nueva solicitud agregada");
+              return [payload.new as Solicitud, ...prev];
+            });
           } else if (payload.eventType === "UPDATE") {
+            const updated = payload.new as Solicitud;
+            console.log(`[Realtime] UPDATE — id: ${updated.id}, estado: ${updated.estado}`);
             setSolicitudes((prev) =>
-              prev.map((s) =>
-                s.id === (payload.new as Solicitud).id
-                  ? (payload.new as Solicitud)
-                  : s,
-              ),
+              prev.map((s) => s.id === updated.id ? updated : s),
             );
           } else if (payload.eventType === "DELETE") {
+            console.log("[Realtime] DELETE — removiendo solicitud");
             setSolicitudes((prev) =>
               prev.filter((s) => s.id !== (payload.old as { id: string }).id),
             );
           }
         },
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log(`[Realtime] Conexión: ${status}`, err ? `Error: ${err.message}` : "");
+      });
+
+    // Polling fallback — catches anything realtime might miss
+    pollRef.current = setInterval(() => {
+      console.log("[Dashboard] Polling fallback...");
+      fetchData();
+    }, POLL_INTERVAL);
 
     return () => {
       subscribedRef.current = false;
       supabase.removeChannel(channel);
+      if (pollRef.current) clearInterval(pollRef.current);
     };
   }, [fetchData]);
 

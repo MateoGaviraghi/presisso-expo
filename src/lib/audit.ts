@@ -7,7 +7,9 @@ type AuditAction =
   | "generar_pdf"
   | "enviar_email"
   | "guardar_notas"
-  | "recovery";
+  | "recovery"
+  | "eliminar"
+  | "cleanup";
 
 /**
  * Logs an admin action to the audit_log table.

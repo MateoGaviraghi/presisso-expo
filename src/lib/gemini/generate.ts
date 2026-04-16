@@ -32,11 +32,11 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-negro/Presisso_28022026_13.jpg",
   ],
   melamina_litio: [
+    // Full kitchen view (best overall reference), medium detail, artistic close-up
     "melamina-litio/MPucci_Presisso_20210323_082.jpg",
-    "melamina-litio/MPucci_Presisso_20210323_009.jpg",
-    "melamina-litio/MPucci_Presisso_20210323_036__.jpg",
-    "melamina-litio/MPucci_Presisso_20210323_070.jpg",
     "melamina-litio/MPucci_Presisso_20210323_085.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_009.jpg",
+    // Removed 036__ and 070: extreme close-ups of hardware/base, not useful for material color
   ],
   politex_gris_grafito: [
     "politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
@@ -83,16 +83,51 @@ function loadReferences(tipo: PromptType): RefEntry[] {
 
 type InlinePart = { inlineData?: { data?: string; mimeType?: string } };
 
+/* ── Helper: find closest supported aspect ratio ── */
+
+const SUPPORTED_RATIOS = [
+  { label: "1:1",  value: 1 },
+  { label: "4:5",  value: 4 / 5 },
+  { label: "5:4",  value: 5 / 4 },
+  { label: "3:4",  value: 3 / 4 },
+  { label: "4:3",  value: 4 / 3 },
+  { label: "2:3",  value: 2 / 3 },
+  { label: "3:2",  value: 3 / 2 },
+  { label: "9:16", value: 9 / 16 },
+  { label: "16:9", value: 16 / 9 },
+  { label: "21:9", value: 21 / 9 },
+];
+
+function closestAspectRatio(width: number, height: number): string | undefined {
+  if (!width || !height) return undefined;
+  const ratio = width / height;
+  let best = SUPPORTED_RATIOS[0];
+  let bestDiff = Math.abs(ratio - best.value);
+  for (const r of SUPPORTED_RATIOS) {
+    const diff = Math.abs(ratio - r.value);
+    if (diff < bestDiff) {
+      best = r;
+      bestDiff = diff;
+    }
+  }
+  console.log(`[Gemini] Foto ${width}x${height} (ratio ${ratio.toFixed(3)}) → API aspectRatio: ${best.label}`);
+  return best.label;
+}
+
 /* ── Helper: single Gemini call ── */
 
 async function callGemini(
   model: string,
   parts: { inlineData?: { mimeType: string; data: string }; text?: string }[],
+  aspectRatio?: string,
 ): Promise<string> {
   const response = await genAI.models.generateContent({
     model,
     contents: [{ role: "user", parts }],
-    config: { responseModalities: ["image", "text"] },
+    config: {
+      responseModalities: ["image", "text"],
+      ...(aspectRatio ? { imageConfig: { aspectRatio } } : {}),
+    },
   });
 
   const responseParts = response.candidates?.[0]?.content?.parts as
@@ -108,7 +143,15 @@ async function callGemini(
 
 /* ── Build dimension note from image buffer ── */
 
-function buildDimensionNote(buf: Buffer): string {
+interface DimensionInfo {
+  width: number;
+  height: number;
+  orientation: string;
+  apiAspectRatio?: string;
+  promptNote: string;
+}
+
+function getDimensionInfo(buf: Buffer): DimensionInfo {
   try {
     const dims = imageSize(buf);
     if (dims.width && dims.height) {
@@ -118,15 +161,22 @@ function buildDimensionNote(buf: Buffer): string {
           : dims.width < dims.height
             ? "PORTRAIT"
             : "SQUARE";
+      const apiAspectRatio = closestAspectRatio(dims.width, dims.height);
       console.log(
         `[Gemini] Foto cliente: ${dims.width}x${dims.height} (${orientation})`,
       );
-      return `\n\n⚠️ MANDATORY OUTPUT DIMENSIONS: IMAGE 1 is ${dims.width}x${dims.height}px (${orientation}). Your output MUST be EXACTLY ${dims.width}x${dims.height}px — same ${orientation} orientation, same aspect ratio. Do NOT crop, zoom, rotate, or change framing.`;
+      return {
+        width: dims.width,
+        height: dims.height,
+        orientation,
+        apiAspectRatio,
+        promptNote: `\n\nThe input photo is ${dims.width}×${dims.height}px (${orientation}). Your output must match this exact aspect ratio and orientation. Do not crop, zoom, or reframe.`,
+      };
     }
   } catch {
     console.warn("[Gemini] No se pudo detectar dimensiones de la imagen");
   }
-  return "";
+  return { width: 0, height: 0, orientation: "UNKNOWN", promptNote: "" };
 }
 
 /* ── Download client photo ── */
@@ -154,7 +204,7 @@ async function generateKitchenImage(
 
   // 1. Descargar foto del cliente
   const client = await downloadClientPhoto(fotoOriginalUrl);
-  const dimensionNote = buildDimensionNote(client.buffer);
+  const dimInfo = getDimensionInfo(client.buffer);
   const clientPart = { inlineData: { mimeType: client.mime, data: client.base64 } };
 
   // 2. Referencias Presisso (cacheadas)
@@ -168,32 +218,33 @@ async function generateKitchenImage(
     // ── DESIGN MODE: 2-step process ──
     // Step 1: Clean the photo (no refs needed — just the photo + clean prompt)
     console.log(`[Gemini] Diseño paso 1/2: limpiando foto con ${model}...`);
-    const cleanPrompt = CLEAN_PROMPT + dimensionNote;
+    const cleanPrompt = CLEAN_PROMPT + dimInfo.promptNote;
     const cleanedBase64 = await callGemini(model, [
       clientPart,
       { text: cleanPrompt },
-    ]);
+    ], dimInfo.apiAspectRatio);
     console.log(`[Gemini] Paso 1 completado — foto limpia obtenida`);
 
     // Step 2: Insert furniture into the CLEANED photo
     console.log(`[Gemini] Diseño paso 2/2: insertando muebles con ${model}...`);
     const cleanedPart = { inlineData: { mimeType: "image/png", data: cleanedBase64 } };
-    const designPrompt = DESIGN_PROMPTS[tipoCocina] + dimensionNote;
+    const designPrompt = DESIGN_PROMPTS[tipoCocina] + dimInfo.promptNote;
     imageBase64 = await callGemini(model, [
       cleanedPart,
       ...refParts,
       cleanedPart,
       { text: designPrompt },
-    ]);
+    ], dimInfo.apiAspectRatio);
     promptUsed = `[2-step] CLEAN + ${designPrompt.substring(0, 400)}`;
   } else {
-    // ── REDESIGN MODE: 1-step (existing flow) ──
-    const redesignPrompt = PROMPTS[tipoCocina] + dimensionNote;
+    // ── REDESIGN MODE: 1-step (bookended — last image locks output dimensions) ──
+    const redesignPrompt = PROMPTS[tipoCocina] + dimInfo.promptNote;
     imageBase64 = await callGemini(model, [
       clientPart,
       ...refParts,
+      clientPart,
       { text: redesignPrompt },
-    ]);
+    ], dimInfo.apiAspectRatio);
     promptUsed = redesignPrompt.substring(0, 500);
   }
 

@@ -38,6 +38,12 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
     from: `"Presisso" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to,
     subject: `${nombre}, tu diseño Presisso ${colorLabel} está listo`,
+    priority: "high",
+    headers: {
+      "X-Priority": "1",
+      "X-MSMail-Priority": "High",
+      "Importance": "high",
+    },
     html: `<!DOCTYPE html>
 <html lang="es">
 <head>
