@@ -27,6 +27,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
     melamina_litio: "Melamina Litio",
     politex_gris_grafito: "Politex Gris Grafito",
     melamina_grafito_scotch: "Melamina Grafito Scotch",
+    polimero_blanco_gloss: "Polímero táctil White Gloss",
   };
   const colorLabel = MATERIAL_LABELS[tipoCocina] ?? tipoCocina;
   const red = "#DF0A0A";

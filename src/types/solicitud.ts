@@ -9,7 +9,8 @@ export type MaterialColor =
   | "politex_negro"
   | "melamina_litio"
   | "politex_gris_grafito"
-  | "melamina_grafito_scotch";
+  | "melamina_grafito_scotch"
+  | "polimero_blanco_gloss";
 
 export type ModoSolicitud = "rediseno" | "diseno";
 
