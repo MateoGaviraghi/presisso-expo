@@ -26,7 +26,7 @@ export const MATERIAL_OPTIONS = {
     label: "Polímero táctil White Gloss",
     tag: "Gloss",
     description: "Polímero ultra gloss blanco puro efecto espejo, perfil Gola negro, mesada PRESTONE Rose",
-    image: "/polimero-tactil-white-gloss/Presisso EXP 2026-72.jpg",
+    image: "/polimero-tactil-white-gloss/presisso-exp-2026-72.jpg",
   },
   politex_gris_grafito: {
     id: "politex_gris_grafito",
