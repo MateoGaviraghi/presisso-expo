@@ -60,6 +60,21 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "melamina-grafito-scotch/DSC05080.jpg",
     "melamina-grafito-scotch/DSC05089.jpg",
   ],
+  polimero_blanco_gloss: [
+    // Full kitchen view (best overall reference for layout + material context)
+    "polimero-tactil-white-gloss/IMG_2317.jpeg",
+    // Close-ups of high-gloss door surfaces showing specular highlights & reflections
+    "polimero-tactil-white-gloss/IMG_2320.jpeg",
+    "polimero-tactil-white-gloss/IMG_2323.jpeg",
+    "polimero-tactil-white-gloss/IMG_2324.jpeg",
+    "polimero-tactil-white-gloss/IMG_2319.jpeg",
+    "polimero-tactil-white-gloss/IMG_2321.jpeg",
+    "polimero-tactil-white-gloss/IMG_2322.jpeg",
+    "polimero-tactil-white-gloss/IMG_2325.jpeg",
+    // Close-ups of PRESTONE Rose sintered-stone countertop (golden-copper veining)
+    "polimero-tactil-white-gloss/IMG_2318.jpeg",
+    "polimero-tactil-white-gloss/IMG_2327.jpeg",
+  ],
 };
 
 const referenceCache = new Map<string, RefEntry[]>();

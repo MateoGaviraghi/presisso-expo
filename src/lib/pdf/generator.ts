@@ -8,6 +8,7 @@ const MATERIAL_LABELS: Record<string, string> = {
   melamina_litio: "Melamina Litio",
   politex_gris_grafito: "Politex Gris Grafito",
   melamina_grafito_scotch: "Melamina Grafito Scotch",
+  polimero_blanco_gloss: "Polímero táctil White Gloss",
 };
 
 /* ── Colores de marca Presisso (escala 0–1) ── */

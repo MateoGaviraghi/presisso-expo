@@ -6,6 +6,7 @@ export const MATERIALES = [
   "melamina_litio",
   "politex_gris_grafito",
   "melamina_grafito_scotch",
+  "polimero_blanco_gloss",
 ] as const;
 
 export const MATERIAL_OPTIONS = {
@@ -18,14 +19,14 @@ export const MATERIAL_OPTIONS = {
     description: "Acabado negro mate con nano-textura, diseño flat slab, herrajes importados",
     image: "/politex-negro/Presisso_28022026_12.jpg",
   },
-  melamina_litio: {
-    id: "melamina_litio",
-    material: "Melamina",
-    color: "Litio",
-    label: "Melamina Litio",
-    tag: "Cálida",
-    description: "Melamina tono cálido claro con superficie lisa y veta sutil, diseño flat slab",
-    image: "/melamina-litio/MPucci_Presisso_20210323_082.jpg",
+  polimero_blanco_gloss: {
+    id: "polimero_blanco_gloss",
+    material: "Polímero táctil",
+    color: "White Gloss",
+    label: "Polímero táctil White Gloss",
+    tag: "Línea Génova",
+    description: "Polímero ultra gloss blanco puro efecto espejo, perfil Gola negro, mesada PRESTONE Rose",
+    image: "/polimero-tactil-white-gloss/IMG_2317.jpeg",
   },
   politex_gris_grafito: {
     id: "politex_gris_grafito",
@@ -35,6 +36,15 @@ export const MATERIAL_OPTIONS = {
     tag: "Elegante",
     description: "Acabado gris grafito mate con nano-textura, diseño flat slab, herrajes importados",
     image: "/politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
+  },
+  melamina_litio: {
+    id: "melamina_litio",
+    material: "Melamina",
+    color: "Litio",
+    label: "Melamina Litio",
+    tag: "Cálida",
+    description: "Melamina tono cálido claro con superficie lisa y veta sutil, diseño flat slab",
+    image: "/melamina-litio/MPucci_Presisso_20210323_082.jpg",
   },
   melamina_grafito_scotch: {
     id: "melamina_grafito_scotch",

@@ -38,6 +38,15 @@ export const MATERIALS: Record<string, MaterialDef> = {
 → THE COUNTERTOP — replace ONLY the top surface and front edge with "Armani Dark Gray" sintered stone: a dark gray stone with subtle white/light veining, similar to dark marble. Study the close-up countertop reference photos carefully — the surface has fine white veins running through a dark gray base. Same footprint, same shape. Do NOT extend it.
 Keep every door's exact dimensions, position, and count. The material stops at the door edge — no bleed.`,
   },
+  polimero_blanco_gloss: {
+    name: "Polímero táctil White Gloss",
+    finish: "ULTRA HIGH-GLOSS pure white polymer — a brilliant, mirror-like lacquered surface similar to piano-lacquer or polished enamel. The color is PURE COLD WHITE (like fresh snow or bright paper) — NOT cream, NOT ivory, NOT warm off-white, NOT beige. The surface is HIGHLY REFLECTIVE: it catches and reflects light sources as soft specular highlights and subtly mirrors the room around it, like a polished mirror or wet paint. A flat uniform white WITHOUT visible reflections would be WRONG — visible gloss with soft environmental reflections is the signature of this material. NOT matte, NOT satin, NOT semi-gloss — fully glossy lacquer finish. Study the reference photos: notice the clear specular highlights from overhead lights on each door panel and how the surface mirrors its surroundings.\nThe COUNTERTOP is a COMPLETELY SEPARATE material from the doors: \"PRESTONE Rose\" sintered stone — a soft white / warm ivory base with sparse, elegant golden-copper marble veins flowing diagonally across the surface (like Calacatta Gold marble, but with warmer golden-brown tones, NOT cold gray veining). The veins are thin, long and natural-looking — NOT busy, NOT uniformly distributed. Soft matte-to-satin finish, clearly distinguishable from the mirror-gloss doors.",
+    apply: `Apply this material to:
+→ ALL cabinet door fronts and drawer fronts — replace every front (including any wooden, painted, raised-panel, or shaker-style doors) with a smooth flat ultra-gloss white polymer slab. Mirror-bright surface, visible specular highlights. Keep every door's exact dimensions, position, and count.
+→ THE COUNTERTOP — replace ONLY the top surface and front edge with PRESTONE Rose sintered stone as described in the FINISH above. Matte-satin, clearly a different material from the glossy doors. Same footprint — do NOT extend it.
+→ HANDLES — OVERRIDE: this material uses the Gola profile — a slim recessed HORIZONTAL channel in matte BLACK at the TOP edge of every lower door and the BOTTOM edge of every upper door. NO vertical grooves, NO knobs, NO pulls on door faces.
+→ REFERENCE PHOTOS: extract ONLY the white gloss door texture and Gola handle detail. Do NOT copy the showroom's marble walls, marble backsplash, or any background surfaces into the output. Walls, backsplash, and floor come from IMAGE 1 only.`,
+  },
 };
 
 /* ── Prompt template for REDESIGN mode (existing kitchen) ────────────── */

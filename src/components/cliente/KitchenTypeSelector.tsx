@@ -30,8 +30,9 @@ export default function KitchenTypeSelector({
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        {types.map((type) => {
+        {types.map((type, index) => {
           const isSelected = selected === type.id;
+          const isLastOdd = index === types.length - 1 && types.length % 2 !== 0;
 
           return (
             <button
@@ -42,7 +43,7 @@ export default function KitchenTypeSelector({
                 isSelected
                   ? "border-presisso-red shadow-[0_0_0_4px_rgba(212,43,43,0.12)]"
                   : "border-gray-100 bg-white hover:border-presisso-red/40 hover:shadow-lg"
-              }`}
+              } ${isLastOdd ? "sm:col-span-2 sm:max-w-[calc(50%-10px)] sm:mx-auto" : ""}`}
             >
               {/* Image */}
               <div className="relative h-56 overflow-hidden bg-gray-100 sm:h-72">
