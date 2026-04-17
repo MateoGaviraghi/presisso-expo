@@ -24,9 +24,9 @@ export const MATERIAL_OPTIONS = {
     material: "Polímero táctil",
     color: "White Gloss",
     label: "Polímero táctil White Gloss",
-    tag: "Línea Génova",
+    tag: "Gloss",
     description: "Polímero ultra gloss blanco puro efecto espejo, perfil Gola negro, mesada PRESTONE Rose",
-    image: "/polimero-tactil-white-gloss/IMG_2317.jpeg",
+    image: "/polimero-tactil-white-gloss/Presisso EXP 2026-72.jpg",
   },
   politex_gris_grafito: {
     id: "politex_gris_grafito",
