@@ -374,8 +374,13 @@ export default function AdminSolicitudPage() {
   const isPendiente = estado === "pendiente" as string;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://presisso-expo.vercel.app";
+  const nombreSlug = solicitud.nombre
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, "")
+    .slice(0, 30);
   const shareUrl = solicitud.short_token
-    ? `${appUrl}/p/${solicitud.short_token}`
+    ? `${appUrl}/p/${nombreSlug || "cliente"}-${solicitud.short_token}`
     : solicitud.pdf_url;
   const whatsappUrl =
     solicitud.whatsapp && shareUrl

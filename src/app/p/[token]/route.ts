@@ -16,13 +16,19 @@ function slugify(value: string): string {
     .slice(0, 40);
 }
 
+function extractToken(param: string): string | null {
+  const lastDash = param.lastIndexOf("-");
+  const candidate = lastDash === -1 ? param : param.slice(lastDash + 1);
+  return TOKEN_REGEX.test(candidate) ? candidate : null;
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { token: string } },
 ) {
-  const { token } = params;
+  const token = extractToken(params.token);
 
-  if (!TOKEN_REGEX.test(token)) {
+  if (!token) {
     return new NextResponse("Link inválido", { status: 400 });
   }
 
