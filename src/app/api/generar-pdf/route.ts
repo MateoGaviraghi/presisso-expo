@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
+import { customAlphabet } from "nanoid";
 import { supabaseAdmin, createAdminClient } from "@/lib/supabase/admin";
 import { generatePDF } from "@/lib/pdf/generator";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { solicitudIdBody, parseBody } from "@/lib/validations/api";
 import { logAction } from "@/lib/audit";
+
+const generateShortToken = customAlphabet(
+  "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
+  10,
+);
 
 export const maxDuration = 60;
 
@@ -80,9 +86,14 @@ export async function POST(req: NextRequest) {
 
     const pdfUrl = `${urlData.publicUrl}?v=${Date.now()}`;
 
+    const updatePayload: { pdf_url: string; short_token?: string } = { pdf_url: pdfUrl };
+    if (!solicitud.short_token) {
+      updatePayload.short_token = generateShortToken();
+    }
+
     await supabaseAdmin
       .from("solicitudes")
-      .update({ pdf_url: pdfUrl })
+      .update(updatePayload)
       .eq("id", solicitud_id);
 
     logAction(solicitud_id, "generar_pdf", { pdf_url: pdfUrl });

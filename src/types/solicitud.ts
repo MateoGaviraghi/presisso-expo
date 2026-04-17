@@ -31,6 +31,7 @@ interface SolicitudBase {
   intentos_generacion: number;
   notas_admin: string | null;
   whatsapp_sid: string | null;
+  short_token: string | null;
 }
 
 // ── Discriminated unions by estado ──────────────────────────────────
