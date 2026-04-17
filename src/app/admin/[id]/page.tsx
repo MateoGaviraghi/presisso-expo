@@ -380,7 +380,7 @@ export default function AdminSolicitudPage() {
     .replace(/[^a-zA-Z0-9]+/g, "")
     .slice(0, 30);
   const shareUrl = solicitud.short_token
-    ? `${appUrl}/p/${nombreSlug || "cliente"}-${solicitud.short_token}`
+    ? `${appUrl}/p/${nombreSlug || "cliente"}-Presisso-${solicitud.short_token}`
     : solicitud.pdf_url;
   const whatsappUrl =
     solicitud.whatsapp && shareUrl
