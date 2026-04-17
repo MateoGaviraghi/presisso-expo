@@ -373,9 +373,13 @@ export default function AdminSolicitudPage() {
   // Handle legacy "pendiente" entries — treat as needing generation
   const isPendiente = estado === "pendiente" as string;
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://presisso-expo.vercel.app";
+  const shareUrl = solicitud.short_token
+    ? `${appUrl}/p/${solicitud.short_token}`
+    : solicitud.pdf_url;
   const whatsappUrl =
-    solicitud.whatsapp && solicitud.pdf_url
-      ? `https://wa.me/${solicitud.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Hola ${solicitud.nombre}!\n\nTu cocina rediseñada con amoblamientos *Presisso ${getMaterialLabel(solicitud.tipo_cocina)}* ya está lista.\n\nPodés descargar tu diseño en PDF desde el siguiente enlace:\n\n${solicitud.pdf_url}\n\nSi tenés alguna consulta, estamos a tu disposición en el stand.\n\n_Presisso — Amoblamientos de cocina_`)}`
+    solicitud.whatsapp && shareUrl
+      ? `https://wa.me/${solicitud.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Hola ${solicitud.nombre}!\n\nTu cocina rediseñada con amoblamientos *Presisso ${getMaterialLabel(solicitud.tipo_cocina)}* ya está lista.\n\nPodés descargar tu diseño en PDF desde el siguiente enlace:\n\n${shareUrl}\n\nSi tenés alguna consulta, estamos a tu disposición en el stand.\n\n_Presisso — Amoblamientos de cocina_`)}`
       : null;
 
   return (

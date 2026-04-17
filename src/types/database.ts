@@ -36,6 +36,7 @@ export interface Database {
           email_id: string | null;
           enviado_at: string | null;
           notas_admin: string | null;
+          short_token: string | null;
         };
         Insert: {
           id?: string;
@@ -60,6 +61,7 @@ export interface Database {
           email_id?: string | null;
           enviado_at?: string | null;
           notas_admin?: string | null;
+          short_token?: string | null;
         };
         Update: {
           id?: string;
@@ -84,6 +86,7 @@ export interface Database {
           email_id?: string | null;
           enviado_at?: string | null;
           notas_admin?: string | null;
+          short_token?: string | null;
         };
       };
     };
