@@ -109,6 +109,7 @@ describe("clientFormSchema", () => {
       nombre: "Juan Pérez",
       email: "juan@test.com",
       tipo_cocina: "politex_negro",
+      modo: "rediseno",
       enviar_pdf: true,
     });
     expect(result.success).toBe(true);
@@ -119,6 +120,7 @@ describe("clientFormSchema", () => {
       nombre: "J",
       email: "juan@test.com",
       tipo_cocina: "politex_negro",
+      modo: "rediseno",
       enviar_pdf: true,
     });
     expect(result.success).toBe(false);
@@ -129,6 +131,7 @@ describe("clientFormSchema", () => {
       nombre: "Juan",
       email: "not-email",
       tipo_cocina: "politex_negro",
+      modo: "rediseno",
       enviar_pdf: true,
     });
     expect(result.success).toBe(false);
@@ -139,6 +142,17 @@ describe("clientFormSchema", () => {
       nombre: "Juan",
       email: "juan@test.com",
       tipo_cocina: "luxury",
+      modo: "rediseno",
+      enviar_pdf: true,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects missing modo", () => {
+    const result = clientFormSchema.safeParse({
+      nombre: "Juan",
+      email: "juan@test.com",
+      tipo_cocina: "politex_negro",
       enviar_pdf: true,
     });
     expect(result.success).toBe(false);
