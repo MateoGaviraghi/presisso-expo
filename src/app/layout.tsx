@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/logo-p-presisso.png",
-        width: 1080,
-        height: 1080,
+        width: 772,
+        height: 772,
         alt: "Presisso",
       },
     ],
@@ -51,7 +51,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;1,300;1,500&display=swap"
           rel="stylesheet"
         />
       </head>

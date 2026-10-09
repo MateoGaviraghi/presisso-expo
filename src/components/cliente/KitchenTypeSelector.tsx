@@ -41,7 +41,7 @@ export default function KitchenTypeSelector({
               onClick={() => onSelect(type.id as MaterialColorKey)}
               className={`group w-full overflow-hidden rounded-2xl border-2 text-left transition-all duration-300 active:scale-[0.99] ${
                 isSelected
-                  ? "border-presisso-red shadow-[0_0_0_4px_rgba(212,43,43,0.12)]"
+                  ? "border-presisso-red shadow-[0_0_0_4px_rgba(139,0,1,0.12)]"
                   : "border-gray-100 bg-white hover:border-presisso-red/40 hover:shadow-lg"
               } ${isLastOdd ? "sm:col-span-2 sm:max-w-[calc(50%-10px)] sm:mx-auto" : ""}`}
             >

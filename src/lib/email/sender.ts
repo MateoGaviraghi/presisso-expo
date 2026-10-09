@@ -10,8 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const LOGO_URL =
-  "https://rkmenjdjldfpfttkirkn.supabase.co/storage/v1/object/public/cocinas/assets/logo-presisso.png";
+const LOGO_URL = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://presisso-expo.vercel.app"}/logo-presisso.png`;
 
 interface SendEmailParams {
   to: string;
@@ -30,9 +29,9 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
     polimero_blanco_gloss: "Polímero táctil White Gloss",
   };
   const colorLabel = MATERIAL_LABELS[tipoCocina] ?? tipoCocina;
-  const red = "#DF0A0A";
-  const black = "#1A1A1A";
-  const grayMid = "#6B6B6B";
+  const red = "#8B0001";
+  const black = "#161616";
+  const grayMid = "#6E6862";
   const grayLight = "#A0A0A0";
 
   const info = await transporter.sendMail({
@@ -55,8 +54,8 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
   <style>table,td{font-family:Arial,Helvetica,sans-serif!important;}</style>
   <![endif]-->
 </head>
-<body style="margin:0;padding:0;background:#F5F5F3;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F3;">
+<body style="margin:0;padding:0;background:#EDE7E0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EDE7E0;">
     <tr>
       <td align="center" style="padding:32px 16px;">
 
@@ -71,7 +70,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
             <td style="padding:20px 32px;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="width:50%;"><img src="${LOGO_URL}" alt="presisso." width="120" style="display:block;border:0;max-width:120px;height:auto;" /></td>
+                  <td style="width:50%;"><img src="${LOGO_URL}" alt="presisso" width="120" style="display:block;border:0;max-width:120px;height:auto;" /></td>
                   <td align="right" valign="middle" style="width:50%;"><span style="font-size:10px;font-weight:700;color:${red};letter-spacing:0.1em;white-space:nowrap;">${colorLabel.toUpperCase()}</span></td>
                 </tr>
               </table>
@@ -127,7 +126,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
                 <!-- Logo footer -->
                 <tr>
                   <td align="center" style="padding-bottom:16px;">
-                    <img src="${LOGO_URL}" alt="presisso." width="100" style="display:block;border:0;max-width:100px;height:auto;" />
+                    <img src="${LOGO_URL}" alt="presisso" width="100" style="display:block;border:0;max-width:100px;height:auto;" />
                   </td>
                 </tr>
 
@@ -146,7 +145,7 @@ export async function sendEmail({ to, nombre, tipoCocina, pdfUrl, imagenUrl }: S
                 <!-- Separador -->
                 <tr>
                   <td align="center" style="padding-bottom:14px;">
-                    <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="width:40px;height:1px;background:#E0E0E0;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+                    <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="width:40px;height:1px;background:#CB9F71;font-size:0;line-height:0;">&nbsp;</td></tr></table>
                   </td>
                 </tr>
 

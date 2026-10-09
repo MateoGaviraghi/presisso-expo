@@ -27,9 +27,9 @@ export default function StepIndicator({
                   <div
                     className={`relative z-10 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
                       isDone
-                        ? "bg-presisso-red text-white shadow-[0_0_0_4px_rgba(212,43,43,0.15)]"
+                        ? "bg-presisso-red text-white shadow-[0_0_0_4px_rgba(139,0,1,0.15)]"
                         : isActive
-                          ? "bg-presisso-red text-white shadow-[0_0_0_5px_rgba(212,43,43,0.18)] scale-110"
+                          ? "bg-presisso-red text-white shadow-[0_0_0_5px_rgba(139,0,1,0.18)] scale-110"
                           : "bg-gray-100 text-gray-400"
                     }`}
                   >

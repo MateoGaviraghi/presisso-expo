@@ -50,7 +50,7 @@ function StatePipeline({ estado }: { estado: string }) {
                 key={step}
                 className={`flex h-[11px] w-[11px] items-center justify-center rounded-full border-2 transition-all ${
                   isCurrent
-                    ? "border-presisso-red bg-presisso-red shadow-[0_0_0_3px_rgba(223,10,10,0.15)]"
+                    ? "border-presisso-red bg-presisso-red shadow-[0_0_0_3px_rgba(139,0,1,0.15)]"
                     : isPast
                       ? "border-presisso-red bg-presisso-red"
                       : "border-presisso-border bg-white"

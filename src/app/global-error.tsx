@@ -19,13 +19,13 @@ export default function GlobalError({
       <body>
         <div style={{ padding: 40, textAlign: "center", fontFamily: "system-ui" }}>
           <h2>Algo salió mal</h2>
-          <p style={{ color: "#6B6B6B" }}>Ocurrió un error inesperado.</p>
+          <p style={{ color: "#6E6862" }}>Ocurrió un error inesperado.</p>
           <button
             onClick={reset}
             style={{
               marginTop: 16,
               padding: "10px 24px",
-              background: "#DF0A0A",
+              background: "#8B0001",
               color: "white",
               border: "none",
               borderRadius: 8,

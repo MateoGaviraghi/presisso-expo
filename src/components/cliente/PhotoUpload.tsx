@@ -99,7 +99,7 @@ export default function PhotoUpload({
 
         </>
       ) : (
-        <div className="relative overflow-hidden rounded-2xl border-2 border-presisso-red/20 shadow-[0_0_0_4px_rgba(212,43,43,0.06)]">
+        <div className="relative overflow-hidden rounded-2xl border-2 border-presisso-red/20 shadow-[0_0_0_4px_rgba(139,0,1,0.06)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}

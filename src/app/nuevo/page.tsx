@@ -133,7 +133,7 @@ export default function NuevoPage() {
       : "Continuar";
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col">
+    <div className="min-h-screen bg-presisso-cream flex flex-col">
 
       {/* ── Header ── */}
       <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
@@ -142,7 +142,7 @@ export default function NuevoPage() {
             <Image
               src="/logo-presisso.png"
               alt="Presisso"
-              width={160}
+              width={165}
               height={42}
               className="h-9 w-auto"
               priority
@@ -245,7 +245,7 @@ export default function NuevoPage() {
               disabled={!canNext() || loading}
               className={`flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl text-[15px] font-bold uppercase tracking-wider transition-all duration-200 ${
                 canNext() && !loading
-                  ? "bg-presisso-red text-white shadow-[0_4px_24px_rgba(212,43,43,0.35)] hover:shadow-[0_4px_16px_rgba(212,43,43,0.25)] hover:bg-presisso-red-hover active:scale-[0.98]"
+                  ? "bg-presisso-red text-white shadow-[0_4px_24px_rgba(139,0,1,0.35)] hover:shadow-[0_4px_16px_rgba(139,0,1,0.25)] hover:bg-presisso-red-hover active:scale-[0.98]"
                   : "cursor-not-allowed bg-gray-100 text-gray-300"
               }`}
             >
