@@ -1,11 +1,12 @@
-import { MATERIALS } from "./prompts-rediseno";
-import type { PromptType } from "./prompts-rediseno";
+import { MATERIALS, LOOSE_OBJECTS } from "./prompts-rediseno";
+import type { MaterialDef, PromptType } from "./prompts-rediseno";
 
 /* ── Step 1 prompt: CLEAN the photo (no furniture changes) ──────────── */
 
 export const CLEAN_PROMPT = `Edit this image. Prepare this kitchen space for a professional interior design photoshoot. Same dimensions, same aspect ratio, same orientation.
 
-REMOVE everything that is not permanent structure: all construction debris, clutter, tools, bags, boxes, temporary objects, loose items on counters and floor. Scan every surface left to right, top to bottom. Fill cleaned areas seamlessly with the clean surface behind them.
+REMOVE everything that is not permanent structure: construction debris, tools, ladders, buckets and building materials.
+${LOOSE_OBJECTS}
 
 CLEAN ALL WALLS: Scan every wall — back, sides, corners, ceiling. If tiles exist, make them look clean and uniform. If walls are damaged, peeling, or bare concrete, give them a fresh smooth painted finish in soft white or warm cream. Apply the SAME color to ALL walls uniformly — do not paint some walls one color and others a different color. The ceiling should look clean and finished.
 
@@ -15,7 +16,7 @@ The output should look like a clean, empty kitchen space ready for a furniture i
 
 /* ── Step 2 prompt: INSERT furniture into the cleaned photo ─────────── */
 
-function buildDesignPrompt(mat: { name: string; finish: string }): string {
+function buildDesignPrompt(mat: MaterialDef): string {
   return `Edit this image. Install Presisso "${mat.name}" kitchen furniture into this room, creating a photorealistic result that looks like a professional interior design magazine photo — real, aspirational, and premium.
 
 IMAGES (in order):
@@ -27,15 +28,19 @@ WHAT TO INSTALL:
 
 1. LOWER CABINETS along existing walls where counter space makes sense:
    - "${mat.name}" flat slab doors. ${mat.finish}
-   - Straight square-edge countertop, ~35mm thick, same material family.
-   - Lower handles: recessed vertical groove, same color as door.
+   - Straight square-edge countertop, ~35mm thick, in the countertop material described above.
    - If cabinets already exist, reskin their surfaces — keep their exact position and count.
 
 2. UPPER CABINETS on clear wall sections above the lower cabinets:
-   - Same "${mat.name}" flat slab, no handles (push-to-open).
+   - Same "${mat.name}" flat slab.
    - ~55cm gap between countertop and upper cabinet bottom.
    - Place only on solid wall — never over windows or doors.
    - Add a matching backsplash in the strip between countertop and uppers.
+
+   - Where each material goes (where it says "replace", read "install"):
+${mat.apply}
+
+   - Handles — the only handle rule: ${mat.handles}
 
 3. ESSENTIAL APPLIANCES to make the kitchen look complete and lived-in:
    - A cooktop on the counter (induction or gas, flush-mounted).
