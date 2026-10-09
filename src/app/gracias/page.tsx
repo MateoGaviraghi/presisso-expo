@@ -61,13 +61,13 @@ export default function GraciasPage({
         {recibirPdf && tieneEmail && (
           <div className="mt-10 w-full max-w-sm">
             <div className="flex items-center gap-4 rounded-2xl border border-presisso-border bg-white p-5 shadow-card">
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-blue-500/10">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-presisso-red-light">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
-                  className="h-6 w-6 text-blue-600"
+                  className="h-6 w-6 text-presisso-red"
                 >
                   <path
                     strokeLinecap="round"

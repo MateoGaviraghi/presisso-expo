@@ -12,11 +12,11 @@ const MATERIAL_LABELS: Record<string, string> = {
 };
 
 /* ── Colores de marca Presisso (escala 0–1) ── */
-const RED = rgb(223 / 255, 10 / 255, 10 / 255); // #DF0A0A
-const BLACK = rgb(26 / 255, 26 / 255, 26 / 255); // #1A1A1A
+const RED = rgb(139 / 255, 0 / 255, 1 / 255); // #8B0001 (manual 2026)
+const BLACK = rgb(22 / 255, 22 / 255, 22 / 255); // #161616
 const WHITE = rgb(1, 1, 1);
 const NEAR_WHITE = rgb(252 / 255, 252 / 255, 251 / 255);
-const GRAY_BG = rgb(245 / 255, 245 / 255, 243 / 255);
+const GRAY_BG = rgb(237 / 255, 231 / 255, 224 / 255); // crema #EDE7E0
 const GRAY_MID = rgb(130 / 255, 130 / 255, 130 / 255);
 const GRAY_LIGHT = rgb(200 / 255, 200 / 255, 200 / 255);
 
@@ -71,12 +71,12 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
     });
   } catch {
     // Fallback texto si no carga el logo
-    page.drawText("presisso.", {
+    page.drawText("presisso", {
       x: M,
       y: H - 42,
       size: 24,
       font: bold,
-      color: BLACK,
+      color: RED,
     });
   }
 
@@ -329,7 +329,7 @@ export async function generatePDF(solicitud: Solicitud): Promise<Buffer> {
       height: footerLogoScaled.height,
     });
   } catch {
-    page.drawText("presisso.", {
+    page.drawText("presisso", {
       x: M,
       y: FOOTER_H / 2 - 5,
       size: 12,

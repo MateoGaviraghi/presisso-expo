@@ -101,7 +101,7 @@ export default function Home() {
           <Image
             src="/logo-presisso.png"
             alt="Presisso"
-            width={200}
+            width={204}
             height={52}
             className="h-11 w-auto"
             priority
@@ -240,6 +240,7 @@ export default function Home() {
         <div className="mx-auto max-w-5xl">
           {/* Section header */}
           <div className="mb-14 text-center">
+            <span aria-hidden="true" className="mx-auto mb-3 block h-px w-10 bg-presisso-gold" />
             <span className="font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-presisso-gray-mid">
               Cómo funciona
             </span>
@@ -248,7 +249,7 @@ export default function Home() {
               <span className="text-presisso-red"> tu diseño listo</span>
             </h2>
             <p className="mx-auto mt-4 max-w-sm text-base leading-relaxed text-presisso-gray-mid">
-              El proceso completo toma menos de 3 minutos. Sin apps, sin
+              El proceso completo toma minutos. Sin apps, sin
               registro.
             </p>
           </div>
@@ -286,7 +287,7 @@ export default function Home() {
                 {/* Connector arrow (hidden on last card) */}
                 {i < 2 && (
                   <div className="mt-6 hidden items-center gap-1 sm:flex">
-                    <div className="h-px flex-1 bg-presisso-border" />
+                    <div className="h-px flex-1 bg-presisso-gold/60" />
                   </div>
                 )}
               </div>
@@ -328,7 +329,7 @@ export default function Home() {
               <Image
                 src="/logo-presisso.png"
                 alt="Presisso"
-                width={140}
+                width={134}
                 height={34}
                 className="h-9 w-auto"
               />

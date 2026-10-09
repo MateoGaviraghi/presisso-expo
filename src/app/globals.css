@@ -1,32 +1,21 @@
-/* Futura Bold — fuente oficial Presisso */
-@font-face {
-  font-family: "Futura";
-  src: url("/fonts/Futura-Bold.otf") format("opentype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Jost 700 = fallback web si Futura no carga */
-@import url("https://fonts.googleapis.com/css2?family=Jost:wght@700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Presisso Colors — exactos del manual de marca */
-  --presisso-red: #df0a0a;
-  --presisso-red-hover: #c50909;
-  --presisso-red-light: #fdf2f2;
-  --presisso-black: #1a1a1a;
+  /* Presisso Colors — manual de marca 2026 (mismos valores que tailwind.config.ts) */
+  --presisso-red: #8b0001;
+  --presisso-red-hover: #6e0001;
+  --presisso-red-light: #f4e4e2;
+  --presisso-black: #161616;
   --presisso-white: #ffffff;
-  --presisso-cream: #faf8f6;
-  --presisso-gray-light: #f5f5f3;
-  --presisso-gray-mid: #6b6b6b;
-  --presisso-gray-dark: #333333;
-  --presisso-border: #e8e8e5;
-  --presisso-surface: #fafaf9;
+  --presisso-cream: #ede7e0;
+  --presisso-gold: #cb9f71;
+  --presisso-gray-light: #ede7e0;
+  --presisso-gray-mid: #6e6862;
+  --presisso-gray-dark: #2e2b29;
+  --presisso-border: #e2dad1;
+  --presisso-surface: #f7f3ef;
 
   /* Spacing */
   --container-max: 1280px;
@@ -38,8 +27,8 @@ html {
 }
 
 body {
-  font-family: "Futura", "Century Gothic", "Jost", sans-serif;
-  font-weight: 700;
+  font-family: "Jost", "Futura", "Century Gothic", sans-serif;
+  font-weight: 300;
   background-color: var(--presisso-gray-light);
   color: var(--presisso-gray-dark);
   -webkit-font-smoothing: antialiased;
@@ -52,7 +41,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Futura", "Century Gothic", "Jost", sans-serif;
+  font-family: "Jost", "Futura", "Century Gothic", sans-serif;
+  font-weight: 500;
 }
 
 /* ── Utility: animate on scroll (JS-driven class) ── */

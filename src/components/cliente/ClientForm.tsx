@@ -54,7 +54,7 @@ export default function ClientForm({
             onChange={(e) => onNombreChange(e.target.value)}
             placeholder="Tu nombre completo"
             autoComplete="name"
-            className="w-full rounded-xl border-2 border-gray-100 bg-gray-50 px-4 py-4 text-base text-presisso-black placeholder:text-gray-300 transition-all duration-200 focus:border-presisso-red focus:bg-white focus:outline-none focus:shadow-[0_0_0_4px_rgba(212,43,43,0.08)]"
+            className="w-full rounded-xl border-2 border-gray-100 bg-gray-50 px-4 py-4 text-base text-presisso-black placeholder:text-gray-300 transition-all duration-200 focus:border-presisso-red focus:bg-white focus:outline-none focus:shadow-[0_0_0_4px_rgba(139,0,1,0.08)]"
           />
         </div>
 
@@ -77,7 +77,7 @@ export default function ClientForm({
             onChange={(e) => onEmailChange(e.target.value)}
             placeholder="tu@email.com"
             autoComplete="email"
-            className="w-full rounded-xl border-2 border-gray-100 bg-gray-50 px-4 py-4 text-base text-presisso-black placeholder:text-gray-300 transition-all duration-200 focus:border-presisso-red focus:bg-white focus:outline-none focus:shadow-[0_0_0_4px_rgba(212,43,43,0.08)]"
+            className="w-full rounded-xl border-2 border-gray-100 bg-gray-50 px-4 py-4 text-base text-presisso-black placeholder:text-gray-300 transition-all duration-200 focus:border-presisso-red focus:bg-white focus:outline-none focus:shadow-[0_0_0_4px_rgba(139,0,1,0.08)]"
           />
         </div>
 
@@ -99,7 +99,7 @@ export default function ClientForm({
             onChange={(e) => onWhatsappChange(e.target.value)}
             placeholder="+54 9 11 1234-5678"
             autoComplete="tel"
-            className="w-full rounded-xl border-2 border-gray-100 bg-gray-50 px-4 py-4 text-base text-presisso-black placeholder:text-gray-300 transition-all duration-200 focus:border-presisso-red focus:bg-white focus:outline-none focus:shadow-[0_0_0_4px_rgba(212,43,43,0.08)]"
+            className="w-full rounded-xl border-2 border-gray-100 bg-gray-50 px-4 py-4 text-base text-presisso-black placeholder:text-gray-300 transition-all duration-200 focus:border-presisso-red focus:bg-white focus:outline-none focus:shadow-[0_0_0_4px_rgba(139,0,1,0.08)]"
           />
         </div>
 
