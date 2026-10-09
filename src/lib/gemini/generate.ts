@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
-import { PROMPTS, type PromptType } from "./prompts-rediseno";
+import { PROMPTS, CLEAN_EXISTING_PROMPT, type PromptType } from "./prompts-rediseno";
 import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
 export type ModoSolicitud = "rediseno" | "diseno";
@@ -51,14 +51,13 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-gris-grafito/Screenshot 2026-04-15 181705.png",
   ],
   melamina_grafito_scotch: [
-    "melamina-grafito-scotch/DSC05054.jpg",
-    "melamina-grafito-scotch/DSC05162.jpg",
-    "melamina-grafito-scotch/DSC05029.jpg",
-    "melamina-grafito-scotch/DSC05114.jpg",
-    "melamina-grafito-scotch/DSC05058.jpg",
-    "melamina-grafito-scotch/DSC05077.jpg",
-    "melamina-grafito-scotch/DSC05080.jpg",
-    "melamina-grafito-scotch/DSC05089.jpg",
+    // Solo primeros planos del material: las fotos de cocina entera tienen las alacenas en dos filas
+    // y el modelo copiaba esa distribución (agregaba filas y muebles que el cliente no tiene).
+    "melamina-grafito-scotch/DSC05119.jpg", // cajones grafito
+    "melamina-grafito-scotch/DSC05089.jpg", // nogal
+    "melamina-grafito-scotch/DSC05102.jpg", // nogal, canto
+    "melamina-grafito-scotch/DSC05114.jpg", // mesada con vetas + lateral grafito
+    "melamina-grafito-scotch/DSC05029.jpg", // mesada, textura
   ],
   polimero_blanco_gloss: [
     // Full kitchen view (best overall reference for layout + material context)
@@ -252,15 +251,28 @@ async function generateKitchenImage(
     ], dimInfo.apiAspectRatio);
     promptUsed = `[2-step] CLEAN + ${designPrompt.substring(0, 400)}`;
   } else {
-    // ── REDESIGN MODE: 1-step (bookended — last image locks output dimensions) ──
+    // ── REDESIGN MODE: 2-step process ──
+    // Un cambio grande por pedido: en un solo paso el modelo priorizaba "no tocar nada"
+    // y dejaba todo el desorden de la mesada.
+    // Step 1: Declutter the photo (keeps cabinets, appliances and room untouched)
+    console.log(`[Gemini] Rediseño paso 1/2: limpiando foto con ${model}...`);
+    const cleanedBase64 = await callGemini(model, [
+      clientPart,
+      { text: CLEAN_EXISTING_PROMPT + dimInfo.promptNote },
+    ], dimInfo.apiAspectRatio);
+    console.log(`[Gemini] Paso 1 completado — foto limpia obtenida`);
+
+    // Step 2: Reskin cabinets and countertop on the CLEANED photo (bookended — last image locks output dimensions)
+    console.log(`[Gemini] Rediseño paso 2/2: aplicando material con ${model}...`);
+    const cleanedPart = { inlineData: { mimeType: "image/png", data: cleanedBase64 } };
     const redesignPrompt = PROMPTS[tipoCocina] + dimInfo.promptNote;
     imageBase64 = await callGemini(model, [
-      clientPart,
+      cleanedPart,
       ...refParts,
-      clientPart,
+      cleanedPart,
       { text: redesignPrompt },
     ], dimInfo.apiAspectRatio);
-    promptUsed = redesignPrompt.substring(0, 500);
+    promptUsed = `[2-step] CLEAN_EXISTING + ${redesignPrompt.substring(0, 400)}`;
   }
 
   return {
