@@ -67,3 +67,19 @@ Empieza el 2026-10-16. Lo anterior a esa fecha no tiene registro (los `docs/` so
 **OQ-002 — Cocinas en obra / con poca estructura.** Con la guía de color: Litio sale como acero, la mesada de Grafito sale granito frío y Negro inventa muebles. El diagnóstico con pasos intermedios quedó corriendo el 2026-10-16. Falta decidir el arreglo.
 
 **OQ-003 — Endurecer el control de calidad:** que compare la mesada contra su propia muestra y que penalice un acabado metálico excesivo.
+
+---
+
+### Agregado 2026-10-16 (tarde) — diagnóstico de la cocina en obra
+
+**G-010 — El render final con guía inventa muebles en espacios vacíos.** Solo recibe el boceto y las muestras, no la foto original, y en paredes vacías agrega alacenas o columnas. Pasó en Negro, Litio y Gris Grafito sobre la cocina en obra. En la cocina con isla (alacenas ya existentes) no pasó.
+
+**G-011 — El paso de cambio de material puede agregar un retorno en L.** En la cocina en obra confundió la pared derecha con un tramo de mesada y agregó bajos ahí (Litio y Gris Grafito). El boceto y el render heredan ese error.
+
+**G-012 — La limpieza puede dejar objetos grandes de obra** (una hormigonera en un intento). La lista `LOOSE_OBJECTS` no nombra materiales ni máquinas de obra.
+
+**OQ-004 — Arreglo propuesto para cocinas en obra (no aplicado, espera OK de Mateo y presupuesto de generaciones):**
+1. Pasar la foto original al render final como referencia de estructura, con la regla explícita de no agregar alacenas, columnas ni tramos que no estén.
+2. Que el control de calidad compare la cantidad de frentes antes y después (reusar `getQuads` de `color-guide.ts`) y que nunca se entregue un resultado con muebles agregados. Si todo falla, entregar el que no agrega muebles aunque el color sea peor.
+3. Sumar a la limpieza los objetos de obra (hormigoneras, bolsas de material, escombros, herramientas grandes).
+4. Probar con la cocina en obra y con la de isla.
