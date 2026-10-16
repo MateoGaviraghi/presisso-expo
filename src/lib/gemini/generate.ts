@@ -24,6 +24,8 @@ type RefEntry = { base64: string; mime: string };
 
 const REFERENCE_FILES: Record<PromptType, string[]> = {
   politex_negro: [
+    // Muestra oficial (presisso.com.ar/productos/materiales) primero: es la autoridad del color
+    "materiales-oficiales/frentes-politex-negro.jpg",
     "politex-negro/Presisso_28022026_12.jpg",
     "politex-negro/Presisso_28022026_03.jpg",
     "politex-negro/Presisso_28022026_04.jpg",
@@ -34,6 +36,10 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-negro/Presisso_28022026_13.jpg",
   ],
   melamina_litio: [
+    "materiales-oficiales/frentes-melaminas-metalicos-litio.jpg", // muestra oficial: "Metálicos: Litio"
+    "materiales-oficiales/mesadas-cuarzo-blanco-puro.jpg", // mesada blanca
+    // Foto oficial de la Línea Siena (presisso.com.ar/productos/cocinas): el color de referencia
+    "melamina-litio/linea-siena-presisso.jpg",
     // Full kitchen view (best overall reference), medium detail, artistic close-up
     "melamina-litio/MPucci_Presisso_20210323_082.jpg",
     "melamina-litio/MPucci_Presisso_20210323_085.jpg",
@@ -44,6 +50,8 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     // Removed 036__ and 070: extreme close-ups of hardware/base, not useful for material color
   ],
   politex_gris_grafito: [
+    "materiales-oficiales/frentes-politex-grafito.jpg", // muestra oficial del frente
+    "materiales-oficiales/mesadas-cuarzo-gris-cemento.jpg", // mesada oficial: Cuarzo Gris Cemento (Línea Milán)
     "politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7552-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7554.jpg.jpg",
@@ -56,6 +64,8 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-gris-grafito/Screenshot 2026-04-15 181705.png",
   ],
   melamina_grafito_scotch: [
+    "materiales-oficiales/frentes-melaminas-lisos-grafito.jpg", // muestra oficial grafito
+    "materiales-oficiales/frentes-melaminas-blend-scotch.jpg", // muestra oficial nogal Scotch
     // Solo primeros planos del material: las fotos de cocina entera tienen las alacenas en dos filas
     // y el modelo copiaba esa distribución (agregaba filas y muebles que el cliente no tiene).
     "melamina-grafito-scotch/DSC05119.jpg", // cajones grafito
@@ -279,7 +289,7 @@ export async function generateKitchenImage(
       const image = await callGemini(model, [
         clientPart,
         cleanedPart,
-        { text: `The next images are the REFERENCE PHOTOS of Presisso "${mat.name}". Copy the door and countertop COLOR exactly as it looks in them.` },
+        { text: `The next images are the REFERENCE PHOTOS of Presisso "${mat.name}". The first ones are OFFICIAL COLOR SWATCHES (flat, evenly lit samples of the real material): they are the authority for color and texture. Copy the door and countertop colors from them, adjusted only for the client's room light.` },
         ...refParts,
         cleanedPart,
         { text: redesignPrompt },

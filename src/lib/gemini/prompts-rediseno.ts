@@ -26,10 +26,10 @@ export const MATERIALS: Record<string, MaterialDef> = {
     handles:
       "Brushed ALUMINUM profile handle: a slim horizontal aluminum channel along the TOP edge of every lower door and drawer, as in the reference close-ups of the drawers. Upper cabinets: no handles, flat fronts. Kickboard in brushed aluminum.",
     finish:
-      "VERY PALE LIGHT GRAY matte melamine — almost white: a soft pearl gray, neutral (no blue, no yellow), only ONE small step darker than the white countertop next to it. Look at the reference photos: the doors read as off-white / very light gray in a bright room. In the client's light the doors must still read as near-white; they must never look medium gray, silver or blue-gray. A flat, painted-looking, non-reflective surface: NOT metallic, NOT silver, NOT brushed, NOT satin, no sheen. Smooth, uniform, no wood grain, no texture. Only the thin handle profile and the kickboard are aluminum — the doors are not. The COUNTERTOP is a DIFFERENT material: a solid WHITE quartz top (about #E4E3E0), brighter and whiter than the gray doors, with no veining. Study the reference photos: gray fronts, white countertop, aluminum profile and aluminum kickboard.",
+      "LITIO — Presisso \"Metálicos\" melamine, as in the OFFICIAL SWATCH (first reference image): a LIGHT WARM CHAMPAGNE / GREIGE — a warm beige-gray with a soft, fine pearly sheen. In a bright room it reads as a warm off-white (see the Línea Siena photo); in a dimmer room it reads as light warm beige. It is NEVER cool gray, blue-gray, silver, chrome or medium gray. Smooth and uniform, no wood grain, no brushed lines, never a mirror look. The COUNTERTOP is a DIFFERENT material: solid WHITE quartz (Blanco Puro swatch), whiter and brighter than the champagne doors, with no veining. Only the thin handle profile and the kickboard are aluminum.",
     apply: `Apply this material to:
-→ EVERY cabinet front: lower doors and drawers, upper doors, tall units — light gray matte slab, same size, position and count as the original doors.
-→ EVERY visible furniture panel: cabinet sides, end panels, the island's body and sides, open-shelf frames — the same light gray. No panel keeps its original color.
+→ EVERY cabinet front: lower doors and drawers, upper doors, tall units — the warm champagne Litio slab, same size, position and count as the original doors.
+→ EVERY visible furniture panel: cabinet sides, end panels, the island's body and sides, open-shelf frames — the same warm champagne Litio. No panel keeps its original color.
 → THE COUNTERTOP and the island top — solid white quartz, top surface and front edge. Same footprint and shape.
 → KICKBOARD — brushed aluminum strip at floor level under the lower cabinets.`,
   },
@@ -38,11 +38,11 @@ export const MATERIALS: Record<string, MaterialDef> = {
     handles:
       "Copy the handle detail from the reference photos: flat handleless fronts with slim recessed grips, same dark color as the door. No knobs, no bar pulls, no chrome.",
     finish:
-      "DARK CHARCOAL matte Politex with a slightly warm tone (about #3A3330 in the photos) — very dark gray, almost black, but still gray next to the black details. Nano-textured matte surface like brushed leather, no gloss. NOT medium gray, NOT blue-gray, NO wood anywhere — all fronts are the same charcoal.\nThe COUNTERTOP is a SEPARATE material: textured dark gray sintered stone that looks like polished concrete — medium-dark gray with lighter speckles and cement-like patches, lighter than the doors and clearly textured. Study the close-up countertop photo.",
+      "POLITEX GRAFITO, as in the OFFICIAL SWATCH (first reference image): a dark SLATE gray with a cool, slightly blue undertone, super-matte nano-textured surface, no gloss. Darker than medium gray, clearly lighter than black. NO wood anywhere — all fronts are the same graphite.\nThe COUNTERTOP is Presisso CUARZO GRIS CEMENTO (second reference image, official swatch): a warm taupe-gray quartz with a FINE, EVEN granular speckle spread uniformly over the whole surface, like fine sand. Smooth and matte. NO cloudy patches, NO concrete stains, NO veins, NO marble look.",
     apply: `Apply this material to:
-→ EVERY cabinet front: lower doors and drawers, upper doors, tall units — dark charcoal matte slab, same size, position and count as the original doors.
-→ EVERY visible furniture panel: cabinet sides, end panels, the island's body and sides, open-shelf frames — the same charcoal. No panel keeps its original color.
-→ THE COUNTERTOP and the island top — the textured concrete-look stone, top surface and front edge. Same footprint and shape.
+→ EVERY cabinet front: lower doors and drawers, upper doors, tall units — the slate graphite Politex slab, same size, position and count as the original doors.
+→ EVERY visible furniture panel: cabinet sides, end panels, the island's body and sides, open-shelf frames — the same graphite. No panel keeps its original color.
+→ THE COUNTERTOP and the island top — Cuarzo Gris Cemento (uniform fine-grain warm taupe-gray quartz), top surface and front edge. Same footprint and shape.
 → KICKBOARD — brushed aluminum strip at floor level, as in the reference photos.`,
   },
   melamina_grafito_scotch: {
