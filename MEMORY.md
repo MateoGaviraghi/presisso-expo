@@ -110,3 +110,11 @@ OQ-004: resuelta por D-009. TD-004: el test temporal ya no existe; la rama `diag
 
 OQ-005: resuelta por G-015 + D-010 (en las pruebas). G-011 (retorno en L) sigue abierto.
 
+### Agregado 2026-10-16 (noche, 3) — retorno en L
+
+**D-011 — Inventario de estructura en texto contra muebles inventados (2026-10-16).** Antes de generar, un modelo de texto describe los muebles fijos de la original y ese inventario va a los prompts de los pasos 2 y 3; el control por texto marca `addedFurniture`, que pesa como "agrega muebles". Se eligió porque el chequeo por área no distingue un retorno en L (G-017). Se reabriría si el inventario se equivoca (por ejemplo, no ve una isla) y eso hace borrar muebles reales.
+
+**G-018 — El control por texto puede inventar problemas** ("se agregó un microondas" cuando ya estaba). Un falso positivo empuja a la imagen sin guía o al reintento.
+
+G-011: resuelto en las pruebas de la cocina en obra por D-011.
+

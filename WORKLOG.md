@@ -9,12 +9,12 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 
 | Campo | Valor |
 |---|---|
-| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Hecho: estructura en obra (PR #39) y Litio sin aspecto de acero (PR de `fix/color-litio`). Pendiente: el paso 2 todavía agrega un retorno en L / columna en la cocina en obra (G-011). |
-| **Status real** | En producción tras el merge: Litio descrito como melamina casi mate (no metal); control con regla de acabado metálico y mesada contra su muestra; el render final recibe la imagen del paso 2 como estructura (ni la original ni la limpia); límite de muebles agregados 5 %; reintento solo si van < 120 s. Probado: isla Litio entrega render con guía (113 s). Obra Litio: sin acero, pero entregó un retorno en L. Sin probar con la versión final: obra (todos), isla Negro y Grafito. |
+| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Hecho hoy: estructura en obra (#39), Litio sin acero (#40), retorno en L (PR de `fix/retorno-l`). Queda: pulido (isla Grafito sin boceto, falsos positivos del control, tiempo). |
+| **Status real** | En producción tras el merge: inventario de estructura de la original (modelo de texto, en paralelo con la limpieza) agregado a los prompts de los pasos 2 y 3; el control devuelve `addedFurniture` y eso cuenta como `addsFurniture`. Probado: obra Litio (116 s) y obra Grafito (99 s) sin retorno en L, render con guía entregado; isla Negro e isla Grafito con estructura bien, entregada la imagen sin guía. |
 | **Último chat** | 2026-10-16 (empezó 2026-10-08) |
 | **Espera de Mateo** | Probar `Renovar` en producción con una cocina en obra. Decidir si se ataca el Litio metálico (pide generaciones). Pendiente desde antes: consultas SQL A–E (cifras de la expo); compartir el brief con Épica; confirmar si salió alguno de los mensajes de `mensajes-pendientes.md`. |
 | **Espera de terceros** | Ninguna. (Épica: recibe el brief y el prompt del video cuando Mateo los comparta.) |
-| **Próxima acción** | G-011 (retorno en L / columna en obra): el paso 2 convierte la pared derecha en un tramo. Ideas sin probar: pasar al paso 2 una máscara/lista de tramos de la original (getQuads) y que el control por texto con "tramo agregado" valga como `addsFurniture`. Probar en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) e isla (`originales/1792158224506-1ika76b0cjg.jpg`). Pide generaciones a Mateo. |
+| **Próxima acción** | Esperar la prueba de Mateo en producción (`Renovar` con obra e isla). Pendientes chicos: 1) isla Grafito no armó el boceto (causa sin ver: los `console.warn` no se ven en las pruebas, G-014); 2) el control marcó "se agregó un microondas" que sí estaba (falso positivo); 3) isla Negro tardó 160 s en un intento (TD-005). |
 | **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (hook de depuración). No mergear ni deployar sin OK de Mateo. |
 
 **Ramas locales vivas:** `diag/obra` (commit `ba74844`, sin push; `debugSave` guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — para volver a diagnosticar, aplicarlo a mano: `cherry-pick` choca con los cambios de `fix/obra`). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito; el ancla de `CLAUDE.md` todavía dice "There is no decision log" (desactualizado: ahora está `MEMORY.md`).
@@ -159,3 +159,25 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 **Gates:** `tsc --noEmit` OK; `eslint src/lib/gemini` sin errores; `vitest run` 34/34.
 
 **Sigue:** ESTADO → Próxima acción.
+
+### 2026-10-16 (noche, 3) — Retorno en L en la cocina en obra (G-011)
+
+**Pedido:** "ok retorno L, autorizo 12 generaciones" → "ok push y merge retorno L".
+
+**Hecho:**
+- `describeStructure` (verify.ts): un modelo de texto (`QC_MODELS`) lista los muebles fijos de la original — tramos por pared, recto o en L, bajos/alacenas/columnas, isla sí/no y paredes sin muebles —, ≤ 70 palabras. `structureNote` lo convierte en un bloque "THE CLIENT'S FURNITURE, exactly…" que se agrega al prompt del paso 2 y al del render final. Corre en paralelo con la limpieza.
+- Control por texto: el JSON suma `addedFurniture` (tramo, retorno/L, columna, alacena que no está en la original). Si es true, `ok` = false y `addsFurniture` = true (pierde siempre en `score`). `withFurnitureCheck` respeta el flag.
+- Inventarios obtenidos: obra → "Back wall: straight run with base cabinets only; no upper cabinets or tall units… Walls with no cabinets: left wall and right wall." Isla → tramo del fondo con bajos y alacenas, isla sí.
+
+**Archivos:** `src/lib/gemini/verify.ts` (`STRUCTURE_PROMPT`, `describeStructure`, `structureNote`, `addedFurniture` en `QC_PROMPT` y en el parseo, `withFurnitureCheck`), `src/lib/gemini/generate.ts` (`structure` en paralelo; nota en los prompts de los pasos 2 y 3).
+
+**Verificado:**
+- Solo texto, sobre imágenes ya generadas: el control marcó `addedFurniture` en los dos retornos en L (`litio-obra` 06, `diag-obra` Litio 02) y aprobó las dos correctas (obra v1, isla final).
+- Generación real (hojas en `scratchpad\l-obra`, `l-isla`): obra Litio 1 intento 116 s, sin L, render con guía entregado. Obra Grafito 1 intento 99 s, sin L, render con guía entregado. Isla Negro (reintento cortado a propósito por presupuesto): 160 s, el control rechazó el render y entregó la sin guía (correcta). Isla Grafito (reintento cortado): no se armó el boceto (sin render final), entregada la sin guía, QC con un falso positivo ("microondas agregado").
+- **Sin verificar:** causa del boceto fallido en isla Grafito; isla con reintento.
+- Generaciones: **11 de 12**.
+
+**Gates:** `tsc --noEmit` OK; `eslint src/lib/gemini` sin errores; `vitest run` 34/34.
+
+**Sigue:** ESTADO → Próxima acción.
+

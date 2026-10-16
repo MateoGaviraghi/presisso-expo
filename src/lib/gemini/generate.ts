@@ -5,7 +5,7 @@ import { genAI, MODELS } from "./client";
 import { isOwnOriginalPhotoUrl } from "@/lib/security";
 import { PROMPTS, CLEAN_EXISTING_PROMPT, MATERIALS, buildRefinePrompt, type PromptType } from "./prompts-rediseno";
 import { buildColorGuide, swatchParts } from "./color-guide";
-import { verifyRedesign, originalFurnitureMask, addedFurnitureRatio, withFurnitureCheck, type QcResult } from "./verify";
+import { verifyRedesign, describeStructure, structureNote, originalFurnitureMask, addedFurnitureRatio, withFurnitureCheck, type QcResult } from "./verify";
 import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
 export type ModoSolicitud = "rediseno" | "diseno";
@@ -279,6 +279,8 @@ export async function generateKitchenImage(
     const redesignPrompt = PROMPTS[tipoCocina] + dimInfo.promptNote;
     // Dónde hay muebles en la original: se calcula una sola vez, en paralelo con la generación
     const originalMask = originalFurnitureMask(clientPart);
+    // Inventario de muebles fijos de la original (texto), también en paralelo: va a los pasos 2 y 3
+    const structure = describeStructure(clientPart).then(structureNote);
 
     // Un resultado que agrega muebles pierde siempre contra uno que no, aunque tenga peor color
     const score = (qc: QcResult) => (qc.addsFurniture ? 1000 : 0) + (qc.ok ? 0 : 1 + qc.problems.length);
@@ -298,7 +300,7 @@ export async function generateKitchenImage(
         { text: `The next images are the REFERENCE PHOTOS of Presisso "${mat.name}". The first ones are OFFICIAL COLOR SWATCHES (flat, evenly lit samples of the real material): they are the authority for color and texture. Copy the door and countertop colors from them, adjusted only for the client's room light.` },
         ...refParts,
         cleanedPart,
-        { text: redesignPrompt },
+        { text: redesignPrompt + (await structure) },
       ], dimInfo.apiAspectRatio);
 
       // Paso 3 (materiales con muestra oficial): boceto de color interno + render final de la IA.
@@ -317,7 +319,7 @@ export async function generateKitchenImage(
               { inlineData: { mimeType: "image/png", data: guide } },
               ...swatchParts(mat.colorGuide),
               { inlineData: { mimeType: "image/png", data: reskinned } },
-              { text: buildRefinePrompt(mat) + dimInfo.promptNote },
+              { text: buildRefinePrompt(mat) + (await structure) + dimInfo.promptNote },
             ], dimInfo.apiAspectRatio);
             guided = true;
           } catch (err) {

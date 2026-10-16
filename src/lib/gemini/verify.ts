@@ -44,6 +44,7 @@ export async function addedFurnitureRatio(originalMask: Float32Array | null, res
 /** Suma el chequeo de muebles agregados al veredicto del control. */
 export function withFurnitureCheck(qc: QcResult, ratio: number | null): QcResult {
   if (ratio === null || ratio <= ADDED_FURNITURE_LIMIT) return qc;
+  if (qc.addsFurniture) return { ...qc, ok: false };
   return {
     ok: false,
     checked: true,
@@ -53,6 +54,41 @@ export function withFurnitureCheck(qc: QcResult, ratio: number | null): QcResult
 }
 
 type Part = { inlineData: { mimeType: string; data: string } };
+
+/* ── Inventario de la estructura ────────────────────────────────────────
+ * El paso de material convertía una pared vacía en un retorno en L o una columna.
+ * Un modelo de texto describe los muebles fijos de la original (tramos, paredes
+ * vacías, isla) y ese inventario se agrega a los prompts de generación.
+ */
+const STRUCTURE_PROMPT = `List ONLY the built-in kitchen furniture visible in this photo, ignoring loose objects and appliances:
+- each cabinet run: which wall it is on (back, left, right), straight or L-shaped, and whether it has base cabinets, upper cabinets and/or tall units;
+- island, peninsula or breakfast bar: yes or no;
+- every visible wall or wall section that has NO cabinets.
+Be literal: if there are no upper cabinets, say so. Answer ONLY with JSON: {"inventory": string} — at most 70 English words.`;
+
+/** Inventario de los muebles fijos de la original, o "" si no se pudo armar. */
+export async function describeStructure(original: Part): Promise<string> {
+  for (const model of QC_MODELS) {
+    try {
+      const response = await genAI.models.generateContent({
+        model,
+        contents: [{ role: "user", parts: [original, { text: STRUCTURE_PROMPT }] }],
+        config: { responseMimeType: "application/json", temperature: 0 },
+      });
+      const parsed = JSON.parse(response.text ?? "") as { inventory?: unknown };
+      if (typeof parsed.inventory === "string" && parsed.inventory.trim()) return parsed.inventory.trim();
+    } catch (err) {
+      console.warn(`[Estructura] ${model} falló:`, err instanceof Error ? err.message : err);
+    }
+  }
+  return "";
+}
+
+/** Nota para los prompts de generación con el inventario de la original. */
+export function structureNote(inventory: string): string {
+  if (!inventory) return "";
+  return `\n\nTHE CLIENT'S FURNITURE, exactly (from the original photo): ${inventory}\nYour output has exactly this furniture — no extra cabinet run, counter return, L-shape, column, tall unit or upper cabinet. A wall without cabinets in this list stays a bare wall.`;
+}
 
 const QC_PROMPT = (materialName: string, materialSummary: string) => `You are a strict quality inspector for a kitchen-redesign tool.
 
@@ -74,7 +110,7 @@ Compare the two images and check each rule:
 
 Small loose objects (bottles, cups, coffee machines, rags, trash bins) disappearing is CORRECT, not a problem.
 
-Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if every rule passes. Each problem is one short sentence in Spanish.`;
+Answer ONLY with JSON: {"ok": boolean, "addedFurniture": boolean, "problems": string[]} — "addedFurniture" is true if IMAGE 2 has ANY cabinet run, counter return or L-shape, column, tall unit or upper cabinet that IMAGE 1 does not have. "ok" is true only if every rule passes. Each problem is one short sentence in Spanish.`;
 
 export async function verifyRedesign(
   references: Part[],
@@ -102,9 +138,11 @@ export async function verifyRedesign(
         config: { responseMimeType: "application/json", temperature: 0 },
       });
       const text = response.text ?? "";
-      const parsed = JSON.parse(text) as { ok?: unknown; problems?: unknown };
+      const parsed = JSON.parse(text) as { ok?: unknown; addedFurniture?: unknown; problems?: unknown };
       const problems = Array.isArray(parsed.problems) ? parsed.problems.map(String) : [];
-      return { ok: parsed.ok === true, problems, checked: true };
+      // Muebles agregados pesa más que cualquier otro problema al elegir entre intentos
+      const addsFurniture = parsed.addedFurniture === true;
+      return { ok: parsed.ok === true && !addsFurniture, problems, checked: true, ...(addsFurniture ? { addsFurniture } : {}) };
     } catch (err) {
       console.warn(`[QC] ${model} falló:`, err instanceof Error ? err.message : err);
     }
