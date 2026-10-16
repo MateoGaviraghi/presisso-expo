@@ -93,6 +93,7 @@ export const LOOSE_OBJECTS = `Remove every loose, movable object from the scene:
 - On the floor: trash bins and pedal bins (even large metal ones standing next to the furniture), buckets, bags, boxes, shoes, mats.
 - On top of cabinets and appliances: anything stored there.
 - Potted plants and decorative objects sitting on counters or on top of cabinets.
+- Construction leftovers, in kitchens still being built: cement mixers, sacks of cement, sand or plaster, rubble and debris piles, paint cans, ladders, wheelbarrows and large tools standing on the floor or against the walls.
 Scan the photo left to right and top to bottom; if an object is not built in, remove it. Rebuild the surface behind each removed object so it looks continuous and untouched.`;
 
 /* ── Step 1 prompt for REDESIGN mode: declutter only, change nothing else ── */
@@ -128,7 +129,7 @@ KEEP EXACTLY AS IN THE CLIENT'S PHOTO:
 - Walls, backsplash, tiles, floor, ceiling, windows, doors and light fixtures.
 - Every appliance (fridge, oven, cooktop, range hood, microwave, dishwasher): same model, color and position.
 - Sink and faucet.
-- Every cabinet and counter section — including islands, peninsulas and breakfast bars — with the same count, size, shape and position as in the ORIGINAL photo (image 0). Nothing added, nothing removed, nothing extended. If the cleaned photo is missing a piece of furniture that the original has, put it back.
+- Every cabinet and counter section — including islands, peninsulas and breakfast bars — with the same count, size, shape and position as in the ORIGINAL photo (image 0). Nothing added, nothing removed, nothing extended. If the cleaned photo is missing a piece of furniture that the original has, put it back. A wall that is bare in the original stays bare: a side wall is never a counter return, and a bare wall above the counter never gets upper cabinets.
 - Clear surfaces. Do not add any object: no coffee machine, kettle, bottles, plants, bowls, decor, stools or chairs. If a loose object is still visible — a trash bin, bottle or bag — remove it as well.
 
 CHANGE ONLY THIS — the Presisso "${mat.name}" material:
@@ -162,7 +163,8 @@ CHECK BEFORE YOU ANSWER — redo the image if any line is false:
 export function buildRefinePrompt(mat: MaterialDef): string {
   return `Edit IMAGE 1. It is a kitchen where the cabinet fronts and countertops were roughly painted with the exact colors of Presisso "${mat.name}". The colors are correct but the surfaces look flat and pasted on.
 Re-render it as a real, professional interior photo: the cabinets and countertops must look like real installed furniture made of this material, with natural soft shadows, crisp straight edges, visible gaps between doors, correct perspective and the room's real light.
-KEEP EXACTLY: the colors and hue of the fronts and countertops (match IMAGE 2 for the fronts and IMAGE 3 for the countertop), the layout, every door, the island, every appliance, the walls, backsplash, floor and framing. Do not add any object. Handles: ${mat.handles}
+IMAGE 4 is the client's kitchen before the new material — the STRUCTURE REFERENCE only (ignore its colors). Furniture exists ONLY where IMAGE 4 has furniture: every wall area that is bare in IMAGE 4 stays a bare wall in your output. Never add upper cabinets, tall units, columns, shelves or a counter return that IMAGE 4 does not have.
+KEEP EXACTLY: the colors and hue of the fronts and countertops (match IMAGE 2 for the fronts and IMAGE 3 for the countertop), every door, the island, every appliance, the walls, backsplash, floor and framing. Do not add any object. Handles: ${mat.handles}
 No mirror reflections on the doors; the finish follows the material: ${mat.finish.split("\n")[0].slice(0, 260)}`;
 }
 

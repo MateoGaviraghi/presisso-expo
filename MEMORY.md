@@ -83,3 +83,16 @@ Empieza el 2026-10-16. Lo anterior a esa fecha no tiene registro (los `docs/` so
 2. Que el control de calidad compare la cantidad de frentes antes y después (reusar `getQuads` de `color-guide.ts`) y que nunca se entregue un resultado con muebles agregados. Si todo falla, entregar el que no agrega muebles aunque el color sea peor.
 3. Sumar a la limpieza los objetos de obra (hormigoneras, bolsas de material, escombros, herramientas grandes).
 4. Probar con la cocina en obra y con la de isla.
+
+### Agregado 2026-10-16 (noche) — arreglo de la cocina en obra
+
+**D-009 — OQ-004 aplicado, con la foto limpia como referencia (2026-10-16).** El render final recibe la foto ya limpia, no la original, como referencia de estructura. El control mide muebles agregados con máscaras de `getQuads` (límite 2 % de la foto) y un resultado que agrega muebles nunca gana a uno que no, aunque tenga peor color. Se descartó contar frentes: en una obra los muebles sin puertas pasan a tener puertas y el conteo sube sin que haya muebles nuevos. Se reabriría si el marcado da falsos positivos (resultados buenos rechazados).
+
+**G-013 — Si el render final ve la foto original, copia su desorden.** Con la original como referencia volvió a poner imanes, objetos sobre la heladera y el tacho. Por eso recibe la foto limpia.
+
+**G-014 — vitest no muestra los `console.log` del pipeline** en las pruebas reales con `--env-file`. Para medir, guardar los valores en archivos desde el test.
+
+**OQ-005 — Litio metálico en cocinas en obra.** Con el arreglo de estructura, Litio en la cocina en obra salió una vez champagne y otra como acero (render con guía y también sin guía). Va con OQ-003. Decide Mateo cuántas generaciones.
+
+OQ-004: resuelta por D-009. TD-004: el test temporal ya no existe; la rama `diag/obra` sigue local.
+

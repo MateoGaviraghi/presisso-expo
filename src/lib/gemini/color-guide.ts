@@ -33,12 +33,12 @@ For each one return its outline as a polygon of 4 corner points in clockwise ord
 Coordinates are [y, x] normalized to 0-1000.
 Answer ONLY JSON: [{"kind":"front"|"top"|"exclude","label":string,"points":[[y,x],[y,x],[y,x],[y,x]]}]`;
 
-async function getQuads(imageBase64: string): Promise<Quad[] | null> {
+export async function getQuads(imageBase64: string, mimeType = "image/png"): Promise<Quad[] | null> {
   for (const model of SEG_MODELS) {
     try {
       const res = await genAI.models.generateContent({
         model,
-        contents: [{ role: "user", parts: [{ inlineData: { mimeType: "image/png", data: imageBase64 } }, { text: QUADS_PROMPT }] }],
+        contents: [{ role: "user", parts: [{ inlineData: { mimeType, data: imageBase64 } }, { text: QUADS_PROMPT }] }],
         config: { responseMimeType: "application/json", temperature: 0 },
       });
       const match = (res.text ?? "").match(/\[[\s\S]*\]/);
@@ -155,6 +155,24 @@ function paint(
     lab[i * 3] = L0 * (1 - m) + L * m;
     lab[i * 3 + 1] = lab[i * 3 + 1] * (1 - m) + sw.a * m;
     lab[i * 3 + 2] = lab[i * 3 + 2] * (1 - m) + sw.b * m;
+  }
+}
+
+/* ── Máscara de muebles (para detectar muebles agregados) ──
+ * Las coordenadas de getQuads están normalizadas, así que la máscara se arma en una
+ * grilla fija: sirve para comparar la original con el resultado aunque midan distinto.
+ */
+export const FURNITURE_GRID = 200;
+
+/** Frentes + mesadas en una grilla de FURNITURE_GRID², o null si no se encontraron frentes. */
+export async function furnitureMask(imageBase64: string, mimeType = "image/png", dilate = 0): Promise<Float32Array | null> {
+  try {
+    const quads = await getQuads(imageBase64, mimeType);
+    if (!quads) return null;
+    return await polygonMask(quads.filter((q) => q.kind !== "exclude"), FURNITURE_GRID, FURNITURE_GRID, dilate);
+  } catch (err) {
+    console.warn("[ColorGuide] no se pudo armar la máscara de muebles:", err instanceof Error ? err.message : err);
+    return null;
   }
 }
 
