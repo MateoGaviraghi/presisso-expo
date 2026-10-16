@@ -1,10 +1,13 @@
 /* ── Material definitions for prompt generation ─────────────────────── */
 
+import type { ColorGuideSpec } from "./color-guide";
+
 export interface MaterialDef {
   name: string;        // e.g. "Politex Negro"
   finish: string;      // the material as it looks in the reference photos (doors + countertop)
   apply: string;       // where each part of the material goes
   handles: string;     // the only handle rule for this material — no global default competes with it
+  colorGuide?: ColorGuideSpec; // muestras oficiales para el boceto de color (materiales de un solo tono)
 }
 
 // Descripciones escritas mirando las fotos de referencia de public/<material>/.
@@ -12,6 +15,7 @@ export interface MaterialDef {
 export const MATERIALS: Record<string, MaterialDef> = {
   politex_negro: {
     name: "Politex Negro",
+    colorGuide: { front: "materiales-oficiales/frentes-politex-negro.jpg", top: "materiales-oficiales/frentes-politex-negro.jpg", topTextured: false },
     handles:
       "Lower and tall doors: a slim VERTICAL black pull integrated into a recessed pocket near the door edge, black on black, exactly as in the reference close-ups. Upper cabinets: no handles, flat fronts. No silver, chrome or contrasting hardware.",
     finish:
@@ -23,6 +27,7 @@ export const MATERIALS: Record<string, MaterialDef> = {
   },
   melamina_litio: {
     name: "Melamina Litio",
+    colorGuide: { front: "materiales-oficiales/frentes-melaminas-metalicos-litio.jpg", top: "materiales-oficiales/mesadas-cuarzo-blanco-puro.jpg", topTextured: false },
     handles:
       "Brushed ALUMINUM profile handle: a slim horizontal aluminum channel along the TOP edge of every lower door and drawer, as in the reference close-ups of the drawers. Upper cabinets: no handles, flat fronts. Kickboard in brushed aluminum.",
     finish:
@@ -35,6 +40,7 @@ export const MATERIALS: Record<string, MaterialDef> = {
   },
   politex_gris_grafito: {
     name: "Politex Gris Grafito",
+    colorGuide: { front: "materiales-oficiales/frentes-politex-grafito.jpg", top: "materiales-oficiales/mesadas-cuarzo-gris-cemento.jpg", topTextured: true },
     handles:
       "Copy the handle detail from the reference photos: flat handleless fronts with slim recessed grips, same dark color as the door. No knobs, no bar pulls, no chrome.",
     finish:
@@ -149,6 +155,15 @@ CHECK BEFORE YOU ANSWER — redo the image if any line is false:
 5. Every countertop and the island are clear — no objects anywhere.
 6. The handles follow the rule above and nothing else.
 7. Same framing and aspect ratio as the original.`;
+}
+
+/* ── Step 3 prompt for REDESIGN mode: final render from the color guide ── */
+
+export function buildRefinePrompt(mat: MaterialDef): string {
+  return `Edit IMAGE 1. It is a kitchen where the cabinet fronts and countertops were roughly painted with the exact colors of Presisso "${mat.name}". The colors are correct but the surfaces look flat and pasted on.
+Re-render it as a real, professional interior photo: the cabinets and countertops must look like real installed furniture made of this material, with natural soft shadows, crisp straight edges, visible gaps between doors, correct perspective and the room's real light.
+KEEP EXACTLY: the colors and hue of the fronts and countertops (match IMAGE 2 for the fronts and IMAGE 3 for the countertop), the layout, every door, the island, every appliance, the walls, backsplash, floor and framing. Do not add any object. Handles: ${mat.handles}
+No mirror reflections on the doors; the finish follows the material: ${mat.finish.split("\n")[0].slice(0, 260)}`;
 }
 
 /* ── Export generated prompts ───────────────────────────────────────── */
