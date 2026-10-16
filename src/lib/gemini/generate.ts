@@ -317,14 +317,26 @@ export async function generateKitchenImage(
         }
       }
 
-      const qc = await verifyRedesign(
-        refParts.slice(0, 3),
-        clientPart,
-        { inlineData: { mimeType: "image/png", data: image } },
-        mat.name,
-        materialSummary,
-      );
+      const check = (img: string) =>
+        verifyRedesign(
+          refParts.slice(0, 3),
+          clientPart,
+          { inlineData: { mimeType: "image/png", data: img } },
+          mat.name,
+          materialSummary,
+        );
+      const qc = await check(image);
       console.log(`[QC] ${qc.checked ? (qc.ok ? "OK" : "FALLA: " + qc.problems.join(" | ")) : "no se pudo correr"}`);
+
+      // Si el render con guía rompió la estructura (p. ej. inventó muebles) y la imagen sin guía
+      // pasa el control, se entrega la imagen sin guía.
+      if (guided && !qc.ok) {
+        const qcPlain = await check(reskinned);
+        console.log(`[QC sin guía] ${qcPlain.ok ? "OK" : "FALLA: " + qcPlain.problems.join(" | ")}`);
+        if (qcPlain.ok || qcPlain.problems.length < qc.problems.length) {
+          return { image: reskinned, qc: qcPlain, guided: false };
+        }
+      }
       return { image, qc, guided };
     };
 
@@ -334,9 +346,14 @@ export async function generateKitchenImage(
     let attempts = 1;
     const elapsedMs = Date.now() - startTime;
     if (!best.qc.ok && elapsedMs < 130_000) {
-      const second = await runOnce();
-      attempts = 2;
-      if (second.qc.ok || second.qc.problems.length < best.qc.problems.length) best = second;
+      // Un error en el reintento (p. ej. 503 por demanda) no tira el primer resultado
+      try {
+        const second = await runOnce();
+        attempts = 2;
+        if (second.qc.ok || second.qc.problems.length < best.qc.problems.length) best = second;
+      } catch (err) {
+        console.warn("[Gemini] El reintento falló, se queda el primer resultado:", err instanceof Error ? err.message : err);
+      }
     }
     imageBase64 = best.image;
     const qcTag = !best.qc.checked ? "QC sin correr" : best.qc.ok ? "QC ok" : `QC con problemas: ${best.qc.problems.join(" | ")}`;
