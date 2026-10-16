@@ -21,8 +21,10 @@ export interface QcResult {
  */
 
 // Fracción de la foto con muebles nuevos a partir de la cual se considera que agregó muebles.
-// Una fila de alacenas inventada ocupa ~8 %; un retorno en L, ~3 %; el ruido del marcado, < 1 %.
-const ADDED_FURNITURE_LIMIT = 0.02;
+// Medido en la cocina en obra: resultados correctos 2,1–2,5 % (ruido del marcado); columna o
+// alacenas inventadas 6,5–19 %. Un retorno en L (2,5–2,9 %) no se distingue por área: lo marca
+// el control por texto (regla 3).
+const ADDED_FURNITURE_LIMIT = 0.05;
 
 /** Máscara de la original, dilatada para tolerar el ruido del marcado. null si no se pudo armar. */
 export function originalFurnitureMask(original: Part) {
@@ -66,12 +68,13 @@ Compare the two images and check each rule:
 3. CABINET LAYOUT: same cabinet runs, same number of rows of upper cabinets, no new tall units, no new rows or horizontal splits.
 4. ROOM: walls, backsplash, floor, windows and camera framing are the same.
 5. MATERIAL: the fronts in IMAGE 2 follow the MATERIAL SPEC (colors, two-tone placement, handles), with no leftover cabinet in the old color and no missing fronts or open gaps.
-6. COLOR MATCH: the door and countertop colors in IMAGE 2 look like the REFERENCE PHOTOS (same lightness, tone and finish). Clearly darker, bluer, more metallic or a different hue than the references is a FAIL.
+6. COLOR MATCH: the door and countertop colors in IMAGE 2 look like the REFERENCE PHOTOS (same lightness, tone and finish). Clearly darker, bluer, more metallic or a different hue than the references is a FAIL. The first reference is the official door swatch; when the second reference is a countertop swatch (stone or quartz), the countertop must match THAT swatch, not the doors.
+6b. FINISH: unless the MATERIAL SPEC asks for gloss, doors that look like stainless steel, brushed metal or chrome, or that show shiny reflections or bright light streaks, are a FAIL.
 7. NOTHING ADDED: IMAGE 2 has no object that is not in IMAGE 1 — no coffee machine, kettle, toaster, bowl, plant, decor, stool or chair placed on counters or around the kitchen.
 
 Small loose objects (bottles, cups, coffee machines, rags, trash bins) disappearing is CORRECT, not a problem.
 
-Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if all 7 rules pass. Each problem is one short sentence in Spanish.`;
+Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if every rule passes. Each problem is one short sentence in Spanish.`;
 
 export async function verifyRedesign(
   references: Part[],

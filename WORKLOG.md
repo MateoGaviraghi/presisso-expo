@@ -9,12 +9,12 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 
 | Campo | Valor |
 |---|---|
-| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Arreglo de la cocina en obra (OQ-004) aplicado y publicado. Pendiente: Litio metálico en cocinas en obra (OQ-003). |
-| **Status real** | Arreglo de estructura en el PR de `fix/obra`: el render final recibe la foto limpia, el control mide muebles agregados (nunca se entrega uno que agregue si hay alternativa) y la limpieza saca restos de obra. Probado: obra (Negro, Litio, Grafito) sin muebles agregados; isla Litio entrega el render con guía, limpio. Sin probar: isla con Negro y Grafito. Problema abierto: en obra, Litio a veces sale como acero (render con guía y sin guía). |
+| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Hecho: estructura en obra (PR #39) y Litio sin aspecto de acero (PR de `fix/color-litio`). Pendiente: el paso 2 todavía agrega un retorno en L / columna en la cocina en obra (G-011). |
+| **Status real** | En producción tras el merge: Litio descrito como melamina casi mate (no metal); control con regla de acabado metálico y mesada contra su muestra; el render final recibe la imagen del paso 2 como estructura (ni la original ni la limpia); límite de muebles agregados 5 %; reintento solo si van < 120 s. Probado: isla Litio entrega render con guía (113 s). Obra Litio: sin acero, pero entregó un retorno en L. Sin probar con la versión final: obra (todos), isla Negro y Grafito. |
 | **Último chat** | 2026-10-16 (empezó 2026-10-08) |
 | **Espera de Mateo** | Probar `Renovar` en producción con una cocina en obra. Decidir si se ataca el Litio metálico (pide generaciones). Pendiente desde antes: consultas SQL A–E (cifras de la expo); compartir el brief con Épica; confirmar si salió alguno de los mensajes de `mensajes-pendientes.md`. |
 | **Espera de terceros** | Ninguna. (Épica: recibe el brief y el prompt del video cuando Mateo los comparta.) |
-| **Próxima acción** | OQ-003 / Litio metálico en obra: endurecer el control para que penalice el acabado metálico y compare la mesada contra su muestra, y reforzar en `MATERIALS.melamina_litio` que no es acero. Probar en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) e isla (`originales/1792158224506-1ika76b0cjg.jpg`). |
+| **Próxima acción** | G-011 (retorno en L / columna en obra): el paso 2 convierte la pared derecha en un tramo. Ideas sin probar: pasar al paso 2 una máscara/lista de tramos de la original (getQuads) y que el control por texto con "tramo agregado" valga como `addsFurniture`. Probar en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) e isla (`originales/1792158224506-1ika76b0cjg.jpg`). Pide generaciones a Mateo. |
 | **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (hook de depuración). No mergear ni deployar sin OK de Mateo. |
 
 **Ramas locales vivas:** `diag/obra` (commit `ba74844`, sin push; `debugSave` guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — para volver a diagnosticar, aplicarlo a mano: `cherry-pick` choca con los cambios de `fix/obra`). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito; el ancla de `CLAUDE.md` todavía dice "There is no decision log" (desactualizado: ahora está `MEMORY.md`).
@@ -131,5 +131,31 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 - Generaciones: **21 de 24** autorizadas.
 
 **Gates:** `tsc --noEmit` OK; `eslint src/lib/gemini` sin errores; `vitest run` 34/34. `next build`: lo corre el preview de Vercel.
+
+**Sigue:** ESTADO → Próxima acción.
+
+### 2026-10-16 (noche, 2) — Litio sin aspecto de acero (OQ-005)
+
+**Pedido:** "ok color litio, autorizo 12 generaciones" → "ok push y merge litio".
+
+**Hecho:**
+- Diagnóstico sin generar (solo modelos de texto): el tono medido de los frentes (Lab, mediana dentro de los frentes de `getQuads`) es igual en los Litio buenos y en los "acero" (L 50–64, a ≈ 2–3, b ≈ 10–13; muestra L 77,6 a 1,9 b 9,7). Lo que cambia es el **acabado**: franjas de luz y brillo de acero cepillado. Un chequeo numérico de color no lo detecta (G-015).
+- `MATERIALS.melamina_litio.finish`: "Metálicos" es solo el nombre de la familia; melamina casi mate, sin brillo, sin franjas, nunca acero/aluminio.
+- `buildRefinePrompt`: sombreado suave y parejo, sin brillos ni aspecto metálico; el recorte del acabado pasa de 260 a 420 caracteres.
+- `verify.ts`: regla 6 compara la mesada contra su muestra (segunda referencia); regla 6b nueva: puertas con aspecto de acero/metal cepillado/cromo o con brillos fallan, salvo materiales gloss. Probado sobre imágenes viejas: rechaza el render acero, aprueba los dos champagne, deja pasar un acero suave del paso 2.
+- Muebles agregados: medido en obra — resultados correctos 2,1–2,5 % (ruido), retorno en L 2,5–2,9 %, columna/alacenas/reencuadre 6,5–19 %. `ADDED_FURNITURE_LIMIT` 0,02 → **0,05** (el 2 % daba falsos positivos).
+- Render final: IMAGE 4 pasa de la foto limpia a la **imagen del paso 2** (G-016: con la limpia copió la mesada negra vieja en la isla).
+- Reintento solo si van **< 120 s** (antes 130): una corrida obra Litio con reintento tardó **283 s**.
+
+**Archivos:** `src/lib/gemini/prompts-rediseno.ts` (Litio `finish`, `buildRefinePrompt`), `src/lib/gemini/verify.ts` (`QC_PROMPT` reglas 6 y 6b, `ADDED_FURNITURE_LIMIT`), `src/lib/gemini/generate.ts` (IMAGE 4 = `reskinned`, corte de reintento 120 s).
+
+**Verificado** (generación real, tests temporales ya borrados; hojas en `scratchpadlitio-obra`, `litio-isla`, `litio-isla2`):
+- Obra Litio (texto nuevo, IMAGE 4 = limpia): 2 intentos, 283 s. Sin acero en ninguna imagen. Intento 1: la limpieza reencuadró la foto. Intento 2: el paso 2 agregó una columna y el render la convirtió en retorno en L; **se entregó con el retorno en L**.
+- Isla Litio (IMAGE 4 = limpia): render copió la mesada negra; el control lo rechazó y entregó la sin guía (correcta).
+- Isla Litio (versión final, IMAGE 4 = paso 2, sin reintento forzado para no pasar el presupuesto): **se entregó el render con guía**, champagne + mesada blanca, 113 s, QC ok.
+- **Sin verificar:** obra con la versión final; isla Negro y Grafito.
+- Generaciones: **12 de 12**.
+
+**Gates:** `tsc --noEmit` OK; `eslint src/lib/gemini` sin errores; `vitest run` 34/34.
 
 **Sigue:** ESTADO → Próxima acción.
