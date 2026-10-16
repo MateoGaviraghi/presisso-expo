@@ -9,10 +9,10 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 
 | Campo | Valor |
 |---|---|
-| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Hecho hoy: estructura en obra (#39), Litio sin acero (#40), retorno en L (PR de `fix/retorno-l`). Queda: pulido (isla Grafito sin boceto, falsos positivos del control, tiempo). |
+| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Hecho hoy: estructura en obra (#39), Litio sin acero (#40), retorno en L (#41), todo en producción. Queda: pulido (isla Grafito sin boceto, falsos positivos del control, tiempo). |
 | **Status real** | En producción tras el merge: inventario de estructura de la original (modelo de texto, en paralelo con la limpieza) agregado a los prompts de los pasos 2 y 3; el control devuelve `addedFurniture` y eso cuenta como `addsFurniture`. Probado: obra Litio (116 s) y obra Grafito (99 s) sin retorno en L, render con guía entregado; isla Negro e isla Grafito con estructura bien, entregada la imagen sin guía. |
 | **Último chat** | 2026-10-16 (empezó 2026-10-08) |
-| **Espera de Mateo** | Probar `Renovar` en producción con una cocina en obra. Decidir si se ataca el Litio metálico (pide generaciones). Pendiente desde antes: consultas SQL A–E (cifras de la expo); compartir el brief con Épica; confirmar si salió alguno de los mensajes de `mensajes-pendientes.md`. |
+| **Espera de Mateo** | Probar `Renovar` en producción con una cocina en obra y con la de isla (mirar la imagen entregada y el tiempo) y contar el resultado. Pendiente desde antes: consultas SQL A–E (cifras de la expo); compartir el brief con Épica; confirmar si salió alguno de los 3 mensajes de `mensajes-pendientes.md` (todos figuran **sin enviar**). |
 | **Espera de terceros** | Ninguna. (Épica: recibe el brief y el prompt del video cuando Mateo los comparta.) |
 | **Próxima acción** | Esperar la prueba de Mateo en producción (`Renovar` con obra e isla). Pendientes chicos: 1) isla Grafito no armó el boceto (causa sin ver: los `console.warn` no se ven en las pruebas, G-014); 2) el control marcó "se agregó un microondas" que sí estaba (falso positivo); 3) isla Negro tardó 160 s en un intento (TD-005). |
 | **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (hook de depuración). No mergear ni deployar sin OK de Mateo. |
@@ -178,6 +178,22 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 - Generaciones: **11 de 12**.
 
 **Gates:** `tsc --noEmit` OK; `eslint src/lib/gemini` sin errores; `vitest run` 34/34.
+
+**Sigue:** ESTADO → Próxima acción.
+
+### 2026-10-16 (cierre) — Cierre de sesión
+
+**Pedido:** `/cerrar`.
+
+**Hecho:** ESTADO actualizado (tarea actual con #39, #40, #41 en producción; espera de Mateo). Las entradas "noche", "noche, 2" y "noche, 3" de este mismo día tienen el detalle de cada PR.
+
+**Resuelto en el camino (no registrado antes):** al escribir el ESTADO del PR #39, un script cortó `WORKLOG.md` por buscar `"
+---
+"` en un archivo con fin de línea CRLF: `indexOf` devolvió -1 y se perdió el REGISTRO. Se restauró con `git checkout WORKLOG.md` antes del commit; ningún commit tiene el archivo roto. Desde entonces los scripts normalizan a LF, editan y vuelven a CRLF (G-019).
+
+**Ramas:** `fix/obra`, `fix/color-litio`, `fix/retorno-l` mergeadas (#39, #40, #41); `diag/obra` sigue local sin push. Carpeta de trabajo en `main` (`df44751`), limpia salvo `CLAUDE.md` y `PROJECT-BRAIN.md` sin trackear a propósito.
+
+**Gates:** sin cambios de código en esta entrada.
 
 **Sigue:** ESTADO → Próxima acción.
 

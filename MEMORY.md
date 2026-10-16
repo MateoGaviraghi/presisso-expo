@@ -118,3 +118,7 @@ OQ-005: resuelta por G-015 + D-010 (en las pruebas). G-011 (retorno en L) sigue 
 
 G-011: resuelto en las pruebas de la cocina en obra por D-011.
 
+**G-019 — `WORKLOG.md` y `MEMORY.md` usan CRLF.** Un script que busca `"
+---
+"` no lo encuentra (`indexOf` = -1) y puede cortar el archivo. Normalizar a LF antes de buscar, validar los marcadores y volver a CRLF al escribir; revisar `git diff --numstat` antes de commitear.
+
