@@ -3,7 +3,8 @@ import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
 import { isOwnOriginalPhotoUrl } from "@/lib/security";
-import { PROMPTS, CLEAN_EXISTING_PROMPT, MATERIALS, type PromptType } from "./prompts-rediseno";
+import { PROMPTS, CLEAN_EXISTING_PROMPT, MATERIALS, buildRefinePrompt, type PromptType } from "./prompts-rediseno";
+import { buildColorGuide, swatchParts } from "./color-guide";
 import { verifyRedesign, type QcResult } from "./verify";
 import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
@@ -24,6 +25,8 @@ type RefEntry = { base64: string; mime: string };
 
 const REFERENCE_FILES: Record<PromptType, string[]> = {
   politex_negro: [
+    // Muestra oficial (presisso.com.ar/productos/materiales) primero: es la autoridad del color
+    "materiales-oficiales/frentes-politex-negro.jpg",
     "politex-negro/Presisso_28022026_12.jpg",
     "politex-negro/Presisso_28022026_03.jpg",
     "politex-negro/Presisso_28022026_04.jpg",
@@ -34,6 +37,10 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-negro/Presisso_28022026_13.jpg",
   ],
   melamina_litio: [
+    "materiales-oficiales/frentes-melaminas-metalicos-litio.jpg", // muestra oficial: "Metálicos: Litio"
+    "materiales-oficiales/mesadas-cuarzo-blanco-puro.jpg", // mesada blanca
+    // Foto oficial de la Línea Siena (presisso.com.ar/productos/cocinas): el color de referencia
+    "melamina-litio/linea-siena-presisso.jpg",
     // Full kitchen view (best overall reference), medium detail, artistic close-up
     "melamina-litio/MPucci_Presisso_20210323_082.jpg",
     "melamina-litio/MPucci_Presisso_20210323_085.jpg",
@@ -44,6 +51,8 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     // Removed 036__ and 070: extreme close-ups of hardware/base, not useful for material color
   ],
   politex_gris_grafito: [
+    "materiales-oficiales/frentes-politex-grafito.jpg", // muestra oficial del frente
+    "materiales-oficiales/mesadas-cuarzo-gris-cemento.jpg", // mesada oficial: Cuarzo Gris Cemento (Línea Milán)
     "politex-gris-grafito/IMG_7549-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7552-Pano.jpg.jpg",
     "politex-gris-grafito/IMG_7554.jpg.jpg",
@@ -56,6 +65,8 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "politex-gris-grafito/Screenshot 2026-04-15 181705.png",
   ],
   melamina_grafito_scotch: [
+    "materiales-oficiales/frentes-melaminas-lisos-grafito.jpg", // muestra oficial grafito
+    "materiales-oficiales/frentes-melaminas-blend-scotch.jpg", // muestra oficial nogal Scotch
     // Solo primeros planos del material: las fotos de cocina entera tienen las alacenas en dos filas
     // y el modelo copiaba esa distribución (agregaba filas y muebles que el cliente no tiene).
     "melamina-grafito-scotch/DSC05119.jpg", // cajones grafito
@@ -267,7 +278,7 @@ export async function generateKitchenImage(
     const materialSummary = [mat.finish, mat.apply, `Handles: ${mat.handles}`].join("\n");
     const redesignPrompt = PROMPTS[tipoCocina] + dimInfo.promptNote;
 
-    const runOnce = async (): Promise<{ image: string; qc: QcResult }> => {
+    const runOnce = async (): Promise<{ image: string; qc: QcResult; guided: boolean }> => {
       console.log(`[Gemini] Rediseño paso 1/2: limpiando foto con ${model}...`);
       const cleanedBase64 = await callGemini(model, [
         clientPart,
@@ -276,37 +287,77 @@ export async function generateKitchenImage(
 
       console.log(`[Gemini] Rediseño paso 2/2: aplicando material con ${model}...`);
       const cleanedPart = { inlineData: { mimeType: "image/png", data: cleanedBase64 } };
-      const image = await callGemini(model, [
+      const reskinned = await callGemini(model, [
         clientPart,
         cleanedPart,
-        { text: `The next images are the REFERENCE PHOTOS of Presisso "${mat.name}". Copy the door and countertop COLOR exactly as it looks in them.` },
+        { text: `The next images are the REFERENCE PHOTOS of Presisso "${mat.name}". The first ones are OFFICIAL COLOR SWATCHES (flat, evenly lit samples of the real material): they are the authority for color and texture. Copy the door and countertop colors from them, adjusted only for the client's room light.` },
         ...refParts,
         cleanedPart,
         { text: redesignPrompt },
       ], dimInfo.apiAspectRatio);
 
-      const qc = await verifyRedesign(
-        refParts.slice(0, 3),
-        clientPart,
-        { inlineData: { mimeType: "image/png", data: image } },
-        mat.name,
-        materialSummary,
-      );
+      // Paso 3 (materiales con muestra oficial): boceto de color interno + render final de la IA.
+      // El boceto nunca llega al cliente; la imagen final la genera el modelo de imagen.
+      let image = reskinned;
+      let guided = false;
+      if (mat.colorGuide) {
+        const guide = await buildColorGuide(reskinned, mat.colorGuide);
+        if (guide) {
+          console.log(`[Gemini] Rediseño paso 3/3: render final con guía de color (${model})...`);
+          try {
+            image = await callGemini(model, [
+              { inlineData: { mimeType: "image/png", data: guide } },
+              ...swatchParts(mat.colorGuide),
+              { text: buildRefinePrompt(mat) + dimInfo.promptNote },
+            ], dimInfo.apiAspectRatio);
+            guided = true;
+          } catch (err) {
+            console.warn("[Gemini] Render final falló, se usa la imagen sin guía:", err instanceof Error ? err.message : err);
+          }
+        }
+      }
+
+      const check = (img: string) =>
+        verifyRedesign(
+          refParts.slice(0, 3),
+          clientPart,
+          { inlineData: { mimeType: "image/png", data: img } },
+          mat.name,
+          materialSummary,
+        );
+      const qc = await check(image);
       console.log(`[QC] ${qc.checked ? (qc.ok ? "OK" : "FALLA: " + qc.problems.join(" | ")) : "no se pudo correr"}`);
-      return { image, qc };
+
+      // Si el render con guía rompió la estructura (p. ej. inventó muebles) y la imagen sin guía
+      // pasa el control, se entrega la imagen sin guía.
+      if (guided && !qc.ok) {
+        const qcPlain = await check(reskinned);
+        console.log(`[QC sin guía] ${qcPlain.ok ? "OK" : "FALLA: " + qcPlain.problems.join(" | ")}`);
+        if (qcPlain.ok || qcPlain.problems.length < qc.problems.length) {
+          return { image: reskinned, qc: qcPlain, guided: false };
+        }
+      }
+      return { image, qc, guided };
     };
 
-    // Si el control de calidad falla, se regenera UNA vez y se queda el intento con menos problemas
+    // Si el control de calidad falla, se regenera UNA vez y se queda el intento con menos problemas.
+    // Con la guía de color cada intento tarda más: solo se reintenta si queda tiempo dentro del límite.
     let best = await runOnce();
     let attempts = 1;
-    if (!best.qc.ok) {
-      const second = await runOnce();
-      attempts = 2;
-      if (second.qc.ok || second.qc.problems.length < best.qc.problems.length) best = second;
+    const elapsedMs = Date.now() - startTime;
+    if (!best.qc.ok && elapsedMs < 130_000) {
+      // Un error en el reintento (p. ej. 503 por demanda) no tira el primer resultado
+      try {
+        const second = await runOnce();
+        attempts = 2;
+        if (second.qc.ok || second.qc.problems.length < best.qc.problems.length) best = second;
+      } catch (err) {
+        console.warn("[Gemini] El reintento falló, se queda el primer resultado:", err instanceof Error ? err.message : err);
+      }
     }
     imageBase64 = best.image;
     const qcTag = !best.qc.checked ? "QC sin correr" : best.qc.ok ? "QC ok" : `QC con problemas: ${best.qc.problems.join(" | ")}`;
-    promptUsed = `[2-step x${attempts}] [${qcTag}] CLEAN_EXISTING + ${redesignPrompt.substring(0, 300)}`;
+    promptUsed = `[${best.guided ? "3-step guía de color" : "2-step"} x${attempts}] [${qcTag}] CLEAN_EXISTING + ${redesignPrompt.substring(0, 300)}`;
   }
 
   return {

@@ -14,6 +14,10 @@ export const MODELS = {
 } as const;
 
 // Modelos de texto para el control de calidad (no generan imágenes; baratos)
-export const QC_MODELS = ["gemini-3.5-flash", "gemini-2.5-flash"] as const;
+// (gemini-2.5-flash ya no está disponible para claves nuevas)
+export const QC_MODELS = ["gemini-3.5-flash", "gemini-3.8-flash"] as const;
+
+// Modelos de texto que marcan las esquinas de frentes y mesadas para la guía de color
+export const SEG_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash"] as const;
 
 export type ModelKey = keyof typeof MODELS;
