@@ -16,7 +16,7 @@ type Part = { inlineData: { mimeType: string; data: string } };
 
 const QC_PROMPT = (materialName: string, materialSummary: string) => `You are a strict quality inspector for a kitchen-redesign tool.
 
-IMAGE 1 is the client's ORIGINAL kitchen photo. IMAGE 2 is the EDITED result.
+IMAGE 1 is the client's ORIGINAL kitchen photo. IMAGE 2 is the EDITED result. The images after those are REFERENCE PHOTOS of the real Presisso material.
 The edit was supposed to: remove loose clutter, then replace ONLY the cabinet fronts, furniture panels, handles and countertops with the material "${materialName}". Everything else must stay.
 
 MATERIAL SPEC (follow its two-tone and row rules exactly; a color the spec asks for is correct):
@@ -28,12 +28,14 @@ Compare the two images and check each rule:
 3. CABINET LAYOUT: same cabinet runs, same number of rows of upper cabinets, no new tall units, no new rows or horizontal splits.
 4. ROOM: walls, backsplash, floor, windows and camera framing are the same.
 5. MATERIAL: the fronts in IMAGE 2 follow the MATERIAL SPEC (colors, two-tone placement, handles), with no leftover cabinet in the old color and no missing fronts or open gaps.
+6. COLOR MATCH: the door and countertop colors in IMAGE 2 look like the REFERENCE PHOTOS (same lightness, tone and finish). Clearly darker, bluer, more metallic or a different hue than the references is a FAIL.
 
 Small loose objects (bottles, cups, coffee machines, rags, trash bins) disappearing is CORRECT, not a problem.
 
-Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if all 5 rules pass. Each problem is one short sentence in Spanish.`;
+Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if all 6 rules pass. Each problem is one short sentence in Spanish.`;
 
 export async function verifyRedesign(
+  references: Part[],
   original: Part,
   result: Part,
   materialName: string,
@@ -46,7 +48,13 @@ export async function verifyRedesign(
         contents: [
           {
             role: "user",
-            parts: [original, result, { text: QC_PROMPT(materialName, materialSummary) }],
+            parts: [
+              original,
+              result,
+              { text: "The following images are REFERENCE PHOTOS of the real material:" },
+              ...references,
+              { text: QC_PROMPT(materialName, materialSummary) },
+            ],
           },
         ],
         config: { responseMimeType: "application/json", temperature: 0 },
