@@ -26,7 +26,7 @@ export const MATERIALS: Record<string, MaterialDef> = {
     handles:
       "Brushed ALUMINUM profile handle: a slim horizontal aluminum channel along the TOP edge of every lower door and drawer, as in the reference close-ups of the drawers. Upper cabinets: no handles, flat fronts. Kickboard in brushed aluminum.",
     finish:
-      "LIGHT GRAY matte melamine with a slightly COOL tone (about #C6C9CD in the reference photos) — clearly light gray next to a white wall, NOT white, NOT ivory, NOT cream, NOT beige. Smooth, uniform, no wood grain, no texture. The COUNTERTOP is a DIFFERENT material: a solid WHITE quartz top (about #E4E3E0), brighter and whiter than the gray doors, with no veining. Study the reference photos: gray fronts, white countertop, aluminum profile and aluminum kickboard.",
+      "LIGHT GRAY MATTE melamine with a slightly COOL tone (about #C6C9CD in the reference photos) — clearly light gray next to a white wall, NOT white, NOT ivory, NOT cream, NOT beige. A flat, painted-looking, non-reflective surface: NOT metallic, NOT silver, NOT brushed, NOT satin, no sheen. Smooth, uniform, no wood grain, no texture. Only the thin handle profile and the kickboard are aluminum — the doors are not. The COUNTERTOP is a DIFFERENT material: a solid WHITE quartz top (about #E4E3E0), brighter and whiter than the gray doors, with no veining. Study the reference photos: gray fronts, white countertop, aluminum profile and aluminum kickboard.",
     apply: `Apply this material to:
 → EVERY cabinet front: lower doors and drawers, upper doors, tall units — light gray matte slab, same size, position and count as the original doors.
 → EVERY visible furniture panel: cabinet sides, end panels, the island's body and sides, open-shelf frames — the same light gray. No panel keeps its original color.
@@ -81,7 +81,7 @@ Keep every door's size, position and count.`,
 /* ── Shared clean-up list (step 1 of both modes) ─────────────────────── */
 
 export const LOOSE_OBJECTS = `Remove every loose, movable object from the scene:
-- On counters, the island and the stovetop: bottles, cartons, cans, jars, cups, glasses, plates, bowls, pots, pans, lids, trays, cutting boards, knives, utensils, food, fruit, dish racks, sponges, rags, towels, bags, boxes, papers, chargers, tablets, phones, cleaning products.
+- Sitting ON TOP of countertops, of the island and of the stovetop (remove the objects, never the counter or the island under them): bottles, cartons, cans, jars, cups, glasses, plates, bowls, pots, pans, lids, trays, cutting boards, knives, utensils, food, fruit, dish racks, sponges, rags, towels, bags, boxes, papers, chargers, tablets, phones, cleaning products.
 - Small countertop appliances: coffee machines, kettles, toasters, blenders, mixers.
 - On the fridge door: magnets, stickers, notes, papers, photos.
 - On the floor: trash bins and pedal bins (even large metal ones standing next to the furniture), buckets, bags, boxes, shoes, mats.
@@ -95,8 +95,10 @@ export const CLEAN_EXISTING_PROMPT = `Edit this image. Declutter this kitchen fo
 
 ${LOOSE_OBJECTS}
 
+FURNITURE IS NEVER REMOVED. Islands, peninsulas, breakfast bars and every cabinet are built-in furniture, even when they are covered with objects: clear what is on top and keep the furniture itself, whole.
+
 Keep exactly as they are, with no change in color, shape, size or position:
-- Every cabinet door, drawer, countertop, island and peninsula.
+- Every cabinet door, drawer, countertop, island, peninsula and breakfast bar.
 - Every large appliance: fridge, oven, cooktop, range hood, microwave, dishwasher, washing machine.
 - Sink, faucet, light fixtures, outlets, windows, doors.
 - Walls, backsplash, tiles, floor, ceiling.
@@ -110,7 +112,8 @@ function buildPrompt(mat: MaterialDef): string {
   return `Edit this image. Replace the cabinet fronts and the countertop of this kitchen with Presisso "${mat.name}". Everything else in the photo stays exactly as it is.
 
 IMAGES, in order:
-1. The client's kitchen — the photo you edit. Its surfaces are already clear.
+0. The client's ORIGINAL photo, before clean-up — the STRUCTURE REFERENCE. Every island, peninsula, breakfast bar, cabinet run and large appliance visible in it must exist in your output, in the same place. Only its small loose objects are gone.
+1. The client's kitchen after clean-up — the photo you edit. Its surfaces are already clear.
 2. Reference photos of Presisso "${mat.name}" — THE AUTHORITY for the material: copy their exact colors, gloss, texture and handle detail. If anything written below seems to differ from these photos, match the photos. Ignore their rooms, walls, backsplash, floor, appliances, objects and camera angle — and NEVER copy their cabinet layout: their number of door rows, door sizes and divisions are not the client's.
 3. The client's kitchen again — your output matches its framing and aspect ratio exactly.
 
@@ -119,7 +122,7 @@ KEEP EXACTLY AS IN THE CLIENT'S PHOTO:
 - Walls, backsplash, tiles, floor, ceiling, windows, doors and light fixtures.
 - Every appliance (fridge, oven, cooktop, range hood, microwave, dishwasher): same model, color and position.
 - Sink and faucet.
-- Every cabinet and counter section — including islands and peninsulas — with the same count, size, shape and position. Nothing added, nothing removed, nothing extended.
+- Every cabinet and counter section — including islands, peninsulas and breakfast bars — with the same count, size, shape and position as in the ORIGINAL photo (image 0). Nothing added, nothing removed, nothing extended. If the cleaned photo is missing a piece of furniture that the original has, put it back.
 - Clear surfaces. Do not add any object: no coffee machine, kettle, bottles, plants, bowls, decor, stools or chairs. If a loose object is still visible — a trash bin, bottle or bag — remove it as well.
 
 CHANGE ONLY THIS — the Presisso "${mat.name}" material:

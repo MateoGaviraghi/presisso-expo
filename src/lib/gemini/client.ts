@@ -6,11 +6,14 @@ export const genAI = new GoogleGenAI({
   httpOptions: { timeout: 120_000 },
 });
 
-// Pro como primary — mayor calidad y precisión siguiendo instrucciones del prompt
-// Flash como fallback si Pro falla
+// Versiones estables (GA). Las "-preview" que se usaban están dadas de baja por Google
+// y pueden apagarse sin otro aviso (ver docs de deprecations, 2026-10).
 export const MODELS = {
-  primary: "gemini-3-pro-image-preview",
-  fallback1: "gemini-3.1-flash-image-preview",
+  primary: "gemini-3-pro-image",
+  fallback1: "gemini-nano-banana-2.1",
 } as const;
+
+// Modelos de texto para el control de calidad (no generan imágenes; baratos)
+export const QC_MODELS = ["gemini-3.5-flash", "gemini-2.5-flash"] as const;
 
 export type ModelKey = keyof typeof MODELS;

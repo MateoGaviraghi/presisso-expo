@@ -3,7 +3,8 @@ import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
 import { isOwnOriginalPhotoUrl } from "@/lib/security";
-import { PROMPTS, CLEAN_EXISTING_PROMPT, type PromptType } from "./prompts-rediseno";
+import { PROMPTS, CLEAN_EXISTING_PROMPT, MATERIALS, type PromptType } from "./prompts-rediseno";
+import { verifyRedesign, type QcResult } from "./verify";
 import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
 export type ModoSolicitud = "rediseno" | "diseno";
@@ -211,7 +212,7 @@ async function downloadClientPhoto(url: string) {
 
 /* ── Main generation (supports 1-step rediseño and 2-step diseño) ── */
 
-async function generateKitchenImage(
+export async function generateKitchenImage(
   fotoOriginalUrl: string,
   tipoCocina: PromptType,
   model: string,
@@ -254,28 +255,53 @@ async function generateKitchenImage(
     ], dimInfo.apiAspectRatio);
     promptUsed = `[2-step] CLEAN + ${designPrompt.substring(0, 400)}`;
   } else {
-    // ── REDESIGN MODE: 2-step process ──
+    // ── REDESIGN MODE: 2-step process + quality control ──
     // Un cambio grande por pedido: en un solo paso el modelo priorizaba "no tocar nada"
-    // y dejaba todo el desorden de la mesada.
-    // Step 1: Declutter the photo (keeps cabinets, appliances and room untouched)
-    console.log(`[Gemini] Rediseño paso 1/2: limpiando foto con ${model}...`);
-    const cleanedBase64 = await callGemini(model, [
-      clientPart,
-      { text: CLEAN_EXISTING_PROMPT + dimInfo.promptNote },
-    ], dimInfo.apiAspectRatio);
-    console.log(`[Gemini] Paso 1 completado — foto limpia obtenida`);
-
-    // Step 2: Reskin cabinets and countertop on the CLEANED photo (bookended — last image locks output dimensions)
-    console.log(`[Gemini] Rediseño paso 2/2: aplicando material con ${model}...`);
-    const cleanedPart = { inlineData: { mimeType: "image/png", data: cleanedBase64 } };
+    // y dejaba todo el desorden. El paso 2 recibe también la ORIGINAL como referencia
+    // de estructura: si la limpieza borra un mueble (pasó con una isla), el paso 2 lo repone.
+    const mat = MATERIALS[tipoCocina];
+    // El control recibe el material completo (incluye reglas de dos tonos y filas de alacenas)
+    const materialSummary = [mat.finish, mat.apply, `Handles: ${mat.handles}`].join("\n");
     const redesignPrompt = PROMPTS[tipoCocina] + dimInfo.promptNote;
-    imageBase64 = await callGemini(model, [
-      cleanedPart,
-      ...refParts,
-      cleanedPart,
-      { text: redesignPrompt },
-    ], dimInfo.apiAspectRatio);
-    promptUsed = `[2-step] CLEAN_EXISTING + ${redesignPrompt.substring(0, 400)}`;
+
+    const runOnce = async (): Promise<{ image: string; qc: QcResult }> => {
+      console.log(`[Gemini] Rediseño paso 1/2: limpiando foto con ${model}...`);
+      const cleanedBase64 = await callGemini(model, [
+        clientPart,
+        { text: CLEAN_EXISTING_PROMPT + dimInfo.promptNote },
+      ], dimInfo.apiAspectRatio);
+
+      console.log(`[Gemini] Rediseño paso 2/2: aplicando material con ${model}...`);
+      const cleanedPart = { inlineData: { mimeType: "image/png", data: cleanedBase64 } };
+      const image = await callGemini(model, [
+        clientPart,
+        cleanedPart,
+        ...refParts,
+        cleanedPart,
+        { text: redesignPrompt },
+      ], dimInfo.apiAspectRatio);
+
+      const qc = await verifyRedesign(
+        clientPart,
+        { inlineData: { mimeType: "image/png", data: image } },
+        mat.name,
+        materialSummary,
+      );
+      console.log(`[QC] ${qc.checked ? (qc.ok ? "OK" : "FALLA: " + qc.problems.join(" | ")) : "no se pudo correr"}`);
+      return { image, qc };
+    };
+
+    // Si el control de calidad falla, se regenera UNA vez y se queda el intento con menos problemas
+    let best = await runOnce();
+    let attempts = 1;
+    if (!best.qc.ok) {
+      const second = await runOnce();
+      attempts = 2;
+      if (second.qc.ok || second.qc.problems.length < best.qc.problems.length) best = second;
+    }
+    imageBase64 = best.image;
+    const qcTag = !best.qc.checked ? "QC sin correr" : best.qc.ok ? "QC ok" : `QC con problemas: ${best.qc.problems.join(" | ")}`;
+    promptUsed = `[2-step x${attempts}] [${qcTag}] CLEAN_EXISTING + ${redesignPrompt.substring(0, 300)}`;
   }
 
   return {
