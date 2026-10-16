@@ -1,4 +1,5 @@
 import { genAI, QC_MODELS } from "./client";
+import { furnitureMask, FURNITURE_GRID } from "./color-guide";
 
 /* ── Control de calidad: compara la foto original con el resultado ──────
  * Un modelo de texto (barato, no genera imágenes) revisa que el resultado
@@ -10,6 +11,43 @@ export interface QcResult {
   ok: boolean;
   problems: string[];
   checked: boolean; // false si el control no pudo correr
+  addsFurniture?: boolean; // el resultado tiene muebles donde la original no tiene
+}
+
+/* ── Muebles agregados ──────────────────────────────────────────────────
+ * El control por texto deja pasar alacenas y retornos inventados en cocinas con
+ * poca estructura. Este chequeo marca frentes y mesadas en la original y en el
+ * resultado y mide qué parte de la foto tiene muebles que antes no estaban.
+ */
+
+// Fracción de la foto con muebles nuevos a partir de la cual se considera que agregó muebles.
+// Una fila de alacenas inventada ocupa ~8 %; un retorno en L, ~3 %; el ruido del marcado, < 1 %.
+const ADDED_FURNITURE_LIMIT = 0.02;
+
+/** Máscara de la original, dilatada para tolerar el ruido del marcado. null si no se pudo armar. */
+export function originalFurnitureMask(original: Part) {
+  return furnitureMask(original.inlineData.data, original.inlineData.mimeType, 4);
+}
+
+/** Fracción de la foto con muebles nuevos, o null si no se pudo medir. */
+export async function addedFurnitureRatio(originalMask: Float32Array | null, resultBase64: string): Promise<number | null> {
+  if (!originalMask) return null;
+  const result = await furnitureMask(resultBase64);
+  if (!result) return null;
+  let added = 0;
+  for (let i = 0; i < result.length; i++) if (result[i] > 0.5 && originalMask[i] < 0.1) added++;
+  return added / (FURNITURE_GRID * FURNITURE_GRID);
+}
+
+/** Suma el chequeo de muebles agregados al veredicto del control. */
+export function withFurnitureCheck(qc: QcResult, ratio: number | null): QcResult {
+  if (ratio === null || ratio <= ADDED_FURNITURE_LIMIT) return qc;
+  return {
+    ok: false,
+    checked: true,
+    addsFurniture: true,
+    problems: [`Agrega muebles que no están en la foto original (${Math.round(ratio * 100)} % de la foto).`, ...qc.problems],
+  };
 }
 
 type Part = { inlineData: { mimeType: string; data: string } };

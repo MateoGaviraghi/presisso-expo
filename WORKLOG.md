@@ -9,15 +9,15 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 
 | Campo | Valor |
 |---|---|
-| **Tarea actual** | Calidad de las imágenes generadas con IA (Renovar): arreglar la cocina "en obra", donde los 3 materiales con guía de color fallan. El diagnóstico ya está hecho (ver REGISTRO 2026-10-16 tarde). |
-| **Status real** | En producción (PR #36): muestras oficiales + guía de color para Litio, Gris Grafito y Negro. Aprobado por Mateo en su cocina con isla. En la cocina en obra los 3 salen mal. Diagnóstico terminado: la falla principal es que el **render final inventa muebles** (alacenas, columnas) porque no recibe la foto original. El arreglo **no está hecho**. Registro (`WORKLOG.md`, `MEMORY.md`, `mensajes-pendientes.md`) en `main` desde el PR #37. |
+| **Tarea actual** | Calidad de las imágenes de IA (Renovar). Arreglo de la cocina en obra (OQ-004) aplicado y publicado. Pendiente: Litio metálico en cocinas en obra (OQ-003). |
+| **Status real** | Arreglo de estructura en el PR de `fix/obra`: el render final recibe la foto limpia, el control mide muebles agregados (nunca se entrega uno que agregue si hay alternativa) y la limpieza saca restos de obra. Probado: obra (Negro, Litio, Grafito) sin muebles agregados; isla Litio entrega el render con guía, limpio. Sin probar: isla con Negro y Grafito. Problema abierto: en obra, Litio a veces sale como acero (render con guía y sin guía). |
 | **Último chat** | 2026-10-16 (empezó 2026-10-08) |
-| **Espera de Mateo** | OK para aplicar y probar el arreglo (gasta generaciones de imagen: pedir el número). Pendiente desde antes: correr las consultas SQL A–E (cifras de la expo) si las quiere en el video; compartir el brief con Épica. |
+| **Espera de Mateo** | Probar `Renovar` en producción con una cocina en obra. Decidir si se ataca el Litio metálico (pide generaciones). Pendiente desde antes: consultas SQL A–E (cifras de la expo); compartir el brief con Épica; confirmar si salió alguno de los mensajes de `mensajes-pendientes.md`. |
 | **Espera de terceros** | Ninguna. (Épica: recibe el brief y el prompt del video cuando Mateo los comparta.) |
-| **Próxima acción** | Aplicar el arreglo de OQ-004 (`MEMORY.md`) en una rama desde `main`: 1) pasar la foto original al render final (`buildRefinePrompt` + `callGemini` del paso 3 en `src/lib/gemini/generate.ts`) como referencia de estructura y prohibir agregar alacenas/columnas/tramos que no están; 2) que el control de calidad (`src/lib/gemini/verify.ts`) compare la cantidad de frentes antes y después (se puede reusar el conteo de `getQuads` de `color-guide.ts`) y que **nunca** se entregue un resultado que agregue muebles; 3) reforzar la limpieza para objetos grandes de obra (hormigonera, escombros). Probar con la cocina en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) y con la de isla (`originales/1792158224506-1ika76b0cjg.jpg`) para no romper lo que ya anda. |
-| **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (tiene un hook de depuración). No mergear ni deployar sin OK de Mateo. |
+| **Próxima acción** | OQ-003 / Litio metálico en obra: endurecer el control para que penalice el acabado metálico y compare la mesada contra su muestra, y reforzar en `MATERIALS.melamina_litio` que no es acero. Probar en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) e isla (`originales/1792158224506-1ika76b0cjg.jpg`). |
+| **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (hook de depuración). No mergear ni deployar sin OK de Mateo. |
 
-**Ramas locales vivas:** `diag/obra` (1 commit `ba74844`, sin push; hook `debugSave` que guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — sirve para volver a diagnosticar). La carpeta de trabajo quedó en esa rama: antes de seguir, `git switch main && git pull` (los archivos sin trackear `WORKLOG.md`, `MEMORY.md`, `mensajes-pendientes.md` del disco ya están en `main`; borrarlos o pisarlos al cambiar). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito.
+**Ramas locales vivas:** `diag/obra` (commit `ba74844`, sin push; `debugSave` guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — para volver a diagnosticar, aplicarlo a mano: `cherry-pick` choca con los cambios de `fix/obra`). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito; el ancla de `CLAUDE.md` todavía dice "There is no decision log" (desactualizado: ahora está `MEMORY.md`).
 
 ---
 
@@ -105,3 +105,31 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 **Gates:** no se tocó código publicable en esta entrada. La rama `diag/obra` pasa `tsc`.
 
 **Sigue:** ESTADO → Próxima acción (arreglo de OQ-004).
+
+### 2026-10-16 (noche) — Arreglo de la cocina en obra (OQ-004)
+
+**Pedido:** `/retomar` → "ok arreglá obra, autorizo 24 generaciones" → "mostrame las hojas cuando termine" → "mostrame la de isla cuando termine" → "ok push y merge obra".
+
+**Hecho:**
+- Render final (paso 3) recibe la **foto limpia** como IMAGE 4, referencia de estructura, con la regla "furniture exists ONLY where IMAGE 4 has furniture". Primera versión con la **original**: en la isla copió imanes, objetos de la heladera y el tacho (el control la rechazó y entregó la sin guía) → se cambió a la limpia (G-013).
+- Paso 2: regla de que una pared vacía queda vacía (sin retorno en L ni alacenas).
+- Control de muebles agregados: `getQuads` marca frentes y mesadas en la original y en cada candidata, en una grilla fija de 200×200; si más del 2 % de la foto tiene muebles nuevos, falla con `addsFurniture`. El orden de elección (`score`) hace que un resultado que agrega muebles pierda siempre contra uno que no. Corre en paralelo con el control por texto (no suma tiempo de generación; sí 1–3 llamadas de texto).
+- Limpieza: `LOOSE_OBJECTS` suma restos de obra (hormigoneras, bolsas de cemento/arena/yeso, escombros, latas de pintura, escaleras, carretillas, herramientas grandes). También aplica a "Diseñar desde cero" (comparte la lista).
+
+**Archivos:**
+- `src/lib/gemini/generate.ts`: `originalMask` (una vez por solicitud), `score`, `check` con `addedFurnitureRatio` + `withFurnitureCheck`, `cleanedPart` en el paso 3, elección por `score` en el respaldo sin guía y en el reintento.
+- `src/lib/gemini/verify.ts`: `addsFurniture` en `QcResult`, `ADDED_FURNITURE_LIMIT = 0.02`, `originalFurnitureMask`, `addedFurnitureRatio`, `withFurnitureCheck`.
+- `src/lib/gemini/color-guide.ts`: `getQuads` exportada con `mimeType`; `FURNITURE_GRID = 200`, `furnitureMask`.
+- `src/lib/gemini/prompts-rediseno.ts`: `buildRefinePrompt` (IMAGE 4), `buildPrompt` (pared vacía), `LOOSE_OBJECTS` (restos de obra).
+
+**Verificado** (pruebas reales con `generateKitchenImage` + `gemini-3-pro-image`, test temporal ya borrado; hojas en `scratchpadix-obra`, `fix-isla`, `fix-isla2`, `fix-obra2`, pueden no existir en otra sesión):
+- Obra, versión con la original: Negro (1 intento), Litio (1), Grafito (2): ninguno agrega muebles; hormigonera eliminada; colores correctos.
+- Isla Litio, versión con la original: render copió objetos → se entregó la sin guía.
+- Isla Litio, versión final (foto limpia): se entregó el render con guía, limpio, champagne + mesada blanca.
+- Obra Litio, versión final: estructura bien; render con guía salió **metálico/acero**, se entregó la sin guía (también tirando a acero).
+- **Sin verificar:** isla con Negro y Grafito; obra Negro y Grafito con la versión final (solo con la versión de la original). Los porcentajes de `[QC muebles]` no quedaron registrados (vitest no mostró los `console.log`); qué imagen se entregó se comprobó comparando archivos.
+- Generaciones: **21 de 24** autorizadas.
+
+**Gates:** `tsc --noEmit` OK; `eslint src/lib/gemini` sin errores; `vitest run` 34/34. `next build`: lo corre el preview de Vercel.
+
+**Sigue:** ESTADO → Próxima acción.

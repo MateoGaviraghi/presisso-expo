@@ -5,7 +5,7 @@ import { genAI, MODELS } from "./client";
 import { isOwnOriginalPhotoUrl } from "@/lib/security";
 import { PROMPTS, CLEAN_EXISTING_PROMPT, MATERIALS, buildRefinePrompt, type PromptType } from "./prompts-rediseno";
 import { buildColorGuide, swatchParts } from "./color-guide";
-import { verifyRedesign, type QcResult } from "./verify";
+import { verifyRedesign, originalFurnitureMask, addedFurnitureRatio, withFurnitureCheck, type QcResult } from "./verify";
 import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
 export type ModoSolicitud = "rediseno" | "diseno";
@@ -277,6 +277,11 @@ export async function generateKitchenImage(
     // El control recibe el material completo (incluye reglas de dos tonos y filas de alacenas)
     const materialSummary = [mat.finish, mat.apply, `Handles: ${mat.handles}`].join("\n");
     const redesignPrompt = PROMPTS[tipoCocina] + dimInfo.promptNote;
+    // Dónde hay muebles en la original: se calcula una sola vez, en paralelo con la generación
+    const originalMask = originalFurnitureMask(clientPart);
+
+    // Un resultado que agrega muebles pierde siempre contra uno que no, aunque tenga peor color
+    const score = (qc: QcResult) => (qc.addsFurniture ? 1000 : 0) + (qc.ok ? 0 : 1 + qc.problems.length);
 
     const runOnce = async (): Promise<{ image: string; qc: QcResult; guided: boolean }> => {
       console.log(`[Gemini] Rediseño paso 1/2: limpiando foto con ${model}...`);
@@ -305,9 +310,12 @@ export async function generateKitchenImage(
         if (guide) {
           console.log(`[Gemini] Rediseño paso 3/3: render final con guía de color (${model})...`);
           try {
+            // La foto limpia va como IMAGE 4 (estructura): sin ella, en paredes vacías inventaba
+            // alacenas y columnas. La original no: el render copiaba sus imanes y objetos.
             image = await callGemini(model, [
               { inlineData: { mimeType: "image/png", data: guide } },
               ...swatchParts(mat.colorGuide),
+              cleanedPart,
               { text: buildRefinePrompt(mat) + dimInfo.promptNote },
             ], dimInfo.apiAspectRatio);
             guided = true;
@@ -317,23 +325,29 @@ export async function generateKitchenImage(
         }
       }
 
-      const check = (img: string) =>
-        verifyRedesign(
-          refParts.slice(0, 3),
-          clientPart,
-          { inlineData: { mimeType: "image/png", data: img } },
-          mat.name,
-          materialSummary,
-        );
+      const check = async (img: string) => {
+        const [qc, ratio] = await Promise.all([
+          verifyRedesign(
+            refParts.slice(0, 3),
+            clientPart,
+            { inlineData: { mimeType: "image/png", data: img } },
+            mat.name,
+            materialSummary,
+          ),
+          originalMask.then((m) => addedFurnitureRatio(m, img)),
+        ]);
+        console.log(`[QC muebles] ${ratio === null ? "no se pudo medir" : `${(ratio * 100).toFixed(1)} % de la foto con muebles nuevos`}`);
+        return withFurnitureCheck(qc, ratio);
+      };
       const qc = await check(image);
       console.log(`[QC] ${qc.checked ? (qc.ok ? "OK" : "FALLA: " + qc.problems.join(" | ")) : "no se pudo correr"}`);
 
       // Si el render con guía rompió la estructura (p. ej. inventó muebles) y la imagen sin guía
-      // pasa el control, se entrega la imagen sin guía.
+      // sale mejor en el control, se entrega la imagen sin guía.
       if (guided && !qc.ok) {
         const qcPlain = await check(reskinned);
         console.log(`[QC sin guía] ${qcPlain.ok ? "OK" : "FALLA: " + qcPlain.problems.join(" | ")}`);
-        if (qcPlain.ok || qcPlain.problems.length < qc.problems.length) {
+        if (score(qcPlain) < score(qc)) {
           return { image: reskinned, qc: qcPlain, guided: false };
         }
       }
@@ -350,7 +364,7 @@ export async function generateKitchenImage(
       try {
         const second = await runOnce();
         attempts = 2;
-        if (second.qc.ok || second.qc.problems.length < best.qc.problems.length) best = second;
+        if (score(second.qc) < score(best.qc)) best = second;
       } catch (err) {
         console.warn("[Gemini] El reintento falló, se queda el primer resultado:", err instanceof Error ? err.message : err);
       }
