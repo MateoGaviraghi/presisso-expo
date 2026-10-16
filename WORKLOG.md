@@ -17,7 +17,7 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 | **Próxima acción** | Esperar la prueba de Mateo en producción (`Renovar` con obra e isla). Pendientes chicos: 1) isla Grafito no armó el boceto (causa sin ver: los `console.warn` no se ven en las pruebas, G-014); 2) el control marcó "se agregó un microondas" que sí estaba (falso positivo); 3) isla Negro tardó 160 s en un intento (TD-005). |
 | **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (hook de depuración). No mergear ni deployar sin OK de Mateo. |
 
-**Ramas locales vivas:** `diag/obra` (commit `ba74844`, sin push; `debugSave` guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — para volver a diagnosticar, aplicarlo a mano: `cherry-pick` choca con los cambios de `fix/obra`). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito; el ancla de `CLAUDE.md` todavía dice "There is no decision log" (desactualizado: ahora está `MEMORY.md`).
+**Ramas locales vivas:** `diag/obra` (commit `ba74844`, sin push; `debugSave` guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — para volver a diagnosticar, aplicarlo a mano: `cherry-pick` choca con los cambios de `fix/obra`). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito; el ancla de `CLAUDE.md` ya remite a `WORKLOG.md` y `MEMORY.md` (corregida 2026-10-16).
 
 ---
 
