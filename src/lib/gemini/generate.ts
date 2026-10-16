@@ -310,12 +310,13 @@ export async function generateKitchenImage(
         if (guide) {
           console.log(`[Gemini] Rediseño paso 3/3: render final con guía de color (${model})...`);
           try {
-            // La foto limpia va como IMAGE 4 (estructura): sin ella, en paredes vacías inventaba
-            // alacenas y columnas. La original no: el render copiaba sus imanes y objetos.
+            // La imagen del paso 2 va como IMAGE 4 (estructura): sin ella, en paredes vacías inventaba
+            // alacenas y columnas. La original copiaba sus imanes y objetos; la foto limpia, su
+            // mesada vieja. La del paso 2 ya tiene el material nuevo y es la base del boceto.
             image = await callGemini(model, [
               { inlineData: { mimeType: "image/png", data: guide } },
               ...swatchParts(mat.colorGuide),
-              cleanedPart,
+              { inlineData: { mimeType: "image/png", data: reskinned } },
               { text: buildRefinePrompt(mat) + dimInfo.promptNote },
             ], dimInfo.apiAspectRatio);
             guided = true;
@@ -359,7 +360,8 @@ export async function generateKitchenImage(
     let best = await runOnce();
     let attempts = 1;
     const elapsedMs = Date.now() - startTime;
-    if (!best.qc.ok && elapsedMs < 130_000) {
+    // 120 s: un intento completo con guía y controles tardó hasta ~160 s (283 s en total con reintento)
+    if (!best.qc.ok && elapsedMs < 120_000) {
       // Un error en el reintento (p. ej. 503 por demanda) no tira el primer resultado
       try {
         const second = await runOnce();

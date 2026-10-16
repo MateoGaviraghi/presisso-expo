@@ -31,7 +31,7 @@ export const MATERIALS: Record<string, MaterialDef> = {
     handles:
       "Brushed ALUMINUM profile handle: a slim horizontal aluminum channel along the TOP edge of every lower door and drawer, as in the reference close-ups of the drawers. Upper cabinets: no handles, flat fronts. Kickboard in brushed aluminum.",
     finish:
-      "LITIO — Presisso \"Metálicos\" melamine, as in the OFFICIAL SWATCH (first reference image): a LIGHT WARM CHAMPAGNE / GREIGE — a warm beige-gray with a soft, fine pearly sheen. In a bright room it reads as a warm off-white (see the Línea Siena photo); in a dimmer room it reads as light warm beige. It is NEVER cool gray, blue-gray, silver, chrome or medium gray. Smooth and uniform, no wood grain, no brushed lines, never a mirror look. The COUNTERTOP is a DIFFERENT material: solid WHITE quartz (Blanco Puro swatch), whiter and brighter than the champagne doors, with no veining. Only the thin handle profile and the kickboard are aluminum.",
+      "LITIO — a Presisso MELAMINE board, as in the OFFICIAL SWATCH (first reference image). Its catalog family is called \"Metálicos\", but the doors are NOT metal: a LIGHT WARM CHAMPAGNE / GREIGE — a warm beige-gray with a near-MATTE satin finish. Light falls on the doors as soft, even shading, like on a painted board: no shine, no light streaks, no bright vertical bands, no reflections. In a bright room it reads as a warm off-white (see the Línea Siena photo); in a dimmer room it reads as light warm beige. It is NEVER stainless steel, brushed metal, aluminum, silver, chrome, cool gray or medium gray. Smooth and uniform, no wood grain, no brushed lines. The COUNTERTOP is a DIFFERENT material: solid WHITE quartz (Blanco Puro swatch), whiter and brighter than the champagne doors, with no veining. Only the thin handle profile and the kickboard are aluminum.",
     apply: `Apply this material to:
 → EVERY cabinet front: lower doors and drawers, upper doors, tall units — the warm champagne Litio slab, same size, position and count as the original doors.
 → EVERY visible furniture panel: cabinet sides, end panels, the island's body and sides, open-shelf frames — the same warm champagne Litio. No panel keeps its original color.
@@ -163,9 +163,9 @@ CHECK BEFORE YOU ANSWER — redo the image if any line is false:
 export function buildRefinePrompt(mat: MaterialDef): string {
   return `Edit IMAGE 1. It is a kitchen where the cabinet fronts and countertops were roughly painted with the exact colors of Presisso "${mat.name}". The colors are correct but the surfaces look flat and pasted on.
 Re-render it as a real, professional interior photo: the cabinets and countertops must look like real installed furniture made of this material, with natural soft shadows, crisp straight edges, visible gaps between doors, correct perspective and the room's real light.
-IMAGE 4 is the client's kitchen before the new material — the STRUCTURE REFERENCE only (ignore its colors). Furniture exists ONLY where IMAGE 4 has furniture: every wall area that is bare in IMAGE 4 stays a bare wall in your output. Never add upper cabinets, tall units, columns, shelves or a counter return that IMAGE 4 does not have.
+IMAGE 4 is the same kitchen, already with the new material — the STRUCTURE REFERENCE. Furniture exists ONLY where IMAGE 4 has furniture: every wall area that is bare in IMAGE 4 stays a bare wall in your output. Never add upper cabinets, tall units, columns, shelves or a counter return that IMAGE 4 does not have.
 KEEP EXACTLY: the colors and hue of the fronts and countertops (match IMAGE 2 for the fronts and IMAGE 3 for the countertop), every door, the island, every appliance, the walls, backsplash, floor and framing. Do not add any object. Handles: ${mat.handles}
-No mirror reflections on the doors; the finish follows the material: ${mat.finish.split("\n")[0].slice(0, 260)}`;
+The doors take the room light as soft, even shading: no mirror reflections, no light streaks, no shiny or brushed-metal look. The finish follows the material: ${mat.finish.split("\n")[0].slice(0, 420)}`;
 }
 
 /* ── Export generated prompts ───────────────────────────────────────── */

@@ -96,3 +96,17 @@ Empieza el 2026-10-16. Lo anterior a esa fecha no tiene registro (los `docs/` so
 
 OQ-004: resuelta por D-009. TD-004: el test temporal ya no existe; la rama `diag/obra` sigue local.
 
+### Agregado 2026-10-16 (noche, 2) — Litio sin acero
+
+**D-010 — Render final con la imagen del paso 2 como estructura; reemplaza la parte de D-009 que decía "foto limpia" (2026-10-16).** La original copiaba el desorden (G-013) y la limpia copiaba la mesada vieja (G-016). La del paso 2 ya tiene el material nuevo y es la base del boceto. Límite de muebles agregados: 5 % (antes 2 %). Reintento solo si van < 120 s.
+
+**G-015 — "Litio acero" es acabado, no color.** El tono medido es el mismo; cambian los brillos y franjas. El nombre de familia "Metálicos" y "pearly sheen" en el texto lo empujaban. Un chequeo numérico de color no lo detecta; lo detecta el control por texto (regla 6b).
+
+**G-016 — Si el render final ve la foto limpia, copia la mesada vieja** (mesada negra en la isla).
+
+**G-017 — El chequeo por área no distingue un retorno en L** (2,5–2,9 %) de un resultado correcto (2,1–2,5 %). Solo detecta alacenas, columnas o reencuadres (6,5–19 %).
+
+**TD-005 — Tiempo:** una solicitud con reintento llegó a 283 s (límite 300 s). Se bajó el corte del reintento a 120 s; sin medir con la versión final.
+
+OQ-005: resuelta por G-015 + D-010 (en las pruebas). G-011 (retorno en L) sigue abierto.
+
