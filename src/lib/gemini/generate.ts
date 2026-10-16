@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import imageSize from "image-size";
 import { genAI, MODELS } from "./client";
+import { isOwnOriginalPhotoUrl } from "@/lib/security";
 import { PROMPTS, CLEAN_EXISTING_PROMPT, type PromptType } from "./prompts-rediseno";
 import { DESIGN_PROMPTS, CLEAN_PROMPT } from "./prompts-diseno";
 
@@ -196,7 +197,9 @@ function getDimensionInfo(buf: Buffer): DimensionInfo {
 /* ── Download client photo ── */
 
 async function downloadClientPhoto(url: string) {
-  const res = await fetch(url);
+  // Segunda barrera anti-SSRF: solo fotos de nuestro bucket, sin seguir redirecciones
+  if (!isOwnOriginalPhotoUrl(url)) throw new Error("URL de foto del cliente no permitida");
+  const res = await fetch(url, { redirect: "error" });
   if (!res.ok) throw new Error(`Error descargando foto del cliente: ${res.status}`);
   const buf = Buffer.from(await res.arrayBuffer());
   return {

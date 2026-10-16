@@ -3,6 +3,7 @@ import { waitUntil } from "@vercel/functions";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/auth/admin-guard";
 import { clientFormSchema } from "@/lib/utils/validators";
+import { dailyCapReached, DAILY_CAP_MESSAGE, isOwnOriginalPhotoUrl } from "@/lib/security";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -10,11 +11,18 @@ export const dynamic = "force-dynamic";
 // POST /api/solicitudes — Crear nueva solicitud
 export async function POST(req: NextRequest) {
   try {
+    if (await dailyCapReached()) {
+      return NextResponse.json({ error: DAILY_CAP_MESSAGE }, { status: 429 });
+    }
+
     const body = await req.json();
 
-    // Validar payload con Zod
+    // Validar payload con Zod. La foto tiene que ser una subida por /api/upload (anti-SSRF).
     const createSchema = clientFormSchema.extend({
-      foto_original: z.string().url("URL de foto inválida"),
+      foto_original: z
+        .string()
+        .url("URL de foto inválida")
+        .refine(isOwnOriginalPhotoUrl, "URL de foto inválida"),
     });
     const validated = createSchema.parse(body);
 

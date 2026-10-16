@@ -1,8 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/auth/admin-guard";
 
-// GET /api/stats — Estadísticas del dashboard admin
-export async function GET() {
+// GET /api/stats — Estadísticas del dashboard admin (admin only)
+export async function GET(req: NextRequest) {
+  const denied = requireAdmin(req);
+  if (denied) return denied;
+
   try {
     const [totalResult, estadosResult, hoyResult] = await Promise.all([
       supabaseAdmin

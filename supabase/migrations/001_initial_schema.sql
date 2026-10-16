@@ -69,21 +69,17 @@ CREATE TRIGGER solicitudes_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
 
--- Storage bucket para fotos
+-- Storage bucket para fotos, imágenes generadas y PDFs.
+-- En producción el bucket se llama "cocinas" (el código usa ese nombre).
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('fotos-cocinas', 'fotos-cocinas', true);
+VALUES ('cocinas', 'cocinas', true);
 
--- Policy: cualquiera puede subir fotos (público para la expo)
-CREATE POLICY "Público puede subir fotos"
-ON storage.objects FOR INSERT
-TO anon
-WITH CHECK (bucket_id = 'fotos-cocinas');
+-- Sin policy de INSERT para anon: las subidas pasan por /api/upload, que usa
+-- la service role y aplica validaciones y el tope diario.
 
--- Policy: cualquiera puede ver fotos
-CREATE POLICY "Público puede ver fotos"
-ON storage.objects FOR SELECT
-TO anon
-USING (bucket_id = 'fotos-cocinas');
+-- Sin policy de SELECT: el bucket es público, así que las URLs públicas de cada
+-- archivo funcionan sin ella. Una policy de SELECT amplia dejaría a cualquiera
+-- con la anon key LISTAR todas las fotos y PDFs de los visitantes.
 
 -- Habilitar Realtime para la tabla solicitudes
 ALTER PUBLICATION supabase_realtime ADD TABLE solicitudes;
