@@ -9,15 +9,15 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 
 | Campo | Valor |
 |---|---|
-| **Tarea actual** | Calidad de las imágenes generadas con IA (Renovar). Diagnóstico de la cocina "en obra", donde los 3 materiales con guía de color fallan. |
-| **Status real** | En producción (PR #36, merge 2026-10-16 15:43 UTC): muestras oficiales + guía de color para Litio, Gris Grafito y Negro. Aprobado por Mateo en su cocina con isla (Litio y Negro "salieron bien"). En la cocina en obra los 3 salen mal (Litio parece acero inoxidable; Grafito con mesada granito frío en vez de Cuarzo Gris Cemento; Negro inventó isla, alacenas y columna). El diagnóstico con pasos intermedios quedó **corriendo** al cerrar (ver Próxima acción). |
+| **Tarea actual** | Calidad de las imágenes generadas con IA (Renovar): arreglar la cocina "en obra", donde los 3 materiales con guía de color fallan. El diagnóstico ya está hecho (ver REGISTRO 2026-10-16 tarde). |
+| **Status real** | En producción (PR #36): muestras oficiales + guía de color para Litio, Gris Grafito y Negro. Aprobado por Mateo en su cocina con isla. En la cocina en obra los 3 salen mal. Diagnóstico terminado: la falla principal es que el **render final inventa muebles** (alacenas, columnas) porque no recibe la foto original. El arreglo **no está hecho**. Registro (`WORKLOG.md`, `MEMORY.md`, `mensajes-pendientes.md`) en `main` desde el PR #37. |
 | **Último chat** | 2026-10-16 (empezó 2026-10-08) |
-| **Espera de Mateo** | Nada bloqueante. Cuando vea el diagnóstico: decidir el arreglo para cocinas en obra. Pendiente desde antes: correr las consultas SQL A–E del brief (cifras de la expo) si las quiere en el video. |
+| **Espera de Mateo** | OK para aplicar y probar el arreglo (gasta generaciones de imagen: pedir el número). Pendiente desde antes: correr las consultas SQL A–E (cifras de la expo) si las quiere en el video; compartir el brief con Épica. |
 | **Espera de terceros** | Ninguna. (Épica: recibe el brief y el prompt del video cuando Mateo los comparta.) |
-| **Próxima acción** | 1) Leer resultados del diagnóstico en `C:\Users\mateo\AppData\Local\Temp\claude\C--Users-mateo-Desktop-presisso-expo\cf197515-dc9f-4034-948a-6fa9437a7741\scratchpad\diag-obra\{politex_negro,melamina_litio,politex_gris_grafito}\` (PNG numerados `01-limpia`, `02-material`, `03-boceto`, `04-render-final`, …, `99-entregada`, más `resultado.txt` y `run.log`). **Es una carpeta temporal: puede no existir en otra sesión** — si no está, hay que volver a correrlo (rama `diag/obra`, ver REGISTRO). 2) Ver en qué paso aparece cada falla y proponer el arreglo. 3) Endurecer el control de calidad: que compare la mesada contra su muestra y que cuente como error un acabado metálico excesivo (dejó pasar la mesada de Grafito). |
+| **Próxima acción** | Aplicar el arreglo de OQ-004 (`MEMORY.md`) en una rama desde `main`: 1) pasar la foto original al render final (`buildRefinePrompt` + `callGemini` del paso 3 en `src/lib/gemini/generate.ts`) como referencia de estructura y prohibir agregar alacenas/columnas/tramos que no están; 2) que el control de calidad (`src/lib/gemini/verify.ts`) compare la cantidad de frentes antes y después (se puede reusar el conteo de `getQuads` de `color-guide.ts`) y que **nunca** se entregue un resultado que agregue muebles; 3) reforzar la limpieza para objetos grandes de obra (hormigonera, escombros). Probar con la cocina en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) y con la de isla (`originales/1792158224506-1ika76b0cjg.jpg`) para no romper lo que ya anda. |
 | **Qué no se toca** | Producción de datos (Supabase) sin preguntar. Nunca crear/modificar `.env.example`. La rama `diag/obra` NO se publica (tiene un hook de depuración). No mergear ni deployar sin OK de Mateo. |
 
-**Ramas locales vivas:** `diag/obra` (1 commit `ba74844`, sin push; solo para diagnóstico). Archivo temporal sin trackear: `src/__tests__/tmp-diag.test.ts` (borrar al terminar el diagnóstico).
+**Ramas locales vivas:** `diag/obra` (1 commit `ba74844`, sin push; hook `debugSave` que guarda pasos intermedios si `GEMINI_DEBUG_DIR` está definida — sirve para volver a diagnosticar). La carpeta de trabajo quedó en esa rama: antes de seguir, `git switch main && git pull` (los archivos sin trackear `WORKLOG.md`, `MEMORY.md`, `mensajes-pendientes.md` del disco ya están en `main`; borrarlos o pisarlos al cambiar). `PROJECT-BRAIN.md` y `CLAUDE.md` siguen sin trackear a propósito.
 
 ---
 
@@ -81,3 +81,27 @@ Decisiones, trampas, deuda y preguntas abiertas: `MEMORY.md`. Textos para tercer
 **Gates** (último estado, rama `fix/litio-blanco` antes del merge de #36): `npx tsc --noEmit` OK; `npx vitest run` 34/34; `npx next lint` sin errores (1 warning previo: fuente custom en `layout.tsx`). `next build` local OK en el PR #30; en Vercel, preview y producción "success" en #30–#36.
 
 **Sigue:** ver ESTADO → Próxima acción.
+
+### 2026-10-16 (tarde) — Publicación de la guía de color, registro y diagnóstico de la cocina en obra
+
+**Pedido:** "publicá lo que hay y diagnosticá obra, autorizo 18 y /cerrar porque debo compactar" → "commiteá el registro" → "ok push y merge registro" → "anotá el diagnóstico en el registro".
+
+**Hecho:**
+- PR #36 (guía de color + muestras oficiales) mergeado y en producción.
+- Registro creado (`WORKLOG.md`, `MEMORY.md`, `mensajes-pendientes.md`) y mergeado en `main` con el PR #37. Se commiteó desde un worktree aparte para no cambiar la rama mientras corría el diagnóstico; el worktree se borró después.
+- Diagnóstico de la cocina en obra (`originales/1776443551957-djbfq5bbeur.jpeg`) con la rama `diag/obra`: Negro, Litio y Gris Grafito, guardando cada paso. **18 generaciones** (las 18 autorizadas): los 3 casos hicieron reintento (2 intentos × 3 pasos).
+
+**Resultado del diagnóstico, paso por paso** (imágenes en la carpeta temporal `scratchpad\diag-obra\<material>\`, `sheet-<material>.jpg`; pueden no existir en otra sesión):
+- **Paso 1, limpieza:** bien en 5 de 6 intentos. En el segundo intento de Gris Grafito **dejó la hormigonera** y el paso 2 la conservó.
+- **Paso 2, cambio de material:** colores bien en los 3 (Negro negro mate, Litio champagne, Grafito pizarra con mesada cemento). En Litio y en Gris Grafito agregó un **retorno en L** de mesada y bajos sobre la pared derecha, que no existe.
+- **Paso 3, boceto:** sigue bien al resultado del paso 2 (incluido el retorno en L cuando está).
+- **Paso 4, render final:** en los 3 materiales **inventó muebles**: alacenas en Negro y Litio, una columna alta en Gris Grafito. Recibe solo el boceto y las muestras, no la foto original, y en una pared vacía "completa" la cocina.
+- **Qué se entregó:** Negro y Litio, la imagen **sin guía** del segundo intento. El control de calidad rechazó el render y el respaldo de "imagen sin guía" funcionó: sin muebles inventados, pero el control igual marcó en Negro "gris oscuro en lugar de negro mate". Gris Grafito entregó el **render con la columna inventada**, porque los dos intentos tenían problemas y quedó el de menos.
+
+**Archivos:** `WORKLOG.md` (ESTADO reescrito, esta entrada), `MEMORY.md` (G-010..G-012, OQ-004). Rama `diag/obra`: `src/lib/gemini/generate.ts` (`debugSave`, sin push). Borrado: `src/__tests__/tmp-diag.test.ts`.
+
+**Verificado:** el diagnóstico se revisó mirando cada paso intermedio. El arreglo **no está hecho ni probado**.
+
+**Gates:** no se tocó código publicable en esta entrada. La rama `diag/obra` pasa `tsc`.
+
+**Sigue:** ESTADO → Próxima acción (arreglo de OQ-004).
