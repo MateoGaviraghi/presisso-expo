@@ -38,6 +38,9 @@ const REFERENCE_FILES: Record<PromptType, string[]> = {
     "melamina-litio/MPucci_Presisso_20210323_082.jpg",
     "melamina-litio/MPucci_Presisso_20210323_085.jpg",
     "melamina-litio/MPucci_Presisso_20210323_009.jpg",
+    "melamina-litio/MPucci_Presisso_20210323_081.jpg", // frentes bajos con mesada blanca, luz pareja
+    "melamina-litio/MPucci_Presisso_20210323_011.jpg", // cajón con perfil de aluminio
+    "melamina-litio/MPucci_Presisso_20210323_047.jpg", // mesada blanca
     // Removed 036__ and 070: extreme close-ups of hardware/base, not useful for material color
   ],
   politex_gris_grafito: [
@@ -276,12 +279,14 @@ export async function generateKitchenImage(
       const image = await callGemini(model, [
         clientPart,
         cleanedPart,
+        { text: `The next images are the REFERENCE PHOTOS of Presisso "${mat.name}". Copy the door and countertop COLOR exactly as it looks in them.` },
         ...refParts,
         cleanedPart,
         { text: redesignPrompt },
       ], dimInfo.apiAspectRatio);
 
       const qc = await verifyRedesign(
+        refParts.slice(0, 3),
         clientPart,
         { inlineData: { mimeType: "image/png", data: image } },
         mat.name,
