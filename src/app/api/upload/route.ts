@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { dailyCapReached, DAILY_CAP_MESSAGE } from "@/lib/security";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"];
+// La extensión sale del tipo del archivo, nunca del nombre que manda el cliente
+const EXT_BY_TYPE: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/heic": "heic",
+};
+const ALLOWED_TYPES = Object.keys(EXT_BY_TYPE);
 const MAX_RETRIES = 2;
 
 export async function POST(req: NextRequest) {
   try {
+    if (await dailyCapReached()) {
+      return NextResponse.json({ error: DAILY_CAP_MESSAGE }, { status: 429 });
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
@@ -31,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const ext = file.name.split(".").pop() ?? "jpg";
+    const ext = EXT_BY_TYPE[file.type];
     const fileName = `originales/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const nodeBuffer = Buffer.from(await file.arrayBuffer());
 

@@ -5,6 +5,7 @@ import { generateWithFallback } from "@/lib/gemini/generate";
 import type { ModoSolicitud } from "@/lib/gemini/generate";
 import type { PromptType } from "@/lib/gemini/prompts";
 import { solicitudIdBody, parseBody } from "@/lib/validations/api";
+import { safeEqual } from "@/lib/security";
 
 export const maxDuration = 300;
 
@@ -14,7 +15,7 @@ const TIMEOUT_MS = 285_000;
 export async function POST(req: NextRequest) {
   // Verificar secret interno — solo llamadas server-to-server autorizadas
   const secret = req.headers.get("x-internal-secret");
-  if (secret !== process.env.INTERNAL_API_SECRET) {
+  if (!safeEqual(secret, process.env.INTERNAL_API_SECRET)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
   const body = await req.json().catch(() => null);
