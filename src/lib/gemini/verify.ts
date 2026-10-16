@@ -29,10 +29,11 @@ Compare the two images and check each rule:
 4. ROOM: walls, backsplash, floor, windows and camera framing are the same.
 5. MATERIAL: the fronts in IMAGE 2 follow the MATERIAL SPEC (colors, two-tone placement, handles), with no leftover cabinet in the old color and no missing fronts or open gaps.
 6. COLOR MATCH: the door and countertop colors in IMAGE 2 look like the REFERENCE PHOTOS (same lightness, tone and finish). Clearly darker, bluer, more metallic or a different hue than the references is a FAIL.
+7. NOTHING ADDED: IMAGE 2 has no object that is not in IMAGE 1 — no coffee machine, kettle, toaster, bowl, plant, decor, stool or chair placed on counters or around the kitchen.
 
 Small loose objects (bottles, cups, coffee machines, rags, trash bins) disappearing is CORRECT, not a problem.
 
-Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if all 6 rules pass. Each problem is one short sentence in Spanish.`;
+Answer ONLY with JSON: {"ok": boolean, "problems": string[]} — "ok" is true only if all 7 rules pass. Each problem is one short sentence in Spanish.`;
 
 export async function verifyRedesign(
   references: Part[],
